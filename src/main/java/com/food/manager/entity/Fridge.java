@@ -12,6 +12,7 @@ import java.util.List;
 @Getter
 @Setter
 @RequiredArgsConstructor
+@Table(name = "FRIDGES")
 public class Fridge {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

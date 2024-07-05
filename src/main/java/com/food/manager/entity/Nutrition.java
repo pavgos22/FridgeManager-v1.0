@@ -9,6 +9,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @RequiredArgsConstructor
+@Table(name = "NUTRITION")
 public class Nutrition {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

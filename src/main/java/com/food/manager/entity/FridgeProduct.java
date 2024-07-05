@@ -5,18 +5,18 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @Entity
 @Getter
 @Setter
 @RequiredArgsConstructor
+@Table(name = "FRIDGE_PRODUCTS")
 public class FridgeProduct {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="FRIDGE_PRODUCT_ID", unique=true)
     private Long FridgeProductId;
+    @Column(name = "QUANTITY_TYPE")
+    private String quantityType;
     @Column(name = "QUANTITY")
     private int quantity; //g/ml/szt. quantity type?
 

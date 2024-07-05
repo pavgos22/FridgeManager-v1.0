@@ -11,6 +11,7 @@ import java.util.List;
 @Getter
 @Setter
 @RequiredArgsConstructor
+@Table(name = "SHOPPING_LIST_ITEMS")
 public class ShoppingListItem {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

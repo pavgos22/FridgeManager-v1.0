@@ -12,6 +12,7 @@ import java.util.Set;
 @Getter
 @Setter
 @RequiredArgsConstructor
+@Table(name = "PRODUCTS")
 public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -12,6 +12,7 @@ import java.util.List;
 @Getter
 @Setter
 @RequiredArgsConstructor
+@Table(name = "RECIPES")
 public class Recipe {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

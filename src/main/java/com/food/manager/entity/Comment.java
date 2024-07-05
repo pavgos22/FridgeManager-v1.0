@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
-import org.hibernate.cache.spi.support.AbstractReadWriteAccess;
 
 import java.time.LocalDateTime;
 
@@ -12,6 +11,7 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @RequiredArgsConstructor
+@Table(name = "COMMENTS")
 public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
