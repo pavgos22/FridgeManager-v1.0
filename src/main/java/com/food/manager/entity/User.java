@@ -1,0 +1,49 @@
+package com.food.manager.entity;
+
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+
+@Entity
+@Getter
+@Setter
+@RequiredArgsConstructor
+public class User {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "USER_ID", unique = true)
+    private Long userId;
+    @Column(name = "USERNAME", nullable = false, unique = true)
+    private String username;
+    @Column(name = "FIRST_NAME", nullable = false)
+    private String firstName;
+    @Column(name = "LAST_NAME")
+    private String lastName;
+    @Column(name = "EMAIL", nullable = false)
+    private String email;
+    @Column(name = "PASSWORD", nullable = false)
+    private String password;
+    @Column(name = "CREATED_AT", nullable = false)
+    private LocalDateTime createdAt;
+    @Column(name = "UPDATED_AT", nullable = false)
+    private LocalDateTime updatedAt;
+
+    @ManyToMany
+    @JoinTable(
+            name = "USER_HAS_GROUP",
+            joinColumns = @JoinColumn(name = "USER_ID"),
+            inverseJoinColumns = @JoinColumn(name = "GROUP_ID")
+    )
+    private List<Group> groups = new ArrayList<>();
+
+    @OneToMany
+    private List<Comment> comments = new ArrayList<>();
+
+//    @OneToOne(mappedBy = "user")
+//    private Fridge personalFridge;
+}
