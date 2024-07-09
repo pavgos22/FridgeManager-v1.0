@@ -25,7 +25,7 @@ public class Comment {
     private LocalDateTime updatedAt;
 
     @ManyToOne
-    @JoinColumn(name="ITEM_ID")
+    @JoinColumn(name="ITEM_ID", nullable = false)
     private ShoppingListItem item;
 
     @ManyToOne

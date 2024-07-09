@@ -20,10 +20,9 @@ public class Fridge {
     private Long fridgeId;
 
     @OneToOne
-    @JoinColumn(name = "GROUP_ID", nullable = true)
+    @JoinColumn(name = "GROUP_ID", nullable = false)
     private Group group;
 
     @OneToMany(mappedBy = "fridge", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<FridgeProduct> products = new ArrayList<>();
 }
-

@@ -2,31 +2,27 @@ package com.food.manager.entity;
 
 import com.food.manager.repository.UserRepository;
 import jakarta.transaction.Transactional;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.boot.test.context.SpringBootTest;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@ExtendWith(SpringExtension.class)
-@DataJpaTest
-@ActiveProfiles("test")
+@SpringBootTest
 public class UserTestSuite {
 
     @Autowired
     private UserRepository userRepository;
 
-    @Test
-    @Transactional
-    public void testCreateUser() {
-        // Given
-        User user = new User();
+    private User user;
+
+    @BeforeEach
+    public void setUp() {
+        user = new User();
         user.setUsername("testuser");
         user.setFirstName("Test");
         user.setLastName("User");
@@ -34,7 +30,11 @@ public class UserTestSuite {
         user.setPassword("password");
         user.setCreatedAt(LocalDateTime.now());
         user.setUpdatedAt(LocalDateTime.now());
+    }
 
+    @Test
+    @Transactional
+    public void testCreateUser() {
         // When
         userRepository.save(user);
         Optional<User> foundUser = userRepository.findById(user.getUserId());
@@ -48,45 +48,36 @@ public class UserTestSuite {
     @Transactional
     public void testUpdateUser() {
         // Given
-        User user = new User();
-        user.setUsername("testuser");
-        user.setFirstName("Test");
-        user.setLastName("User");
-        user.setEmail("test.user@example.com");
-        user.setPassword("password");
-        user.setCreatedAt(LocalDateTime.now());
-        user.setUpdatedAt(LocalDateTime.now());
         userRepository.save(user);
+        User savedUser = userRepository.findById(user.getUserId()).orElseThrow();
 
         // When
-        user.setUsername("updateduser");
-        userRepository.save(user);
-        Optional<User> foundUser = userRepository.findById(user.getUserId());
+        savedUser.setFirstName("UpdatedFirstName");
+        savedUser.setLastName("UpdatedLastName");
+        savedUser.setEmail("updated.email@example.com");
+        savedUser.setUpdatedAt(LocalDateTime.now());
+        userRepository.save(savedUser);
 
         // Then
-        assertThat(foundUser).isPresent();
-        assertThat(foundUser.get().getUsername()).isEqualTo("updateduser");
+        User updatedUser = userRepository.findById(savedUser.getUserId()).orElseThrow();
+        assertThat(updatedUser).isNotNull();
+        assertThat(updatedUser.getFirstName()).isEqualTo("UpdatedFirstName");
+        assertThat(updatedUser.getLastName()).isEqualTo("UpdatedLastName");
+        assertThat(updatedUser.getEmail()).isEqualTo("updated.email@example.com");
     }
 
     @Test
     @Transactional
     public void testDeleteUser() {
         // Given
-        User user = new User();
-        user.setUsername("testuser");
-        user.setFirstName("Test");
-        user.setLastName("User");
-        user.setEmail("test.user@example.com");
-        user.setPassword("password");
-        user.setCreatedAt(LocalDateTime.now());
-        user.setUpdatedAt(LocalDateTime.now());
         userRepository.save(user);
+        User savedUser = userRepository.findById(user.getUserId()).orElseThrow();
 
         // When
-        userRepository.delete(user);
-        Optional<User> foundUser = userRepository.findById(user.getUserId());
+        userRepository.delete(savedUser);
 
         // Then
+        Optional<User> foundUser = userRepository.findById(savedUser.getUserId());
         assertThat(foundUser).isNotPresent();
     }
 }

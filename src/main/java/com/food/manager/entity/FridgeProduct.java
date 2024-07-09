@@ -21,10 +21,10 @@ public class FridgeProduct {
     private int quantity; //g/ml/szt. quantity type?
 
     @ManyToOne
-    @JoinColumn(name="FRIDGE_ID", nullable=false)
+    @JoinColumn(name="FRIDGE_ID", nullable = false)
     private Fridge fridge;
 
-    @OneToOne(mappedBy = "fridgeProduct")
+    @ManyToOne
+    @JoinColumn(name="PRODUCT_ID", nullable = false)
     private Product product;
-
 }

@@ -2,6 +2,7 @@ package com.food.manager.entity;
 
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
@@ -13,7 +14,7 @@ import java.util.List;
 @Getter
 @Setter
 @RequiredArgsConstructor
-@Table(name = "GROUPS")
+@Table(name = "`GROUPS`")
 public class Group {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

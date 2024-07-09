@@ -26,10 +26,6 @@ public class Product {
     private Nutrition nutrition;
 
     @OneToOne
-    @JoinColumn(name="FRIDGE_PRODUCT_ID", nullable = true)
-    private FridgeProduct fridgeProduct;
-
-    @OneToOne
     @JoinColumn(name="ITEM_ID", nullable = true)
     private ShoppingListItem item;
 
@@ -41,4 +37,6 @@ public class Product {
     )
     private List<Recipe> recipes;
 
+    @OneToMany
+    private List<FridgeProduct> fridgeProductsList;
 }
