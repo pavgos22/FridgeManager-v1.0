@@ -32,5 +32,11 @@ public class Group {
 
     @OneToOne(mappedBy = "group")
     private Fridge groupFridge;
+
+    public Group(String groupName, LocalDateTime createdAt, LocalDateTime updatedAt) {
+        this.groupName = groupName;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+    }
 }
 

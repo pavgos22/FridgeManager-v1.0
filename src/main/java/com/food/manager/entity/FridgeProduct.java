@@ -15,9 +15,9 @@ public class FridgeProduct {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="FRIDGE_PRODUCT_ID", unique=true)
     private Long FridgeProductId;
-    @Column(name = "QUANTITY_TYPE")
+    @Column(name = "QUANTITY_TYPE", nullable = false)
     private String quantityType;
-    @Column(name = "QUANTITY")
+    @Column(name = "QUANTITY", nullable = false)
     private int quantity; //g/ml/szt. quantity type?
 
     @ManyToOne
@@ -27,4 +27,11 @@ public class FridgeProduct {
     @ManyToOne
     @JoinColumn(name="PRODUCT_ID", nullable = false)
     private Product product;
+
+    public FridgeProduct(String quantityType, int quantity, Fridge fridge, Product product) {
+        this.quantityType = quantityType;
+        this.quantity = quantity;
+        this.fridge = fridge;
+        this.product = product;
+    }
 }
