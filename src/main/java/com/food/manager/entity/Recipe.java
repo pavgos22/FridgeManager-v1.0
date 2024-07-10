@@ -27,7 +27,6 @@ public class Recipe {
     @Column(name="WEATHER", nullable = true)
     private String weather; //enum
 
-    @ManyToMany(mappedBy = "recipes")
+    @ManyToMany(mappedBy = "recipes") //ingredients
     private List<Product> products;
-
 }

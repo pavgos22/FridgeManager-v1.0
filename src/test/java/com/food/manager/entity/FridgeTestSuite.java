@@ -1,17 +1,17 @@
 package com.food.manager.entity;
 
-import com.food.manager.repository.*;
+import com.food.manager.repository.FridgeProductRepository;
+import com.food.manager.repository.FridgeRepository;
+import com.food.manager.repository.GroupRepository;
+import com.food.manager.repository.ProductRepository;
 import jakarta.transaction.Transactional;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.time.LocalDateTime;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.mockito.Mockito.when;
 
 @SpringBootTest
 public class FridgeTestSuite {
@@ -58,4 +58,3 @@ public class FridgeTestSuite {
         assertThat(retrievedFridgeProduct.getQuantity()).isEqualTo(1);
     }
 }
-

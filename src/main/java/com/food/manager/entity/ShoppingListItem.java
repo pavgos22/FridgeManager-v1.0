@@ -17,14 +17,21 @@ public class ShoppingListItem {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="ITEM_ID", unique = true)
     private Long itemId;
-    @Column(name="QUANTITY", nullable = true)
+    @Column(name="QUANTITY_TYPE", nullable = false)
+    private String quantityType;
+    @Column(name="QUANTITY", nullable = false)
     private int quantity;
     @Column(name="CHECKED", nullable = false)
     private boolean checked;
 
-    @OneToOne(mappedBy = "item")
+    @OneToOne
+    @JoinColumn(name="PRODUCT_ID", nullable = false)
     private Product product;
 
     @OneToMany(mappedBy = "item")
     private List<Comment> comments;
+
+    @ManyToOne
+    @JoinColumn(name="GROUP_ID", nullable = false)
+    private Group group;
 }

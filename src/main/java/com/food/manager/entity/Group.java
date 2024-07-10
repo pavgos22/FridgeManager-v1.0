@@ -2,7 +2,6 @@ package com.food.manager.entity;
 
 import jakarta.persistence.*;
 import lombok.Getter;
-import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
@@ -32,6 +31,9 @@ public class Group {
 
     @OneToOne(mappedBy = "group")
     private Fridge groupFridge;
+
+    @OneToMany(mappedBy = "group")
+    private List<ShoppingListItem> shoppingListItems = new ArrayList<>();
 
     public Group(String groupName, LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.groupName = groupName;

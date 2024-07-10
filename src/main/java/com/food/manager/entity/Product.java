@@ -6,7 +6,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
 import java.util.List;
-import java.util.Set;
 
 @Entity
 @Getter
@@ -21,13 +20,12 @@ public class Product {
     @Column(name = "PRODUCT_NAME", nullable=false)
     private String productName;
 
-    @OneToOne
-    @JoinColumn(name="NUTRITION_ID", nullable = true)
-    private Nutrition nutrition;
+    @OneToOne(mappedBy = "product")
+    private ShoppingListItem item;
 
     @OneToOne
-    @JoinColumn(name="ITEM_ID", nullable = true)
-    private ShoppingListItem item;
+    @JoinColumn(name="NUTRITION_ID")
+    private Nutrition nutrition;
 
     @ManyToMany
     @JoinTable(
