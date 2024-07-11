@@ -35,11 +35,9 @@ public class UserTestSuite {
     @Test
     @Transactional
     public void testCreateUser() {
-        // When
         userRepository.save(user);
         Optional<User> foundUser = userRepository.findById(user.getUserId());
 
-        // Then
         assertThat(foundUser).isPresent();
         assertThat(foundUser.get().getUsername()).isEqualTo("testuser");
     }
@@ -47,18 +45,15 @@ public class UserTestSuite {
     @Test
     @Transactional
     public void testUpdateUser() {
-        // Given
         userRepository.save(user);
         User savedUser = userRepository.findById(user.getUserId()).orElseThrow();
 
-        // When
         savedUser.setFirstName("UpdatedFirstName");
         savedUser.setLastName("UpdatedLastName");
         savedUser.setEmail("updated.email@example.com");
         savedUser.setUpdatedAt(LocalDateTime.now());
         userRepository.save(savedUser);
 
-        // Then
         User updatedUser = userRepository.findById(savedUser.getUserId()).orElseThrow();
         assertThat(updatedUser).isNotNull();
         assertThat(updatedUser.getFirstName()).isEqualTo("UpdatedFirstName");
@@ -69,14 +64,11 @@ public class UserTestSuite {
     @Test
     @Transactional
     public void testDeleteUser() {
-        // Given
         userRepository.save(user);
         User savedUser = userRepository.findById(user.getUserId()).orElseThrow();
 
-        // When
         userRepository.delete(savedUser);
 
-        // Then
         Optional<User> foundUser = userRepository.findById(savedUser.getUserId());
         assertThat(foundUser).isNotPresent();
     }
