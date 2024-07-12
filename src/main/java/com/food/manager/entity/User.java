@@ -45,6 +45,16 @@ public class User {
     @OneToMany
     private List<Comment> comments = new ArrayList<>();
 
+    public User(String username, String firstName, String lastName, String email, String password, LocalDateTime createdAt, LocalDateTime updatedAt) {
+        this.username = username;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.email = email;
+        this.password = password;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+    }
+
 //    @OneToOne(mappedBy = "user")
 //    private Fridge personalFridge;
 }
