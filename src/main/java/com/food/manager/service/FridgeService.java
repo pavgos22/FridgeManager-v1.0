@@ -27,8 +27,12 @@ public class FridgeService {
 
     @Autowired
     private FridgeMapper fridgeMapper;
+
     @Autowired
     private ProductRepository productRepository;
+
+    @Autowired
+    private FridgeProductService fridgeProductService;
 
     public FridgeResponse getFridge(Long id) {
         Optional<Fridge> fridgeOptional = fridgeRepository.findById(id);
@@ -56,6 +60,7 @@ public class FridgeService {
     }
 
     public FridgeResponse addProduct(AddProductToFridgeRequest addProductToFridgeRequest) {
+
         Optional<Fridge> fridgeOptional = fridgeRepository.findById(addProductToFridgeRequest.fridgeId());
         Optional<FridgeProduct> fridgeProductOptional = fridgeProductRepository.findById(addProductToFridgeRequest.FridgeProductId());
 
