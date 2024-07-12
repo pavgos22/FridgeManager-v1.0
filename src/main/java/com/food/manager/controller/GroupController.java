@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/groups")
+@RequestMapping("/v1/groups")
 public class GroupController {
 
     @Autowired
@@ -47,13 +47,13 @@ public class GroupController {
     }
 
     @PostMapping("/addUser")
-    public ResponseEntity<GroupResponse> addUserToGroup(@RequestBody AddUserRequest addUserRequest) {
+    public ResponseEntity<GroupResponse> addUser(@RequestBody AddUserRequest addUserRequest) {
         GroupResponse groupResponse = groupService.addUser(addUserRequest);
         return ResponseEntity.ok(groupResponse);
     }
 
     @PostMapping("/deleteUser")
-    public ResponseEntity<GroupResponse> deleteUserFromGroup(@RequestBody DeleteUserRequest deleteUserRequest) {
+    public ResponseEntity<GroupResponse> removeUser(@RequestBody DeleteUserRequest deleteUserRequest) {
         GroupResponse groupResponse = groupService.deleteUser(deleteUserRequest);
         return ResponseEntity.ok(groupResponse);
     }
