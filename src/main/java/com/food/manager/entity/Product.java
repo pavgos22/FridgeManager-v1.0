@@ -36,7 +36,7 @@ public class Product {
     private List<Recipe> recipes;
 
     @OneToMany
-    private List<FridgeProduct> fridgeProductsList;
+    private List<FridgeProduct> fridgeProducts;
 
     public Product(String productName) {
         this.productName = productName;

@@ -33,7 +33,7 @@ public class Group {
     private Fridge groupFridge;
 
     @OneToMany(mappedBy = "group")
-    private List<ShoppingListItem> shoppingListItems = new ArrayList<>();
+    private List<ShoppingListItem> shoppingListItems;
 
     public Group(String groupName, LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.groupName = groupName;

@@ -24,5 +24,5 @@ public class Fridge {
     private Group group;
 
     @OneToMany(mappedBy = "fridge", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<FridgeProduct> products = new ArrayList<>();
+    private List<FridgeProduct> products;
 }
