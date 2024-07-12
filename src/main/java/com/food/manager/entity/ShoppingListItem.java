@@ -1,5 +1,6 @@
 package com.food.manager.entity;
 
+import com.food.manager.enums.QuantityType;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +19,7 @@ public class ShoppingListItem {
     @Column(name="ITEM_ID", unique = true)
     private Long itemId;
     @Column(name="QUANTITY_TYPE", nullable = false)
-    private String quantityType;
+    private QuantityType quantityType;
     @Column(name="QUANTITY", nullable = false)
     private int quantity;
     @Column(name="CHECKED", nullable = false)

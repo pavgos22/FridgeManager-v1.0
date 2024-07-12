@@ -1,5 +1,6 @@
 package com.food.manager.entity;
 
+import com.food.manager.enums.QuantityType;
 import com.food.manager.repository.FridgeProductRepository;
 import com.food.manager.repository.FridgeRepository;
 import com.food.manager.repository.ProductRepository;
@@ -47,7 +48,7 @@ public class FridgeProductTestSuite {
         product = new Product("TestProduct");
         productRepository.save(product);
 
-        fridgeProduct = new FridgeProduct("kg", 5, fridge, product);
+        fridgeProduct = new FridgeProduct(QuantityType.GRAM, 50, fridge, product);
     }
 
     @Test
@@ -57,8 +58,8 @@ public class FridgeProductTestSuite {
         Optional<FridgeProduct> foundFridgeProduct = fridgeProductRepository.findById(fridgeProduct.getFridgeProductId());
 
         assertThat(foundFridgeProduct).isPresent();
-        assertThat(foundFridgeProduct.get().getQuantityType()).isEqualTo("kg");
-        assertThat(foundFridgeProduct.get().getQuantity()).isEqualTo(5);
+        assertThat(foundFridgeProduct.get().getQuantityType()).isEqualTo(QuantityType.GRAM);
+        assertThat(foundFridgeProduct.get().getQuantity()).isEqualTo(50);
         assertThat(foundFridgeProduct.get().getFridge().getGroup().getGroupName()).isEqualTo("TestGroup");
         assertThat(foundFridgeProduct.get().getProduct().getProductName()).isEqualTo("TestProduct");
     }
@@ -69,14 +70,14 @@ public class FridgeProductTestSuite {
         fridgeProductRepository.save(fridgeProduct);
         FridgeProduct savedFridgeProduct = fridgeProductRepository.findById(fridgeProduct.getFridgeProductId()).orElseThrow();
 
-        savedFridgeProduct.setQuantityType("liters");
-        savedFridgeProduct.setQuantity(3);
+        savedFridgeProduct.setQuantityType(QuantityType.MILLILITER);
+        savedFridgeProduct.setQuantity(3000);
         fridgeProductRepository.save(savedFridgeProduct);
 
         FridgeProduct updatedFridgeProduct = fridgeProductRepository.findById(savedFridgeProduct.getFridgeProductId()).orElseThrow();
         assertThat(updatedFridgeProduct).isNotNull();
-        assertThat(updatedFridgeProduct.getQuantityType()).isEqualTo("liters");
-        assertThat(updatedFridgeProduct.getQuantity()).isEqualTo(3);
+        assertThat(updatedFridgeProduct.getQuantityType()).isEqualTo(QuantityType.MILLILITER);
+        assertThat(updatedFridgeProduct.getQuantity()).isEqualTo(3000);
     }
 
     @Test

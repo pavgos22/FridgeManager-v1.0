@@ -1,5 +1,6 @@
 package com.food.manager.entity;
 
+import com.food.manager.enums.QuantityType;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -16,7 +17,7 @@ public class FridgeProduct {
     @Column(name="FRIDGE_PRODUCT_ID", unique=true)
     private Long FridgeProductId;
     @Column(name = "QUANTITY_TYPE", nullable = false)
-    private String quantityType;
+    private QuantityType quantityType;
     @Column(name = "QUANTITY", nullable = false)
     private int quantity; //g/ml/szt. quantity type?
 
@@ -28,7 +29,7 @@ public class FridgeProduct {
     @JoinColumn(name="PRODUCT_ID", nullable = false)
     private Product product;
 
-    public FridgeProduct(String quantityType, int quantity, Fridge fridge, Product product) {
+    public FridgeProduct(QuantityType quantityType, int quantity, Fridge fridge, Product product) {
         this.quantityType = quantityType;
         this.quantity = quantity;
         this.fridge = fridge;
