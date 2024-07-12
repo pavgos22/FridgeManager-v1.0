@@ -2,9 +2,11 @@ package com.food.manager.mapper;
 
 import com.food.manager.dto.response.UserResponse;
 import com.food.manager.entity.User;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Service
 public class UserMapper {
     public UserResponse toUserResponse(User user) {
         if (user == null) {

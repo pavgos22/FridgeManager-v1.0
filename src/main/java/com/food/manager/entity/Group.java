@@ -40,5 +40,9 @@ public class Group {
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
     }
+
+    public Group(String groupName) {
+        this.groupName = groupName;
+    }
 }
 

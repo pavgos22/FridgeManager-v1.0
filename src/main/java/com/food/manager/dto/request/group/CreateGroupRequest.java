@@ -1,4 +1,4 @@
 package com.food.manager.dto.request.group;
 
-public record CreateGroupRequest() {
+public record CreateGroupRequest(String groupName) {
 }
