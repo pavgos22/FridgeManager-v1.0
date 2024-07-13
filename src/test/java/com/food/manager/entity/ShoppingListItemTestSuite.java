@@ -1,5 +1,6 @@
 package com.food.manager.entity;
 
+import com.food.manager.enums.QuantityType;
 import com.food.manager.repository.ShoppingListItemRepository;
 import com.food.manager.repository.ProductRepository;
 import com.food.manager.repository.GroupRepository;
@@ -39,7 +40,7 @@ public class ShoppingListItemTestSuite {
         productRepository.save(product);
 
         shoppingListItem = new ShoppingListItem();
-        shoppingListItem.setQuantityType("g");
+        shoppingListItem.setQuantityType(QuantityType.GRAM);
         shoppingListItem.setQuantity(500);
         shoppingListItem.setChecked(false);
         shoppingListItem.setProduct(product);
@@ -66,7 +67,7 @@ public class ShoppingListItemTestSuite {
         shoppingListItemRepository.save(shoppingListItem);
         ShoppingListItem savedItem = shoppingListItemRepository.findById(shoppingListItem.getItemId()).orElseThrow();
 
-        savedItem.setQuantityType("l");
+        savedItem.setQuantityType(QuantityType.LITER);
         savedItem.setQuantity(3);
         savedItem.setChecked(true);
         shoppingListItemRepository.save(savedItem);

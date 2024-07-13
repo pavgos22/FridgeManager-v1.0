@@ -1,5 +1,7 @@
 package com.food.manager.entity;
 
+import com.food.manager.enums.RecipeType;
+import com.food.manager.enums.Weather;
 import com.food.manager.repository.ProductRepository;
 import com.food.manager.repository.RecipeRepository;
 import jakarta.transaction.Transactional;
@@ -34,8 +36,8 @@ public class RecipeTestSuite {
         recipe = new Recipe();
         recipe.setDescription("Test Description");
         recipe.setNumberOfServings(4);
-        recipe.setRecipeType("Main Course");
-        recipe.setWeather("Winter");
+        recipe.setRecipeType(RecipeType.AMERICAN);
+        recipe.setWeather(Weather.SUNNY);
         recipe.setProducts(new ArrayList<>(List.of(product)));
     }
 
@@ -63,16 +65,16 @@ public class RecipeTestSuite {
 
         savedRecipe.setDescription("Updated Description");
         savedRecipe.setNumberOfServings(2);
-        savedRecipe.setRecipeType("Dessert");
-        savedRecipe.setWeather("Summer");
+        savedRecipe.setRecipeType(RecipeType.AMERICAN);
+        savedRecipe.setWeather(Weather.SNOWY);
         recipeRepository.saveAndFlush(savedRecipe);
 
         Recipe updatedRecipe = recipeRepository.findById(savedRecipe.getRecipeId()).orElseThrow();
         assertThat(updatedRecipe).isNotNull();
         assertThat(updatedRecipe.getDescription()).isEqualTo("Updated Description");
         assertThat(updatedRecipe.getNumberOfServings()).isEqualTo(2);
-        assertThat(updatedRecipe.getRecipeType()).isEqualTo("Dessert");
-        assertThat(updatedRecipe.getWeather()).isEqualTo("Summer");
+        assertThat(updatedRecipe.getRecipeType()).isEqualTo(RecipeType.AMERICAN);
+        assertThat(updatedRecipe.getWeather()).isEqualTo(Weather.SNOWY);
     }
 
     @Test

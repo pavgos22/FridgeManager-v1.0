@@ -40,9 +40,13 @@ public class GroupController {
 
     @PutMapping("/{id}")
     public ResponseEntity<GroupResponse> updateGroup(@PathVariable Long id, @RequestBody UpdateGroupRequest updateGroupRequest) {
-        GroupResponse groupResponse = groupService.updateGroup(id, updateGroupRequest);
+        if (!id.equals(updateGroupRequest.groupId())) {
+            throw new RuntimeException("Path variable id does not match request body id");
+        }
+        GroupResponse groupResponse = groupService.updateGroup(updateGroupRequest);
         return ResponseEntity.ok(groupResponse);
     }
+
 
     @PostMapping("/addUser")
     public ResponseEntity<GroupResponse> addUser(@RequestBody AddUserRequest addUserRequest) {

@@ -1,5 +1,6 @@
 package com.food.manager.entity;
 
+import com.food.manager.enums.QuantityType;
 import com.food.manager.repository.CommentRepository;
 import com.food.manager.repository.ProductRepository;
 import com.food.manager.repository.ShoppingListItemRepository;
@@ -62,7 +63,7 @@ public class CommentTestSuite {
         productRepository.save(product);
 
         shoppingListItem = new ShoppingListItem();
-        shoppingListItem.setQuantityType("pieces");
+        shoppingListItem.setQuantityType(QuantityType.PIECE);
         shoppingListItem.setQuantity(5);
         shoppingListItem.setChecked(false);
         shoppingListItem.setProduct(product);

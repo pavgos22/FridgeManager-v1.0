@@ -13,6 +13,7 @@ import com.food.manager.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -48,19 +49,20 @@ public class GroupService {
     }
 
     public GroupResponse createGroup(CreateGroupRequest createGroupRequest) {
-        Group group = new Group(createGroupRequest.groupName());
+        Group group = new Group(createGroupRequest.groupName(), LocalDateTime.now(), LocalDateTime.now());
         return groupMapper.toGroupResponse(groupRepository.save(group));
     }
 
-    public GroupResponse updateGroup(Long id, UpdateGroupRequest updateGroupRequest) {
-        Optional<Group> optionalGroup = groupRepository.findById(id);
+    public GroupResponse updateGroup(UpdateGroupRequest updateGroupRequest) {
+        Optional<Group> optionalGroup = groupRepository.findById(updateGroupRequest.groupId());
 
         if (optionalGroup.isPresent()) {
             Group group = optionalGroup.get();
             group.setGroupName(updateGroupRequest.groupName());
+            group.setUpdatedAt(LocalDateTime.now());
             return groupMapper.toGroupResponse(groupRepository.save(group));
         } else
-            throw new RuntimeException("Group not found with id: " + id);
+            throw new RuntimeException("Group not found with id: " + updateGroupRequest.groupId());
     }
 
 

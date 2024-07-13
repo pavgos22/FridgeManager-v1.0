@@ -1,5 +1,6 @@
 package com.food.manager.entity;
 
+import com.food.manager.enums.QuantityType;
 import com.food.manager.repository.FridgeProductRepository;
 import com.food.manager.repository.FridgeRepository;
 import com.food.manager.repository.GroupRepository;
@@ -43,7 +44,7 @@ public class FridgeTestSuite {
         fridge.setGroup(group);
         Fridge savedFridge = fridgeRepository.save(fridge);
 
-        FridgeProduct fridgeProduct = new FridgeProduct("g", 1, fridge, product);
+        FridgeProduct fridgeProduct = new FridgeProduct(QuantityType.GRAM, 1, fridge, product);
 
         savedFridge.getProducts().add(fridgeProduct);
         fridgeProductRepository.save(fridgeProduct);
