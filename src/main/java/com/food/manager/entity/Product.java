@@ -23,7 +23,7 @@ public class Product {
     @OneToOne(mappedBy = "product")
     private ShoppingListItem item;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name="NUTRITION_ID")
     private Nutrition nutrition;
 

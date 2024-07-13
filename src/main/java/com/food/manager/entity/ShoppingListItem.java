@@ -35,4 +35,12 @@ public class ShoppingListItem {
     @ManyToOne
     @JoinColumn(name="GROUP_ID", nullable = false)
     private Group group;
+
+    public ShoppingListItem(Product product, QuantityType quantityType, int quantity, boolean checked, Group group) {
+        this.product = product;
+        this.quantityType = quantityType;
+        this.quantity = quantity;
+        this.checked = checked;
+        this.group = group;
+    }
 }

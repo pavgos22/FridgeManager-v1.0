@@ -4,7 +4,6 @@ import com.food.manager.dto.request.fridgeproduct.AddFridgeProductRequest;
 import com.food.manager.dto.response.FridgeProductResponse;
 import com.food.manager.entity.FridgeProduct;
 import com.food.manager.entity.Product;
-import com.food.manager.enums.QuantityType;
 import com.food.manager.mapper.FridgeProductMapper;
 import com.food.manager.repository.FridgeProductRepository;
 import com.food.manager.repository.ProductRepository;
@@ -26,20 +25,21 @@ public class FridgeProductService {
     @Autowired
     private FridgeProductMapper fridgeProductMapper;
 
-    public FridgeProduct addFridgeProduct(Long productId, QuantityType quantityType, int quantity) {
-        Optional<Product> productOptional = productRepository.findById(productId);
+    public FridgeProductResponse addFridgeProduct(AddFridgeProductRequest addFridgeProductRequest) {
+        Optional<Product> productOptional = productRepository.findById(addFridgeProductRequest.productId());
 
         if (productOptional.isPresent()) {
             FridgeProduct fridgeProduct = new FridgeProduct(
-                    quantityType,
-                    quantity,
+                    addFridgeProductRequest.quantityType(),
+                    addFridgeProductRequest.quantity(),
                     null,
                     productOptional.get()
             );
 
-            return fridgeProductRepository.save(fridgeProduct);
+            fridgeProductRepository.save(fridgeProduct);
+            return fridgeProductMapper.toFridgeProductResponse(fridgeProduct);
         } else {
-            throw new RuntimeException("Product not found with id: " + productId);
+            throw new RuntimeException("Product not found with id: " + addFridgeProductRequest.productId());
         }
     }
 

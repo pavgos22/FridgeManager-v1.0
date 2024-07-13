@@ -59,7 +59,7 @@ public class FridgeService {
         }
     }
 
-    public FridgeResponse addProduct(AddProductToFridgeRequest addProductToFridgeRequest) {
+    public FridgeResponse addProductToFridge(AddProductToFridgeRequest addProductToFridgeRequest) {
 
         Optional<Fridge> fridgeOptional = fridgeRepository.findById(addProductToFridgeRequest.fridgeId());
         Optional<FridgeProduct> fridgeProductOptional = fridgeProductRepository.findById(addProductToFridgeRequest.FridgeProductId());
@@ -91,7 +91,7 @@ public class FridgeService {
         }
     }
 
-    public FridgeResponse removeProduct(RemoveProductFromFridgeRequest removeProductFromFridgeRequest) {
+    public FridgeResponse removeProductFromFridge(RemoveProductFromFridgeRequest removeProductFromFridgeRequest) {
         Optional<Fridge> fridgeOptional = fridgeRepository.findById(removeProductFromFridgeRequest.fridgeId());
 
         if (fridgeOptional.isPresent()) {

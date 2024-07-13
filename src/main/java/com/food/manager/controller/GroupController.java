@@ -1,9 +1,7 @@
 package com.food.manager.controller;
 
-import com.food.manager.dto.request.group.AddUserRequest;
-import com.food.manager.dto.request.group.CreateGroupRequest;
-import com.food.manager.dto.request.group.DeleteGroupRequest;
-import com.food.manager.dto.request.group.UpdateGroupRequest;
+import com.food.manager.dto.request.group.*;
+import com.food.manager.dto.request.item.CreateItemRequest;
 import com.food.manager.dto.request.user.DeleteUserRequest;
 import com.food.manager.dto.response.GroupResponse;
 import com.food.manager.service.GroupService;
@@ -55,6 +53,19 @@ public class GroupController {
     @PostMapping("/deleteUser")
     public ResponseEntity<GroupResponse> removeUser(@RequestBody DeleteUserRequest deleteUserRequest) {
         GroupResponse groupResponse = groupService.deleteUser(deleteUserRequest);
+        return ResponseEntity.ok(groupResponse);
+    }
+
+    @PostMapping("/addItem")
+    public ResponseEntity<GroupResponse> addItemToGroup(@RequestBody CreateItemRequest createItemRequest, @RequestBody AddItemToGroupRequest addItemToGroupRequest) {
+        GroupResponse groupResponse = groupService.addItemToGroup(createItemRequest, addItemToGroupRequest);
+        return ResponseEntity.ok(groupResponse);
+    }
+
+    @DeleteMapping("/removeItem")
+    public ResponseEntity<GroupResponse> removeItemFromGroup(
+            @RequestBody RemoveItemFromGroupRequest removeItemFromGroupRequest) {
+        GroupResponse groupResponse = groupService.removeItemFromGroup(removeItemFromGroupRequest);
         return ResponseEntity.ok(groupResponse);
     }
 

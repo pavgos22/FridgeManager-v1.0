@@ -26,13 +26,13 @@ public class FridgeController {
 
     @PostMapping("/addProduct")
     public ResponseEntity<FridgeResponse> addProduct(@RequestBody AddProductToFridgeRequest addProductRequest) {
-        FridgeResponse fridgeResponse = fridgeService.addProduct(addProductRequest);
+        FridgeResponse fridgeResponse = fridgeService.addProductToFridge(addProductRequest);
         return ResponseEntity.ok(fridgeResponse);
     }
 
     @PostMapping("/removeProduct")
     public ResponseEntity<FridgeResponse> removeProduct(@RequestBody RemoveProductFromFridgeRequest removeProductRequest) {
-        FridgeResponse fridgeResponse = fridgeService.removeProduct(removeProductRequest);
+        FridgeResponse fridgeResponse = fridgeService.removeProductFromFridge(removeProductRequest);
         return ResponseEntity.ok(fridgeResponse);
     }
 
