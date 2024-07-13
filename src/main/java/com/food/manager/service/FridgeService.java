@@ -1,15 +1,15 @@
 package com.food.manager.service;
 
 import com.food.manager.dto.request.fridge.AddProductToFridgeRequest;
-import com.food.manager.dto.request.fridge.CreateFridgeRequest;
 import com.food.manager.dto.request.fridge.RemoveProductFromFridgeRequest;
 import com.food.manager.dto.response.FridgeResponse;
 import com.food.manager.entity.Fridge;
+import com.food.manager.entity.Group;
 import com.food.manager.entity.FridgeProduct;
 import com.food.manager.mapper.FridgeMapper;
-import com.food.manager.repository.FridgeRepository;
 import com.food.manager.repository.FridgeProductRepository;
-import com.food.manager.repository.ProductRepository;
+import com.food.manager.repository.FridgeRepository;
+import com.food.manager.repository.GroupRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -29,10 +29,7 @@ public class FridgeService {
     private FridgeMapper fridgeMapper;
 
     @Autowired
-    private ProductRepository productRepository;
-
-    @Autowired
-    private FridgeProductService fridgeProductService;
+    private GroupRepository groupRepository;
 
     public FridgeResponse getFridge(Long id) {
         Optional<Fridge> fridgeOptional = fridgeRepository.findById(id);
@@ -48,16 +45,16 @@ public class FridgeService {
         return fridgeMapper.mapToFridgeList(fridges);
     }
 
-    public FridgeResponse createFridge(CreateFridgeRequest createFridgeRequest) {
-        Optional<Fridge> fridgeOptional = fridgeRepository.findById(createFridgeRequest.groupId());
-
-        if (fridgeOptional.isPresent()) {
-            Fridge fridge = fridgeOptional.get();
-            return fridgeMapper.toFridgeResponse(fridgeRepository.save(fridge));
-        } else {
-            throw new RuntimeException("Group not found with id: " + createFridgeRequest.groupId());
+    public Fridge createFridge(Long groupId) {
+        Optional<Group> optionalGroup = groupRepository.findById(groupId);
+        if (optionalGroup.isEmpty()) {
+            throw new RuntimeException("Group not found with id: " + groupId);
         }
+        Fridge fridge = new Fridge(optionalGroup.get());
+        fridge = fridgeRepository.save(fridge);
+        return fridge;
     }
+
 
     public FridgeResponse addProductToFridge(AddProductToFridgeRequest addProductToFridgeRequest) {
 

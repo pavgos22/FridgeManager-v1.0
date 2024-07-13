@@ -54,15 +54,15 @@ public class GroupController {
         return ResponseEntity.ok(groupResponse);
     }
 
-    @PostMapping("/deleteUser")
+    @PostMapping("/removeUser")
     public ResponseEntity<GroupResponse> removeUser(@RequestBody DeleteUserRequest deleteUserRequest) {
         GroupResponse groupResponse = groupService.deleteUser(deleteUserRequest);
         return ResponseEntity.ok(groupResponse);
     }
 
     @PostMapping("/addItem")
-    public ResponseEntity<GroupResponse> addItemToGroup(@RequestBody CreateItemRequest createItemRequest, @RequestBody AddItemToGroupRequest addItemToGroupRequest) {
-        GroupResponse groupResponse = groupService.addItemToGroup(createItemRequest, addItemToGroupRequest);
+    public ResponseEntity<GroupResponse> addItemToGroup(@RequestBody CreateItemRequest createItemRequest) {
+        GroupResponse groupResponse = groupService.addItemToGroup(createItemRequest);
         return ResponseEntity.ok(groupResponse);
     }
 

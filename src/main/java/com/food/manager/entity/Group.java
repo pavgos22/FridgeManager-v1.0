@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -27,12 +28,15 @@ public class Group {
     private LocalDateTime updatedAt;
 
     @ManyToMany(mappedBy = "groups")
-    private List<User> users = new ArrayList<>();
+    @JsonManagedReference
+    private List<User> users;
 
-    @OneToOne(mappedBy = "group")
+    @OneToOne(mappedBy = "group", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonManagedReference
     private Fridge groupFridge;
 
-    @OneToMany(mappedBy = "group")
+    @OneToMany(mappedBy = "group", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonManagedReference
     private List<ShoppingListItem> shoppingListItems;
 
     public Group(String groupName, LocalDateTime createdAt, LocalDateTime updatedAt) {
@@ -45,4 +49,3 @@ public class Group {
         this.groupName = groupName;
     }
 }
-

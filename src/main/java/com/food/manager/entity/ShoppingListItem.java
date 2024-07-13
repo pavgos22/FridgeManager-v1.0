@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 
 import java.util.List;
 
@@ -34,6 +35,7 @@ public class ShoppingListItem {
 
     @ManyToOne
     @JoinColumn(name="GROUP_ID", nullable = false)
+    @JsonBackReference
     private Group group;
 
     public ShoppingListItem(Product product, QuantityType quantityType, int quantity, boolean checked, Group group) {

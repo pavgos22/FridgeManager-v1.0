@@ -1,5 +1,6 @@
 package com.food.manager.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -25,5 +26,6 @@ public class Nutrition {
     private float carbohydrate;
 
     @OneToOne(mappedBy = "nutrition")
+    @JsonBackReference
     private Product product;
 }

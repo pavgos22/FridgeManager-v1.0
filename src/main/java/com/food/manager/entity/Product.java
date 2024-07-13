@@ -1,5 +1,6 @@
 package com.food.manager.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -20,10 +21,10 @@ public class Product {
     @Column(name = "PRODUCT_NAME", nullable=false)
     private String productName;
 
-    @OneToOne(mappedBy = "product")
+    @OneToOne
     private ShoppingListItem item;
 
-    @OneToOne(cascade = CascadeType.PERSIST)
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name="NUTRITION_ID")
     private Nutrition nutrition;
 

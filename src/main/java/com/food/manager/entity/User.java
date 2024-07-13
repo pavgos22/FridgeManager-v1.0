@@ -1,10 +1,10 @@
 package com.food.manager.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -41,7 +41,7 @@ public class User {
             joinColumns = @JoinColumn(name = "USER_ID"),
             inverseJoinColumns = @JoinColumn(name = "GROUP_ID")
     )
-    @JsonIgnore
+    @JsonBackReference
     private List<Group> groups = new ArrayList<>();
 
     @OneToMany
@@ -57,6 +57,6 @@ public class User {
         this.updatedAt = updatedAt;
     }
 
-//    @OneToOne(mappedBy = "user")
+    //    @OneToOne(mappedBy = "user")
 //    private Fridge personalFridge;
 }

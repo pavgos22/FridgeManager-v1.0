@@ -1,5 +1,6 @@
 package com.food.manager.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -19,9 +20,14 @@ public class Fridge {
     private Long fridgeId;
 
     @OneToOne
-    @JoinColumn(name = "GROUP_ID", nullable = false)
+    @JoinColumn(name = "GROUP_ID")
+    @JsonBackReference
     private Group group;
 
     @OneToMany(mappedBy = "fridge", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<FridgeProduct> products;
+
+    public Fridge(Group group) {
+        this.group = group;
+    }
 }
