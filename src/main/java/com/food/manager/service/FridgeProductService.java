@@ -4,7 +4,6 @@ import com.food.manager.dto.response.FridgeProductResponse;
 import com.food.manager.entity.FridgeProduct;
 import com.food.manager.mapper.FridgeProductMapper;
 import com.food.manager.repository.FridgeProductRepository;
-import com.food.manager.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,9 +15,6 @@ public class FridgeProductService {
 
     @Autowired
     private FridgeProductRepository fridgeProductRepository;
-
-    @Autowired
-    private ProductRepository productRepository;
 
     @Autowired
     private FridgeProductMapper fridgeProductMapper;

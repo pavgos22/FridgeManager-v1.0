@@ -123,7 +123,7 @@ public class FridgeService {
             FridgeProduct fridgeProduct = new FridgeProduct(
                     addFridgeProductRequest.quantityType(),
                     addFridgeProductRequest.quantity(),
-                    fridge,
+                    null,
                     product
             );
             fridgeProductRepository.save(fridgeProduct);
