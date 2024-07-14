@@ -35,4 +35,6 @@ public class FridgeProduct {
         this.fridge = fridge;
         this.product = product;
     }
+
+
 }

@@ -1,15 +1,18 @@
 package com.food.manager.service;
 
-import com.food.manager.dto.request.fridge.AddProductToFridgeRequest;
+import com.food.manager.dto.request.fridge.AddProductRequest;
 import com.food.manager.dto.request.fridge.RemoveProductFromFridgeRequest;
+import com.food.manager.dto.request.fridgeproduct.AddFridgeProductRequest;
+import com.food.manager.dto.request.product.CreateNutritionRequest;
 import com.food.manager.dto.response.FridgeResponse;
-import com.food.manager.entity.Fridge;
-import com.food.manager.entity.Group;
-import com.food.manager.entity.FridgeProduct;
+import com.food.manager.dto.response.ProductResponse;
+import com.food.manager.entity.*;
+import com.food.manager.enums.QuantityType;
 import com.food.manager.mapper.FridgeMapper;
 import com.food.manager.repository.FridgeProductRepository;
 import com.food.manager.repository.FridgeRepository;
 import com.food.manager.repository.GroupRepository;
+import com.food.manager.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -30,6 +33,8 @@ public class FridgeService {
 
     @Autowired
     private GroupRepository groupRepository;
+    @Autowired
+    private ProductRepository productRepository;
 
     public FridgeResponse getFridge(Long id) {
         Optional<Fridge> fridgeOptional = fridgeRepository.findById(id);
@@ -55,37 +60,47 @@ public class FridgeService {
         return fridge;
     }
 
+    public Product createProduct(String name) {
+        return new Product(name);
+    }
 
-    public FridgeResponse addProductToFridge(AddProductToFridgeRequest addProductToFridgeRequest) {
+    public Nutrition createNutrition(CreateNutritionRequest createNutritionRequest) {
+        return new Nutrition(
+                createNutritionRequest.calories(),
+                createNutritionRequest.protein(),
+                createNutritionRequest.fat(),
+                createNutritionRequest.carbohydrate()
+        );
+    }
 
-        Optional<Fridge> fridgeOptional = fridgeRepository.findById(addProductToFridgeRequest.fridgeId());
-        Optional<FridgeProduct> fridgeProductOptional = fridgeProductRepository.findById(addProductToFridgeRequest.FridgeProductId());
+    public FridgeProduct createFridgeProduct(QuantityType quantityType, int quantity, Long fridgeId, Long productId) {
+        Fridge fridge = fridgeRepository.findById(fridgeId).get();
+        Product product = productRepository.findById(productId).get();
+        return new FridgeProduct(
+                quantityType,
+                quantity,
+                fridge,
+                product
+        );
+    }
 
-        if (fridgeOptional.isPresent() && fridgeProductOptional.isPresent()) {
-            Fridge fridge = fridgeOptional.get();
-            FridgeProduct fridgeProduct = fridgeProductOptional.get();
+    public FridgeResponse addProductToFridge(AddProductRequest addProductRequest) {
+        Product product = productRepository.findById(addProductRequest.productId()).get();
+        createProduct(product.getProductName());
+        productRepository.save(product);
+        FridgeProduct fridgeProduct = createFridgeProduct(
+                addProductRequest.quantityType(),
+                addProductRequest.quantity(),
+                addProductRequest.fridgeId(),
+                addProductRequest.productId()
+        );
+        fridgeProductRepository.save(fridgeProduct);
 
-            Optional<FridgeProduct> existingProductOptional = fridge.getProducts().stream()
-                    .filter(fp -> fp.getProduct().getProductName().equals(fridgeProduct.getProduct().getProductName()))
-                    .findFirst();
+        Fridge fridge = fridgeRepository.findById(addProductRequest.fridgeId()).get();
+        fridge.getProducts().add(fridgeProduct);
+        fridgeRepository.save(fridge);
 
-            if (existingProductOptional.isPresent()) {
-                FridgeProduct existingProduct = existingProductOptional.get();
-                existingProduct.setQuantity(existingProduct.getQuantity() + addProductToFridgeRequest.quantity());
-                //fridgeProductRepository.save(existingProduct);
-                fridgeProductRepository.delete(fridgeProduct);
-            } else {
-                fridgeProduct.setFridge(fridge);
-                fridge.getProducts().add(fridgeProduct);
-                //fridgeProductRepository.save(fridgeProduct);
-            }
-
-            fridgeRepository.save(fridge);
-
-            return fridgeMapper.toFridgeResponse(fridge);
-        } else {
-            throw new RuntimeException("Fridge or FridgeProduct not found with given IDs");
-        }
+        return fridgeMapper.toFridgeResponse(fridge);
     }
 
     public FridgeResponse removeProductFromFridge(RemoveProductFromFridgeRequest removeProductFromFridgeRequest) {

@@ -28,4 +28,11 @@ public class Nutrition {
     @OneToOne(mappedBy = "nutrition")
     @JsonBackReference
     private Product product;
+
+    public Nutrition(int calories, float protein, float fat, float carbohydrate) {
+        this.calories = calories;
+        this.protein = protein;
+        this.fat = fat;
+        this.carbohydrate = carbohydrate;
+    }
 }

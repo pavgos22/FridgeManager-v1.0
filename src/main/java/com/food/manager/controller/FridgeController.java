@@ -1,7 +1,6 @@
 package com.food.manager.controller;
 
-import com.food.manager.dto.request.fridge.AddProductToFridgeRequest;
-import com.food.manager.dto.request.fridge.CreateFridgeRequest;
+import com.food.manager.dto.request.fridge.AddProductRequest;
 import com.food.manager.dto.request.fridge.RemoveProductFromFridgeRequest;
 import com.food.manager.dto.response.FridgeResponse;
 import com.food.manager.service.FridgeService;
@@ -19,7 +18,7 @@ public class FridgeController {
     private FridgeService fridgeService;
 
     @PostMapping("/addProduct")
-    public ResponseEntity<FridgeResponse> addProduct(@RequestBody AddProductToFridgeRequest addProductRequest) {
+    public ResponseEntity<FridgeResponse> addProduct(@RequestBody AddProductRequest addProductRequest) {
         FridgeResponse fridgeResponse = fridgeService.addProductToFridge(addProductRequest);
         return ResponseEntity.ok(fridgeResponse);
     }
