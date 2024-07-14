@@ -1,6 +1,6 @@
 package com.food.manager.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -37,6 +37,7 @@ public class Product {
     private List<Recipe> recipes;
 
     @OneToMany
+    @JsonManagedReference
     private List<FridgeProduct> fridgeProducts;
 
     public Product(String productName) {

@@ -1,5 +1,6 @@
 package com.food.manager.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.food.manager.enums.QuantityType;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -23,9 +24,11 @@ public class FridgeProduct {
 
     @ManyToOne
     @JoinColumn(name="FRIDGE_ID")
+    @JsonBackReference
     private Fridge fridge;
 
     @ManyToOne
+    @JsonBackReference
     @JoinColumn(name="PRODUCT_ID", nullable = false)
     private Product product;
 
@@ -35,6 +38,4 @@ public class FridgeProduct {
         this.fridge = fridge;
         this.product = product;
     }
-
-
 }
