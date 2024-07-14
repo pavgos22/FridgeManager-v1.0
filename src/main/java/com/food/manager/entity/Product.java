@@ -18,7 +18,7 @@ public class Product {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="PRODUCT_ID", unique=true)
     private Long productId;
-    @Column(name = "PRODUCT_NAME", nullable=false)
+    @Column(name = "PRODUCT_NAME", nullable=false, unique = true)
     private String productName;
 
     @OneToOne
@@ -36,7 +36,7 @@ public class Product {
     )
     private List<Recipe> recipes;
 
-    @OneToMany
+    @OneToMany(mappedBy = "product", cascade = CascadeType.REMOVE)
     @JsonManagedReference
     private List<FridgeProduct> fridgeProducts;
 
@@ -44,3 +44,4 @@ public class Product {
         this.productName = productName;
     }
 }
+

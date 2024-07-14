@@ -3,11 +3,16 @@ package com.food.manager.service;
 import com.food.manager.config.OAuthService;
 import com.food.manager.dto.request.fridge.AddProductRequest;
 import com.food.manager.dto.request.fridge.RemoveProductFromFridgeRequest;
+import com.food.manager.dto.request.fridgeproduct.AddFridgeProductRequest;
 import com.food.manager.dto.request.product.CreateNutritionRequest;
+import com.food.manager.dto.response.FridgeProductResponse;
 import com.food.manager.dto.response.FridgeResponse;
 import com.food.manager.entity.*;
 import com.food.manager.enums.QuantityType;
+import com.food.manager.exception.FridgeNotFoundException;
+import com.food.manager.exception.FridgeProductNotFoundException;
 import com.food.manager.mapper.FridgeMapper;
+import com.food.manager.mapper.FridgeProductMapper;
 import com.food.manager.repository.FridgeProductRepository;
 import com.food.manager.repository.FridgeRepository;
 import com.food.manager.repository.GroupRepository;
@@ -15,6 +20,7 @@ import com.food.manager.repository.ProductRepository;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
@@ -45,6 +51,9 @@ public class FridgeService {
 
     @Autowired
     private OAuthService oAuthService;
+
+    @Autowired
+    private FridgeProductMapper fridgeProductMapper;
 
     public FridgeResponse getFridge(Long id) {
         Optional<Fridge> fridgeOptional = fridgeRepository.findById(id);
@@ -92,40 +101,65 @@ public class FridgeService {
         );
     }
 
-    public FridgeResponse addProductToFridge(AddProductRequest addProductRequest) {
-        Optional<Product> optionalProduct = productRepository.findByProductName(addProductRequest.productName());
+    public FridgeProductResponse addFridgeProduct(AddFridgeProductRequest addFridgeProductRequest) {
+        Optional<Product> optionalProduct = productRepository.findByProductName(addFridgeProductRequest.productName());
         Product product;
 
         if (optionalProduct.isEmpty()) {
-            product = fetchProductFromAPI(addProductRequest.productName());
+            product = fetchProductFromAPI(addFridgeProductRequest.productName());
             if (product == null) {
-                throw new RuntimeException("Product not found in external API: " + addProductRequest.productName());
+                throw new RuntimeException("Product not found in external API: " + addFridgeProductRequest.productName());
             }
             productRepository.save(product);
         } else {
             product = optionalProduct.get();
         }
 
-        Optional<Fridge> optionalFridge = fridgeRepository.findById(addProductRequest.fridgeId());
-        if (optionalFridge.isEmpty()) {
-            throw new RuntimeException("Fridge not found with id: " + addProductRequest.fridgeId());
+        Optional<Fridge> fridgeOptional = fridgeRepository.findById(addFridgeProductRequest.fridgeId());
+
+
+        if (fridgeOptional.isPresent()) {
+            Fridge fridge = fridgeOptional.get();
+            FridgeProduct fridgeProduct = new FridgeProduct(
+                    addFridgeProductRequest.quantityType(),
+                    addFridgeProductRequest.quantity(),
+                    fridge,
+                    product
+            );
+            fridgeProductRepository.save(fridgeProduct);
+            return fridgeProductMapper.toFridgeProductResponse(fridgeProduct);
+        }
+        else
+            throw new FridgeNotFoundException("Fridge with ID " + addFridgeProductRequest.fridgeId() + " not found");
+    }
+
+    public FridgeResponse addProductToFridge(AddProductRequest addProductRequest) {
+        Fridge fridge = fridgeRepository.findById(addProductRequest.fridgeId()).orElseThrow(() -> new FridgeNotFoundException("Fridge with ID: " + addProductRequest.fridgeId()));
+        FridgeProduct fridgeProduct = fridgeProductRepository.findById(addProductRequest.fridgeProductId()).orElseThrow(() -> new FridgeProductNotFoundException("FridgeProduct with ID: " + addProductRequest.fridgeProductId()));
+
+        Optional<FridgeProduct> optionalFridgeProduct = fridge.getProducts().stream()
+                .filter(fp -> fp.getProduct().equals(fridgeProduct.getProduct()))
+                .findFirst();
+
+        if (optionalFridgeProduct.isPresent()) {
+            FridgeProduct existingProduct = optionalFridgeProduct.get();
+            existingProduct.setQuantity(existingProduct.getQuantity() + fridgeProduct.getQuantity());
+            fridgeProductRepository.save(existingProduct);
+        } else {
+            fridge.getProducts().add(new FridgeProduct(
+                    fridgeProduct.getQuantityType(),
+                    fridgeProduct.getQuantity(),
+                    fridge,
+                    fridgeProduct.getProduct()
+            ));
         }
 
-        Fridge fridge = optionalFridge.get();
-
-        FridgeProduct fridgeProduct = createFridgeProduct(
-                addProductRequest.quantityType(),
-                addProductRequest.quantity(),
-                fridge,
-                product
-        );
-        fridgeProductRepository.save(fridgeProduct);
-
-        fridge.getProducts().add(fridgeProduct);
         fridgeRepository.save(fridge);
 
         return fridgeMapper.toFridgeResponse(fridge);
     }
+
+
 
     private Product fetchProductFromAPI(String productName) {
         String token = oAuthService.getOAuthToken();
@@ -183,4 +217,5 @@ public class FridgeService {
             throw new RuntimeException("Fridge not found with id: " + removeProductFromFridgeRequest.fridgeId());
         }
     }
+
 }

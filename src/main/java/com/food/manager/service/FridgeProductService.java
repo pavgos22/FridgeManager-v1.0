@@ -1,9 +1,7 @@
 package com.food.manager.service;
 
-import com.food.manager.dto.request.fridgeproduct.AddFridgeProductRequest;
 import com.food.manager.dto.response.FridgeProductResponse;
 import com.food.manager.entity.FridgeProduct;
-import com.food.manager.entity.Product;
 import com.food.manager.mapper.FridgeProductMapper;
 import com.food.manager.repository.FridgeProductRepository;
 import com.food.manager.repository.ProductRepository;
@@ -24,24 +22,6 @@ public class FridgeProductService {
 
     @Autowired
     private FridgeProductMapper fridgeProductMapper;
-
-    public FridgeProductResponse addFridgeProduct(AddFridgeProductRequest addFridgeProductRequest) {
-        Optional<Product> productOptional = productRepository.findById(addFridgeProductRequest.productId());
-
-        if (productOptional.isPresent()) {
-            FridgeProduct fridgeProduct = new FridgeProduct(
-                    addFridgeProductRequest.quantityType(),
-                    addFridgeProductRequest.quantity(),
-                    null,
-                    productOptional.get()
-            );
-
-            fridgeProductRepository.save(fridgeProduct);
-            return fridgeProductMapper.toFridgeProductResponse(fridgeProduct);
-        } else {
-            throw new RuntimeException("Product not found with id: " + addFridgeProductRequest.productId());
-        }
-    }
 
     public FridgeProductResponse getFridgeProduct(Long id) {
         Optional<FridgeProduct> fridgeProductOptional = fridgeProductRepository.findById(id);

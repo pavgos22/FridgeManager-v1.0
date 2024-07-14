@@ -18,7 +18,7 @@ public class FridgeProductMapper {
                 fridgeProduct.getFridgeProductId(),
                 fridgeProduct.getQuantityType(),
                 fridgeProduct.getQuantity(),
-                fridgeProduct.getFridge(),
+                fridgeProduct.getFridge().getFridgeId(),
                 fridgeProduct.getProduct()
         );
     }

@@ -16,12 +16,6 @@ public class FridgeProductController {
     @Autowired
     private FridgeProductService fridgeProductService;
 
-    @PostMapping
-    public ResponseEntity<FridgeProductResponse> addFridgeProduct(@RequestBody AddFridgeProductRequest addFridgeProductRequest) {
-        FridgeProductResponse fridgeProductResponse = fridgeProductService.addFridgeProduct(addFridgeProductRequest);
-        return ResponseEntity.ok(fridgeProductResponse);
-    }
-
     @GetMapping("/{id}")
     public ResponseEntity<FridgeProductResponse> getFridgeProduct(@PathVariable Long id) {
         FridgeProductResponse fridgeProductResponse = fridgeProductService.getFridgeProduct(id);
