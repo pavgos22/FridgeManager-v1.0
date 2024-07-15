@@ -3,8 +3,10 @@ package com.food.manager.mapper;
 import com.food.manager.dto.response.UserResponse;
 import com.food.manager.entity.User;
 import org.springframework.stereotype.Service;
+import com.food.manager.entity.Group;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class UserMapper {
@@ -18,10 +20,9 @@ public class UserMapper {
                 user.getFirstName(),
                 user.getLastName(),
                 user.getEmail(),
-                user.getPassword(),
                 user.getCreatedAt(),
                 user.getUpdatedAt(),
-                user.getGroups(),
+                user.getGroups().stream().map(Group::getGroupId).collect(Collectors.toList()),
                 user.getComments()
         );
     }
