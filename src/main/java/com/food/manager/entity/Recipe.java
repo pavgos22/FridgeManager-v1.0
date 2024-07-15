@@ -27,6 +27,8 @@ public class Recipe {
     private RecipeType recipeType;
     @Column(name="WEATHER", nullable = true)
     private Weather weather;
+    @Column(name="RECIPE_URL", nullable = true)
+    private String recipeUrl;
 
     @ManyToMany(mappedBy = "recipes") //ingredients
     private List<Product> products;

@@ -19,8 +19,7 @@ public class ProductMapper {
                 product.getProductName(),
                 product.getItem(),
                 product.getNutrition(),
-                product.getRecipes(),
-                product.getFridgeProducts()
+                product.getRecipes()
         );
     }
 

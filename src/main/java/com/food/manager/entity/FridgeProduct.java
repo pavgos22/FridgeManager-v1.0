@@ -22,7 +22,7 @@ public class FridgeProduct {
     @Column(name = "QUANTITY", nullable = false)
     private int quantity;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     @JoinColumn(name="FRIDGE_ID")
     @JsonBackReference
     private Fridge fridge;
@@ -31,6 +31,12 @@ public class FridgeProduct {
     @JsonBackReference
     @JoinColumn(name="PRODUCT_ID", nullable = false)
     private Product product;
+
+    public FridgeProduct(QuantityType quantityType, int quantity, Product product) {
+        this.quantityType = quantityType;
+        this.quantity = quantity;
+        this.product = product;
+    }
 
     public FridgeProduct(QuantityType quantityType, int quantity, Fridge fridge, Product product) {
         this.quantityType = quantityType;

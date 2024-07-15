@@ -31,7 +31,7 @@ public class FridgeController {
         return ResponseEntity.ok(fridgeResponse);
     }
 
-    @PostMapping("/removeProduct")
+    @PutMapping("/removeProduct")
     public ResponseEntity<FridgeResponse> removeProduct(@RequestBody RemoveProductFromFridgeRequest removeProductRequest) {
         FridgeResponse fridgeResponse = fridgeService.removeProductFromFridge(removeProductRequest);
         return ResponseEntity.ok(fridgeResponse);

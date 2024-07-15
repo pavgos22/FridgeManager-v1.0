@@ -79,58 +79,24 @@ public class FridgeService {
         return fridge;
     }
 
-    public Nutrition createNutrition(CreateNutritionRequest createNutritionRequest) {
-        return new Nutrition(
-                createNutritionRequest.calories(),
-                createNutritionRequest.protein(),
-                createNutritionRequest.fat(),
-                createNutritionRequest.carbohydrate()
-        );
-    }
-
-    public Product createProduct(String name) {
-        return new Product(name);
-    }
-
-    public FridgeProduct createFridgeProduct(QuantityType quantityType, int quantity, Fridge fridge, Product product) {
-        return new FridgeProduct(
-                quantityType,
-                quantity,
-                fridge,
-                product
-        );
-    }
-
     public FridgeProductResponse addFridgeProduct(AddFridgeProductRequest addFridgeProductRequest) {
         Optional<Product> optionalProduct = productRepository.findByProductName(addFridgeProductRequest.productName());
         Product product;
 
         if (optionalProduct.isEmpty()) {
             product = fetchProductFromAPI(addFridgeProductRequest.productName());
-            if (product == null) {
+            if (product == null)
                 throw new RuntimeException("Product not found in external API: " + addFridgeProductRequest.productName());
-            }
+
             productRepository.save(product);
-        } else {
-            product = optionalProduct.get();
-        }
-
-        Optional<Fridge> fridgeOptional = fridgeRepository.findById(addFridgeProductRequest.fridgeId());
-
-
-        if (fridgeOptional.isPresent()) {
-            Fridge fridge = fridgeOptional.get();
-            FridgeProduct fridgeProduct = new FridgeProduct(
-                    addFridgeProductRequest.quantityType(),
-                    addFridgeProductRequest.quantity(),
-                    null,
-                    product
-            );
-            fridgeProductRepository.save(fridgeProduct);
-            return fridgeProductMapper.toFridgeProductResponse(fridgeProduct);
         }
         else
-            throw new FridgeNotFoundException("Fridge with ID " + addFridgeProductRequest.fridgeId() + " not found");
+            product = optionalProduct.get();
+
+
+        FridgeProduct fridgeProduct = new FridgeProduct(addFridgeProductRequest.quantityType(), addFridgeProductRequest.quantity(), product);
+        fridgeProductRepository.save(fridgeProduct);
+        return fridgeProductMapper.toFridgeProductResponse(fridgeProduct);
     }
 
     public FridgeResponse addProductToFridge(AddProductRequest addProductRequest) {
@@ -182,7 +148,6 @@ public class FridgeService {
                 return new Product(food.getString("food_name"));
             }
         }
-
         return null;
     }
 
@@ -206,16 +171,17 @@ public class FridgeService {
             if (fridgeProduct.getQuantity() == 0) {
                 fridge.getProducts().remove(fridgeProduct);
                 fridgeProductRepository.delete(fridgeProduct);
-            } else {
-                fridgeProductRepository.save(fridgeProduct);
             }
+            else
+                fridgeProductRepository.save(fridgeProduct);
+
 
             fridgeRepository.save(fridge);
 
             return fridgeMapper.toFridgeResponse(fridge);
-        } else {
-            throw new RuntimeException("Fridge not found with id: " + removeProductFromFridgeRequest.fridgeId());
         }
+        else
+            throw new RuntimeException("Fridge not found with id: " + removeProductFromFridgeRequest.fridgeId());
     }
 
 }

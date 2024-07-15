@@ -47,6 +47,10 @@ public class ProductService {
         return productMapper.mapToProductList(products);
     }
 
+    public ProductResponse createProduct(CreateProductRequest createProductRequest) {
+        return null;
+    }
+
     public NutritionResponse createNutrition(CreateNutritionRequest createNutritionRequest) {
         Nutrition nutrition = new Nutrition();
         nutrition.setCalories(createNutritionRequest.calories());
