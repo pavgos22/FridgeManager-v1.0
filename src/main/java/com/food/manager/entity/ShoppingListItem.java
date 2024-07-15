@@ -26,7 +26,7 @@ public class ShoppingListItem {
     @Column(name="CHECKED", nullable = false)
     private boolean checked;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name="PRODUCT_ID", nullable = false)
     private Product product;
 

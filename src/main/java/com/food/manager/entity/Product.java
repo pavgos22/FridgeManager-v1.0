@@ -21,8 +21,8 @@ public class Product {
     @Column(name = "PRODUCT_NAME", nullable=false, unique = true)
     private String productName;
 
-    @OneToOne
-    private ShoppingListItem item;
+    @OneToMany(cascade = CascadeType.REMOVE)
+    private List<ShoppingListItem> items;
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name="NUTRITION_ID")

@@ -17,7 +17,6 @@ public class ProductMapper {
         return new ProductResponse(
                 product.getProductId(),
                 product.getProductName(),
-                product.getItem(),
                 product.getNutrition(),
                 product.getRecipes()
         );

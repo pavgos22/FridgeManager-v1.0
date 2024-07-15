@@ -103,4 +103,8 @@ public class ProductService {
             throw new RuntimeException("Product not found with id: " + id);
         }
     }
+
+    public void deleteAllProducts() {
+        productRepository.deleteAll();
+    }
 }

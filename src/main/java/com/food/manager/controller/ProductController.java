@@ -57,4 +57,10 @@ public class ProductController {
         productService.deleteProduct(id);
         return ResponseEntity.noContent().build();
     }
+
+    @DeleteMapping("/all")
+    public ResponseEntity<Void> deleteAllProducts() {
+        productService.deleteAllProducts();
+        return ResponseEntity.noContent().build();
+    }
 }
