@@ -26,4 +26,16 @@ public class ShoppingListItemController {
         ShoppingListItemResponse item = shoppingListItemService.getItem(id);
         return ResponseEntity.ok(item);
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteItem(@PathVariable Long id) {
+        shoppingListItemService.deleteItem(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping("/all")
+    public ResponseEntity<Void> deleteAllItems() {
+        shoppingListItemService.deleteAllItems();
+        return ResponseEntity.noContent().build();
+    }
 }

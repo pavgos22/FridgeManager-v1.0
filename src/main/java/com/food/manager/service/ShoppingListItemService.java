@@ -32,4 +32,16 @@ public class ShoppingListItemService {
             throw new RuntimeException("Item not found with id: " + id);
         }
     }
+
+    public void deleteItem(Long id) {
+        if (shoppingListItemRepository.existsById(id)) {
+            shoppingListItemRepository.deleteById(id);
+        } else {
+            throw new RuntimeException("Item not found with id: " + id);
+        }
+    }
+
+    public void deleteAllItems() {
+        shoppingListItemRepository.deleteAll();
+    }
 }

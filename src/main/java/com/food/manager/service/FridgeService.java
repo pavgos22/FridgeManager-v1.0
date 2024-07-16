@@ -6,10 +6,7 @@ import com.food.manager.dto.request.fridge.RemoveProductFromFridgeRequest;
 import com.food.manager.dto.request.fridgeproduct.AddFridgeProductRequest;
 import com.food.manager.dto.response.FridgeProductResponse;
 import com.food.manager.dto.response.FridgeResponse;
-import com.food.manager.entity.Fridge;
-import com.food.manager.entity.FridgeProduct;
-import com.food.manager.entity.Group;
-import com.food.manager.entity.Product;
+import com.food.manager.entity.*;
 import com.food.manager.exception.FridgeNotFoundException;
 import com.food.manager.exception.FridgeProductNotFoundException;
 import com.food.manager.mapper.FridgeMapper;
@@ -126,12 +123,11 @@ public class FridgeService {
     }
 
 
-
     private Product fetchProductFromAPI(String productName) {
         String token = oAuthService.getOAuthToken();
 
         RestTemplate restTemplate = new RestTemplate();
-        String url = "https://platform.fatsecret.com/rest/server.api?method=foods.search&search_expression=" + productName + "&format=json&page_number=0&max_results=10";
+        String url = "https://platform.fatsecret.com/rest/server.api?method=foods.search.v3&search_expression=" + productName + "&format=json&include_sub_categories=true&flag_default_serving=true&max_results=10&language=en&region=US";
 
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer " + token);
@@ -140,12 +136,53 @@ public class FridgeService {
         ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
 
         JSONObject jsonResponse = new JSONObject(response.getBody());
-        JSONArray foods = jsonResponse.getJSONObject("foods").getJSONArray("food");
+        JSONArray foods = jsonResponse.getJSONObject("foods_search").getJSONObject("results").getJSONArray("food");
 
         for (int i = 0; i < foods.length(); i++) {
             JSONObject food = foods.getJSONObject(i);
             if (food.getString("food_type").equals("Generic")) {
-                return new Product(food.getString("food_name"));
+                Product product = new Product(food.getString("food_name"));
+
+                Nutrition nutrition = fetchNutritionFromAPI(productName);
+                if (nutrition != null)
+                    product.setNutrition(nutrition);
+                return product;
+            }
+        }
+        return null;
+    }
+
+
+
+    private Nutrition fetchNutritionFromAPI(String productName) {
+        String token = oAuthService.getOAuthToken();
+
+        RestTemplate restTemplate = new RestTemplate();
+        String url = "https://platform.fatsecret.com/rest/server.api?method=foods.search.v3&search_expression=" + productName + "&format=json&include_sub_categories=true&flag_default_serving=true&max_results=10&language=en&region=US";
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "Bearer " + token);
+        HttpEntity<String> entity = new HttpEntity<>(headers);
+
+        ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
+
+        JSONObject jsonResponse = new JSONObject(response.getBody());
+        JSONArray foods = jsonResponse.getJSONObject("foods_search").getJSONObject("results").getJSONArray("food");
+
+        for (int i = 0; i < foods.length(); i++) {
+            JSONObject food = foods.getJSONObject(i);
+            if (food.getString("food_type").equals("Generic")) {
+                JSONArray servings = food.getJSONObject("servings").getJSONArray("serving");
+                for (int j = 0; j < servings.length(); j++) {
+                    JSONObject serving = servings.getJSONObject(j);
+                    if (serving.getString("metric_serving_unit").equals("g") && serving.getDouble("metric_serving_amount") == 100.0) {
+                        int calories = serving.getInt("calories");
+                        float protein = (float) serving.getDouble("protein");
+                        float fat = (float) serving.getDouble("fat");
+                        float carbohydrate = (float) serving.getDouble("carbohydrate");
+                        return new Nutrition(calories, protein, fat, carbohydrate);
+                    }
+                }
             }
         }
         return null;
