@@ -31,6 +31,8 @@ public class ShoppingListItemService {
     private ProductRepository productRepository;
     @Autowired
     private GroupRepository groupRepository;
+    @Autowired
+    private FridgeService fridgeService;
 
     public List<ShoppingListItemResponse> getAllItems() {
         List<ShoppingListItem> items = shoppingListItemRepository.findAll();
@@ -47,10 +49,20 @@ public class ShoppingListItemService {
     }
 
     public ShoppingListItemResponse addItemToShoppingList(AddItemToListRequest addItemToListRequest) {
-        if(addItemToListRequest.quantity() <= 0)
+        if (addItemToListRequest.quantity() <= 0)
             throw new NegativeValueException("Quantity must be greater than zero");
-        Product product = productRepository.findByProductName(addItemToListRequest.productName())
-                .orElseThrow(() -> new ProductNotFoundInProductsException("Product not found in the products list"));
+
+        Optional<Product> optionalProduct = productRepository.findByProductName(addItemToListRequest.productName());
+        Product product;
+
+        if (optionalProduct.isEmpty()) {
+            product = fridgeService.fetchProductFromAPI(addItemToListRequest.productName());
+            if (product == null)
+                throw new RuntimeException("Product not found in external API");
+            productRepository.save(product);
+        } else {
+            product = optionalProduct.get();
+        }
 
         Group group = groupRepository.findById(addItemToListRequest.groupId())
                 .orElseThrow(() -> new GroupNotFoundException("Group not found"));
@@ -71,6 +83,8 @@ public class ShoppingListItemService {
         shoppingListItemRepository.save(shoppingListItem);
         return shoppingListItemMapper.toShoppingListItemResponse(shoppingListItem);
     }
+
+
 
     public void removeItemFromShoppingList(RemoveItemFromListRequest removeItemFromListRequest) {
         if(removeItemFromListRequest.quantity() <= 0)

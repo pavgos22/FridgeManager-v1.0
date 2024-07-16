@@ -123,7 +123,7 @@ public class FridgeService {
     }
 
 
-    private Product fetchProductFromAPI(String productName) {
+    public Product fetchProductFromAPI(String productName) {
         String token = oAuthService.getOAuthToken();
 
         RestTemplate restTemplate = new RestTemplate();
@@ -152,9 +152,7 @@ public class FridgeService {
         return null;
     }
 
-
-
-    private Nutrition fetchNutritionFromAPI(String productName) {
+    public Nutrition fetchNutritionFromAPI(String productName) {
         String token = oAuthService.getOAuthToken();
 
         RestTemplate restTemplate = new RestTemplate();
