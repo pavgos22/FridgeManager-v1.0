@@ -1,5 +1,7 @@
 package com.food.manager.controller;
 
+import com.food.manager.dto.request.item.AddItemToListRequest;
+import com.food.manager.dto.request.item.RemoveItemFromListRequest;
 import com.food.manager.dto.response.ShoppingListItemResponse;
 import com.food.manager.service.ShoppingListItemService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +27,18 @@ public class ShoppingListItemController {
     public ResponseEntity<ShoppingListItemResponse> getItem(@PathVariable Long id) {
         ShoppingListItemResponse item = shoppingListItemService.getItem(id);
         return ResponseEntity.ok(item);
+    }
+
+    @PutMapping
+    public ResponseEntity<ShoppingListItemResponse> addItemToShoppingList(@RequestBody AddItemToListRequest addItemToListRequest) {
+        ShoppingListItemResponse itemResponse = shoppingListItemService.addItemToShoppingList(addItemToListRequest);
+        return ResponseEntity.ok(itemResponse);
+    }
+
+    @DeleteMapping
+    public ResponseEntity<Void> removeItemFromShoppingList(@RequestBody RemoveItemFromListRequest removeItemFromListRequest) {
+        shoppingListItemService.removeItemFromShoppingList(removeItemFromListRequest);
+        return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("/{id}")

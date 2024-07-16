@@ -16,6 +16,7 @@ public class ShoppingListItemMapper {
         }
         return new ShoppingListItemResponse(
                 item.getItemId(),
+                item.getProduct().getProductId(),
                 item.getQuantityType(),
                 item.getQuantity(),
                 item.isChecked()
