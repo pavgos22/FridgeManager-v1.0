@@ -1,7 +1,10 @@
 package com.food.manager.controller;
 
+import com.food.manager.dto.request.user.AddCommentRequest;
 import com.food.manager.dto.request.user.CreateUserRequest;
+import com.food.manager.dto.request.user.EditCommentRequest;
 import com.food.manager.dto.request.user.UpdateUserRequest;
+import com.food.manager.dto.response.CommentResponse;
 import com.food.manager.dto.response.UserResponse;
 import com.food.manager.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +37,18 @@ public class UserController {
         return userService.getUser(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
+    }
+
+    @PostMapping("/addComment")
+    public ResponseEntity<CommentResponse> addComment(@RequestBody AddCommentRequest addCommentRequest) {
+        CommentResponse comment = userService.addComment(addCommentRequest);
+        return ResponseEntity.ok(comment);
+    }
+
+    @PatchMapping("/editComment")
+    public ResponseEntity<CommentResponse> editComment(@RequestBody EditCommentRequest editCommentRequest) {
+        CommentResponse updatedComment = userService.editComment(editCommentRequest);
+        return ResponseEntity.ok(updatedComment);
     }
 
     @PutMapping("/{id}")

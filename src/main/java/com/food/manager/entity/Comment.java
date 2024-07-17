@@ -1,5 +1,6 @@
 package com.food.manager.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -26,9 +27,18 @@ public class Comment {
 
     @ManyToOne
     @JoinColumn(name="ITEM_ID", nullable = false)
+    @JsonBackReference
     private ShoppingListItem item;
 
     @ManyToOne
     @JoinColumn(name="USER_ID")
     private User author;
+
+    public Comment(String content, LocalDateTime createdAt, LocalDateTime updatedAt, ShoppingListItem item, User author) {
+        this.content = content;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+        this.item = item;
+        this.author = author;
+    }
 }

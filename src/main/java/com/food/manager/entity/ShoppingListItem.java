@@ -1,5 +1,6 @@
 package com.food.manager.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.food.manager.enums.QuantityType;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -28,9 +29,11 @@ public class ShoppingListItem {
 
     @ManyToOne
     @JoinColumn(name="PRODUCT_ID", nullable = false)
+    @JsonBackReference
     private Product product;
 
     @OneToMany(mappedBy = "item")
+    @JsonManagedReference
     private List<Comment> comments;
 
     @ManyToOne

@@ -6,5 +6,5 @@ import com.food.manager.enums.QuantityType;
 
 import java.util.List;
 
-public record ShoppingListItemResponse(Long itemId, Long productId, QuantityType quantityType, int quantity, boolean checked) {
+public record ShoppingListItemResponse(Long itemId, Long productId, Long groupId, QuantityType quantityType, int quantity, boolean checked) {
 }

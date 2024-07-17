@@ -1,10 +1,18 @@
 package com.food.manager.service;
 
+import com.food.manager.dto.request.user.AddCommentRequest;
 import com.food.manager.dto.request.user.CreateUserRequest;
+import com.food.manager.dto.request.user.EditCommentRequest;
 import com.food.manager.dto.request.user.UpdateUserRequest;
+import com.food.manager.dto.response.CommentResponse;
 import com.food.manager.dto.response.UserResponse;
+import com.food.manager.entity.Comment;
+import com.food.manager.entity.ShoppingListItem;
 import com.food.manager.entity.User;
+import com.food.manager.mapper.CommentMapper;
 import com.food.manager.mapper.UserMapper;
+import com.food.manager.repository.CommentRepository;
+import com.food.manager.repository.ShoppingListItemRepository;
 import com.food.manager.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,6 +29,12 @@ public class UserService {
 
     @Autowired
     private UserMapper userMapper;
+    @Autowired
+    private ShoppingListItemRepository shoppingListItemRepository;
+    @Autowired
+    private CommentMapper commentMapper;
+    @Autowired
+    private CommentRepository commentRepository;
 
     public List<UserResponse> getAllUsers() {
         List<User> users = userRepository.findAll();
@@ -58,6 +72,27 @@ public class UserService {
                 })
                 .map(userMapper::toUserResponse)
                 .orElseThrow(() -> new RuntimeException("User not found"));
+    }
+
+    public CommentResponse addComment(AddCommentRequest addCommentRequest) {
+        ShoppingListItem item = shoppingListItemRepository.findById(addCommentRequest.itemId()).orElseThrow(() -> new RuntimeException("Item not found"));
+        User user = userRepository.findById(addCommentRequest.userId()).orElseThrow(() -> new RuntimeException("User not found"));
+        Comment comment = new Comment(
+                addCommentRequest.content(),
+                LocalDateTime.now(),
+                LocalDateTime.now(),
+                item, user
+        );
+        commentRepository.save(comment);
+        return commentMapper.toCommentResponse(comment);
+    }
+
+    public CommentResponse editComment(EditCommentRequest editCommentRequest) {
+        Comment comment = commentRepository.findById(editCommentRequest.commentId()).orElseThrow(() -> new RuntimeException("Comment not found"));
+        comment.setContent(editCommentRequest.content());
+        comment.setUpdatedAt(LocalDateTime.now());
+        commentRepository.save(comment);
+        return commentMapper.toCommentResponse(comment);
     }
 
     public void deleteUser(Long userId) {
