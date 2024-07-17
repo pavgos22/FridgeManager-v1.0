@@ -8,7 +8,6 @@ import com.food.manager.entity.Product;
 import com.food.manager.entity.ShoppingListItem;
 import com.food.manager.exception.GroupNotFoundException;
 import com.food.manager.exception.NegativeValueException;
-import com.food.manager.exception.ProductNotFoundInProductsException;
 import com.food.manager.mapper.ShoppingListItemMapper;
 import com.food.manager.repository.GroupRepository;
 import com.food.manager.repository.ProductRepository;
@@ -16,6 +15,7 @@ import com.food.manager.repository.ShoppingListItemRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -67,8 +67,11 @@ public class ShoppingListItemService {
         Group group = groupRepository.findById(addItemToListRequest.groupId())
                 .orElseThrow(() -> new GroupNotFoundException("Group not found"));
 
-        Optional<ShoppingListItem> existingItem = product.getItems().stream()
-                .filter(item -> item.getGroup().equals(group)).findFirst();
+        Optional<ShoppingListItem> existingItem = Optional.empty();
+        if (product.getItems() != null && !product.getItems().isEmpty()) {
+            existingItem = product.getItems().stream()
+                    .filter(item -> item.getGroup().equals(group)).findFirst();
+        }
 
         ShoppingListItem shoppingListItem;
 
@@ -77,12 +80,19 @@ public class ShoppingListItemService {
             shoppingListItem.setQuantity(shoppingListItem.getQuantity() + addItemToListRequest.quantity());
         } else {
             shoppingListItem = new ShoppingListItem(product, addItemToListRequest.quantityType(), addItemToListRequest.quantity(), false, group);
-            product.getItems().add(shoppingListItem);
+            if (product.getItems() != null) {
+                product.getItems().add(shoppingListItem);
+            } else {
+                List<ShoppingListItem> items = new ArrayList<>();
+                items.add(shoppingListItem);
+                product.setItems(items);
+            }
         }
 
         shoppingListItemRepository.save(shoppingListItem);
         return shoppingListItemMapper.toShoppingListItemResponse(shoppingListItem);
     }
+
 
 
 
