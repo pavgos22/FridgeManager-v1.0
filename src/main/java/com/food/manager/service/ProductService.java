@@ -1,5 +1,6 @@
 package com.food.manager.service;
 
+import com.food.manager.config.OAuthService;
 import com.food.manager.dto.request.product.CreateNutritionRequest;
 import com.food.manager.dto.request.product.CreateProductRequest;
 import com.food.manager.dto.request.product.UpdateProductRequest;
@@ -12,8 +13,15 @@ import com.food.manager.mapper.NutritionMapper;
 import com.food.manager.mapper.ProductMapper;
 import com.food.manager.repository.NutritionRepository;
 import com.food.manager.repository.ProductRepository;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
 import java.util.Optional;
@@ -33,6 +41,9 @@ public class ProductService {
     @Autowired
     private NutritionMapper nutritionMapper;
 
+    @Autowired
+    private OAuthService oAuthService;
+
     public ProductResponse getProduct(Long id) {
         Optional<Product> productOptional = productRepository.findById(id);
         if (productOptional.isPresent()) {
@@ -48,25 +59,7 @@ public class ProductService {
     }
 
     public ProductResponse createProduct(CreateProductRequest createProductRequest) {
-        return null;
-    }
-
-    public NutritionResponse createNutrition(CreateNutritionRequest createNutritionRequest) {
-        Nutrition nutrition = new Nutrition();
-        nutrition.setCalories(createNutritionRequest.calories());
-        nutrition.setProtein(createNutritionRequest.protein());
-        nutrition.setFat(createNutritionRequest.fat());
-        nutrition.setCarbohydrate(createNutritionRequest.carbohydrate());
-        nutrition = nutritionRepository.save(nutrition);
-        return nutritionMapper.toNutritionResponse(nutrition);
-    }
-
-    public ProductResponse createProduct(CreateNutritionRequest createNutritionRequest, CreateProductRequest createProductRequest) {
-        NutritionResponse nutrition = createNutrition(createNutritionRequest);
-        Product product = new Product(createProductRequest.productName());
-        product.setNutrition(nutritionMapper.toEntity(nutrition));
-        product = productRepository.save(product);
-        return productMapper.toProductResponse(product);
+        return productMapper.toProductResponse(productRepository.save(fetchProductFromAPI(createProductRequest.productName())));
     }
 
     public ProductResponse updateProduct(UpdateProductRequest updateProductRequest) {
@@ -81,19 +74,67 @@ public class ProductService {
         }
     }
 
-    public ProductResponse addNutrition(AddNutritionRequest addNutritionRequest) {
-        Optional<Product> productOptional = productRepository.findById(addNutritionRequest.productId());
-        Optional<Nutrition> nutritionOptional = nutritionRepository.findById(addNutritionRequest.nutritionId());
+    public Product fetchProductFromAPI(String productName) {
+        String token = oAuthService.getOAuthToken();
 
-        if (productOptional.isPresent() && nutritionOptional.isPresent()) {
-            Product product = productOptional.get();
-            Nutrition nutrition = nutritionOptional.get();
-            product.setNutrition(nutrition);
-            product = productRepository.save(product);
-            return productMapper.toProductResponse(product);
-        } else {
-            throw new RuntimeException("Product or Nutrition not found with given ids");
+        RestTemplate restTemplate = new RestTemplate();
+        String url = "https://platform.fatsecret.com/rest/server.api?method=foods.search.v3&search_expression=" + productName + "&format=json&include_sub_categories=true&flag_default_serving=true&max_results=10&language=en&region=US";
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "Bearer " + token);
+        HttpEntity<String> entity = new HttpEntity<>(headers);
+
+        ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
+
+        JSONObject jsonResponse = new JSONObject(response.getBody());
+        JSONArray foods = jsonResponse.getJSONObject("foods_search").getJSONObject("results").getJSONArray("food");
+
+        for (int i = 0; i < foods.length(); i++) {
+            JSONObject food = foods.getJSONObject(i);
+            if (food.getString("food_type").equals("Generic")) {
+                Product product = new Product(food.getString("food_name"));
+
+                Nutrition nutrition = fetchNutritionFromAPI(productName);
+                if (nutrition != null)
+                    product.setNutrition(nutrition);
+                return product;
+            }
         }
+        return null;
+    }
+
+    public Nutrition fetchNutritionFromAPI(String productName) {
+        String token = oAuthService.getOAuthToken();
+
+        RestTemplate restTemplate = new RestTemplate();
+        String url = "https://platform.fatsecret.com/rest/server.api?method=foods.search.v3&search_expression=" + productName + "&format=json&include_sub_categories=true&flag_default_serving=true&max_results=10&language=en&region=US";
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "Bearer " + token);
+        HttpEntity<String> entity = new HttpEntity<>(headers);
+
+        ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
+
+        JSONObject jsonResponse = new JSONObject(response.getBody());
+        JSONArray foods = jsonResponse.getJSONObject("foods_search").getJSONObject("results").getJSONArray("food");
+
+        for (int i = 0; i < foods.length(); i++) {
+            JSONObject food = foods.getJSONObject(i);
+            if (food.getString("food_type").equals("Generic")) {
+                JSONArray servings = food.getJSONObject("servings").getJSONArray("serving");
+                for (int j = 0; j < servings.length(); j++) {
+                    JSONObject serving = servings.getJSONObject(j);
+                    if (serving.getString("metric_serving_unit").equals("g") && serving.getDouble("metric_serving_amount") == 100.0) {
+                        int calories = serving.getInt("calories");
+                        float protein = (float) serving.getDouble("protein");
+                        float fat = (float) serving.getDouble("fat");
+                        float carbohydrate = (float) serving.getDouble("carbohydrate");
+                        return new Nutrition(calories, protein, fat, carbohydrate);
+                    }
+                }
+            }
+        }
+        return null;
     }
 
     public void deleteProduct(Long id) {

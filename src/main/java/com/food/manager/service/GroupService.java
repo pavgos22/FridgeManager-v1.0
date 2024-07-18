@@ -33,9 +33,6 @@ public class GroupService {
     private ShoppingListItemRepository shoppingListItemRepository;
 
     @Autowired
-    private CommentRepository commentRepository;
-
-    @Autowired
     private FridgeService fridgeService;
 
 

@@ -2,8 +2,6 @@ package com.food.manager.controller;
 
 import com.food.manager.dto.request.fridge.AddProductRequest;
 import com.food.manager.dto.request.fridge.RemoveProductFromFridgeRequest;
-import com.food.manager.dto.request.fridgeproduct.AddFridgeProductRequest;
-import com.food.manager.dto.response.FridgeProductResponse;
 import com.food.manager.dto.response.FridgeResponse;
 import com.food.manager.service.FridgeService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,13 +17,7 @@ public class FridgeController {
     @Autowired
     private FridgeService fridgeService;
 
-    @PostMapping("/addProduct")
-    public ResponseEntity<FridgeProductResponse> addFridgeProduct(@RequestBody AddFridgeProductRequest addFridgeProductRequest) {
-        FridgeProductResponse fridgeProductResponse = fridgeService.addFridgeProduct(addFridgeProductRequest);
-        return ResponseEntity.ok(fridgeProductResponse);
-    }
-
-    @PutMapping("/addProduct/toFridge")
+    @PutMapping("/addProduct")
     public ResponseEntity<FridgeResponse> addProductToFridge(@RequestBody AddProductRequest addProductRequest) {
         FridgeResponse fridgeResponse = fridgeService.addProductToFridge(addProductRequest);
         return ResponseEntity.ok(fridgeResponse);

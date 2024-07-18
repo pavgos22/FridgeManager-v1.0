@@ -32,23 +32,17 @@ public class ProductController {
     }
 
     @PostMapping
-    public ResponseEntity<ProductResponse> createProduct(@RequestBody CreateNutritionRequest createNutritionRequest, @RequestBody CreateProductRequest createProductRequest) {
-        ProductResponse productResponse = productService.createProduct(createNutritionRequest, createProductRequest);
+    public ResponseEntity<ProductResponse> createProduct(@RequestBody CreateProductRequest createProductRequest) {
+        ProductResponse productResponse = productService.createProduct(createProductRequest);
         return ResponseEntity.ok(productResponse);
     }
 
-    @PutMapping("/{id}")
+    @PatchMapping("/{id}")
     public ResponseEntity<ProductResponse> updateProduct(@PathVariable Long id, @RequestBody UpdateProductRequest updateProductRequest) {
         if (!id.equals(updateProductRequest.productId())) {
             return ResponseEntity.badRequest().build();
         }
         ProductResponse productResponse = productService.updateProduct(updateProductRequest);
-        return ResponseEntity.ok(productResponse);
-    }
-
-    @PostMapping("/addNutrition")
-    public ResponseEntity<ProductResponse> addNutrition(@RequestBody AddNutritionRequest addNutritionRequest) {
-        ProductResponse productResponse = productService.addNutrition(addNutritionRequest);
         return ResponseEntity.ok(productResponse);
     }
 

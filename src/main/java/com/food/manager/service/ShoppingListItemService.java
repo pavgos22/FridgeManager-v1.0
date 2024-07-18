@@ -8,6 +8,7 @@ import com.food.manager.entity.Product;
 import com.food.manager.entity.ShoppingListItem;
 import com.food.manager.exception.GroupNotFoundException;
 import com.food.manager.exception.NegativeValueException;
+import com.food.manager.exception.ProductNotFoundInProductsException;
 import com.food.manager.mapper.ShoppingListItemMapper;
 import com.food.manager.repository.GroupRepository;
 import com.food.manager.repository.ProductRepository;
@@ -24,15 +25,12 @@ public class ShoppingListItemService {
 
     @Autowired
     private ShoppingListItemRepository shoppingListItemRepository;
-
     @Autowired
     private ShoppingListItemMapper shoppingListItemMapper;
     @Autowired
     private ProductRepository productRepository;
     @Autowired
     private GroupRepository groupRepository;
-    @Autowired
-    private FridgeService fridgeService;
 
     public List<ShoppingListItemResponse> getAllItems() {
         List<ShoppingListItem> items = shoppingListItemRepository.findAll();
@@ -52,26 +50,13 @@ public class ShoppingListItemService {
         if (addItemToListRequest.quantity() <= 0)
             throw new NegativeValueException("Quantity must be greater than zero");
 
-        Optional<Product> optionalProduct = productRepository.findByProductName(addItemToListRequest.productName());
-        Product product;
-
-        if (optionalProduct.isEmpty()) {
-            product = fridgeService.fetchProductFromAPI(addItemToListRequest.productName());
-            if (product == null)
-                throw new RuntimeException("Product not found in external API");
-            productRepository.save(product);
-        } else {
-            product = optionalProduct.get();
-        }
+        Product product = productRepository.findById(addItemToListRequest.productId())
+                .orElseThrow(() -> new ProductNotFoundInProductsException("Product not found in the products list"));
 
         Group group = groupRepository.findById(addItemToListRequest.groupId())
                 .orElseThrow(() -> new GroupNotFoundException("Group not found"));
 
-        Optional<ShoppingListItem> existingItem = Optional.empty();
-        if (product.getItems() != null && !product.getItems().isEmpty()) {
-            existingItem = product.getItems().stream()
-                    .filter(item -> item.getGroup().equals(group)).findFirst();
-        }
+        Optional<ShoppingListItem> existingItem = shoppingListItemRepository.findByProductAndGroup(product, group);
 
         ShoppingListItem shoppingListItem;
 
@@ -80,16 +65,9 @@ public class ShoppingListItemService {
             shoppingListItem.setQuantity(shoppingListItem.getQuantity() + addItemToListRequest.quantity());
         } else {
             shoppingListItem = new ShoppingListItem(product, addItemToListRequest.quantityType(), addItemToListRequest.quantity(), false, group);
-            if (product.getItems() != null) {
-                product.getItems().add(shoppingListItem);
-            } else {
-                List<ShoppingListItem> items = new ArrayList<>();
-                items.add(shoppingListItem);
-                product.setItems(items);
-            }
+            shoppingListItemRepository.save(shoppingListItem);
         }
 
-        shoppingListItemRepository.save(shoppingListItem);
         return shoppingListItemMapper.toShoppingListItemResponse(shoppingListItem);
     }
 
