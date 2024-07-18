@@ -5,6 +5,7 @@ import com.food.manager.dto.request.item.CreateItemRequest;
 import com.food.manager.dto.request.user.DeleteUserRequest;
 import com.food.manager.dto.response.GroupResponse;
 import com.food.manager.entity.*;
+import com.food.manager.exception.ProductNotFoundInProductsException;
 import com.food.manager.mapper.GroupMapper;
 import com.food.manager.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -103,58 +104,51 @@ public class GroupService {
             throw new RuntimeException("Group or User not found");
     }
 
-    public ShoppingListItem createItem(CreateItemRequest createItemRequest) {
-        Product product = productRepository.findById(createItemRequest.productId()).get();
-        Group group = groupRepository.findById(createItemRequest.groupId()).get();
-        return new ShoppingListItem(
-                product,
-                createItemRequest.quantityType(),
-                createItemRequest.quantity(),
-                false,
-                group
-        );
-    }
-
     public GroupResponse addItemToGroup(CreateItemRequest createItemRequest) {
-        Optional<Group> groupOptional = groupRepository.findById(createItemRequest.groupId());
-        if (groupOptional.isEmpty()) {
-            throw new RuntimeException("Group not found with id: " + createItemRequest.groupId());
+        Group group = groupRepository.findById(createItemRequest.groupId())
+                .orElseThrow(() -> new RuntimeException("Group not found with id: " + createItemRequest.groupId()));
+
+        Product product = productRepository.findById(createItemRequest.productId())
+                .orElseThrow(() -> new ProductNotFoundInProductsException("Product with id " + createItemRequest.productId() + " not found"));
+
+        Optional<ShoppingListItem> existingItemOptional = group.getShoppingListItems().stream()
+                .filter(item -> item.getProduct().getProductId().equals(createItemRequest.productId()))
+                .findFirst();
+
+        if (existingItemOptional.isPresent()) {
+            ShoppingListItem existingItem = existingItemOptional.get();
+            existingItem.setQuantity(existingItem.getQuantity() + createItemRequest.quantity());
+            shoppingListItemRepository.save(existingItem);
+        } else {
+            ShoppingListItem newItem = new ShoppingListItem(product, createItemRequest.quantityType(), createItemRequest.quantity(), false, group);
+            shoppingListItemRepository.save(newItem);
+            group.getShoppingListItems().add(newItem);
         }
 
-        Group group = groupOptional.get();
-
-        ShoppingListItem item = createItem(createItemRequest);
-
-        item = shoppingListItemRepository.save(item);
-
-        group.getShoppingListItems().add(item);
-        group = groupRepository.save(group);
-
+        groupRepository.save(group);
         return groupMapper.toGroupResponse(group);
     }
+
 
     public GroupResponse removeItemFromGroup(RemoveItemFromGroupRequest removeItemFromGroupRequest) {
-        Optional<Group> groupOptional = groupRepository.findById(removeItemFromGroupRequest.groupId());
-        if (groupOptional.isEmpty()) {
-            throw new RuntimeException("Group not found with id: " + removeItemFromGroupRequest.groupId());
+        Group group = groupRepository.findById(removeItemFromGroupRequest.groupId())
+                .orElseThrow(() -> new RuntimeException("Group not found with id: " + removeItemFromGroupRequest.groupId()));
+
+        ShoppingListItem item = shoppingListItemRepository.findById(removeItemFromGroupRequest.itemId())
+                .orElseThrow(() -> new RuntimeException("Item not found with id: " + removeItemFromGroupRequest.itemId()));
+
+        if (item.getQuantity() > removeItemFromGroupRequest.quantity()) {
+            item.setQuantity(item.getQuantity() - removeItemFromGroupRequest.quantity());
+            shoppingListItemRepository.save(item);
+        } else {
+            group.getShoppingListItems().remove(item);
+            shoppingListItemRepository.delete(item);
         }
 
-        Group group = groupOptional.get();
-
-        Optional<ShoppingListItem> itemOptional = shoppingListItemRepository.findById(removeItemFromGroupRequest.itemId());
-        if (itemOptional.isEmpty()) {
-            throw new RuntimeException("Item not found with id: " + removeItemFromGroupRequest.itemId());
-        }
-
-        ShoppingListItem item = itemOptional.get();
-
-        group.getShoppingListItems().remove(item);
-        shoppingListItemRepository.delete(item);
-
-        group = groupRepository.save(group);
-
+        groupRepository.save(group);
         return groupMapper.toGroupResponse(group);
     }
+
 
     public void deleteGroup(DeleteGroupRequest deleteGroupRequest) {
         groupRepository.deleteById(deleteGroupRequest.id());

@@ -23,7 +23,7 @@ public class Product {
     @Column(name = "PRODUCT_NAME", nullable=false, unique = true)
     private String productName;
 
-    @OneToMany(cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "product", cascade = CascadeType.REMOVE)
     @JsonManagedReference
     private List<ShoppingListItem> items;
 

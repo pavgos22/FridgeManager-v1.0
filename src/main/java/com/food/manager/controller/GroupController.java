@@ -60,13 +60,13 @@ public class GroupController {
         return ResponseEntity.ok(groupResponse);
     }
 
-    @PostMapping("/addItem")
+    @PutMapping("/addItem")
     public ResponseEntity<GroupResponse> addItemToGroup(@RequestBody CreateItemRequest createItemRequest) {
         GroupResponse groupResponse = groupService.addItemToGroup(createItemRequest);
         return ResponseEntity.ok(groupResponse);
     }
 
-    @DeleteMapping("/removeItem")
+    @PutMapping("/removeItem")
     public ResponseEntity<GroupResponse> removeItemFromGroup(
             @RequestBody RemoveItemFromGroupRequest removeItemFromGroupRequest) {
         GroupResponse groupResponse = groupService.removeItemFromGroup(removeItemFromGroupRequest);
