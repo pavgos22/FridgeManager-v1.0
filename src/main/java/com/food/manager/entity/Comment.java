@@ -32,6 +32,7 @@ public class Comment {
 
     @ManyToOne
     @JoinColumn(name="USER_ID")
+    @JsonBackReference
     private User author;
 
     public Comment(String content, LocalDateTime createdAt, LocalDateTime updatedAt, ShoppingListItem item, User author) {

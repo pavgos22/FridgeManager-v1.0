@@ -1,5 +1,6 @@
 package com.food.manager.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -44,7 +45,8 @@ public class User {
     @JsonBackReference
     private List<Group> groups = new ArrayList<>();
 
-    @OneToMany
+    @OneToMany(mappedBy = "author")
+    @JsonManagedReference
     private List<Comment> comments = new ArrayList<>();
 
     public User(String username, String firstName, String lastName, String email, String password, LocalDateTime createdAt, LocalDateTime updatedAt) {
