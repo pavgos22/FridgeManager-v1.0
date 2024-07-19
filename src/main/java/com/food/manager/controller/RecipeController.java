@@ -33,4 +33,16 @@ public class RecipeController {
         List<RecipeResponse> recipes = recipeService.getAllRecipes();
         return ResponseEntity.ok(recipes);
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteRecipe(@PathVariable Long id) {
+        recipeService.deleteRecipe(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping
+    public ResponseEntity<Void> deleteAllRecipes() {
+        recipeService.deleteAllRecipes();
+        return ResponseEntity.noContent().build();
+    }
 }

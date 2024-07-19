@@ -23,6 +23,7 @@ public class IngredientService {
 
     @Autowired
     private IngredientMapper ingredientMapper;
+
     @Autowired
     private ProductRepository productRepository;
 
@@ -41,7 +42,19 @@ public class IngredientService {
 
     public IngredientResponse createIngredient(CreateIngredientRequest createIngredientRequest) {
         Product product = productRepository.findById(createIngredientRequest.productId()).orElseThrow(() -> new ProductNotFoundInProductsException("Product not found with id: " + createIngredientRequest.productId()));
-        Ingredient ingredient = new Ingredient(createIngredientRequest.quantityType(), createIngredientRequest.quantity(), createIngredientRequest.required(), createIngredientRequest.required(), product);
+        Ingredient ingredient = new Ingredient(createIngredientRequest.quantityType(), createIngredientRequest.quantity(), createIngredientRequest.required(), createIngredientRequest.ignoreGroup(), product);
         return ingredientMapper.toIngredientResponse(ingredientRepository.save(ingredient));
+    }
+
+    public void deleteIngredient(Long id) {
+        if (ingredientRepository.existsById(id)) {
+            ingredientRepository.deleteById(id);
+        } else {
+            throw new IngredientNotFoundException("Ingredient not found with id: " + id);
+        }
+    }
+
+    public void deleteAllIngredients() {
+        ingredientRepository.deleteAll();
     }
 }

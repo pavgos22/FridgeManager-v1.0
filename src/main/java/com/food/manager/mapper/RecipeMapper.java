@@ -1,6 +1,5 @@
 package com.food.manager.mapper;
 
-import com.food.manager.dto.request.recipe.CreateRecipeRequest;
 import com.food.manager.dto.response.RecipeResponse;
 import com.food.manager.entity.Recipe;
 import org.springframework.stereotype.Service;
@@ -17,6 +16,7 @@ public class RecipeMapper {
         }
         return new RecipeResponse(
                 recipe.getRecipeId(),
+                recipe.getRecipeName(),
                 recipe.getDescription(),
                 recipe.getNumberOfServings(),
                 recipe.getRecipeType().name(),
@@ -30,18 +30,5 @@ public class RecipeMapper {
         return recipes.stream()
                 .map(this::toRecipeResponse)
                 .collect(Collectors.toList());
-    }
-
-    public Recipe toEntity(CreateRecipeRequest createRecipeRequest) {
-        if (createRecipeRequest == null) {
-            return null;
-        }
-        Recipe recipe = new Recipe();
-        recipe.setDescription(createRecipeRequest.description());
-        recipe.setNumberOfServings(createRecipeRequest.numberOfServings());
-        recipe.setRecipeType(createRecipeRequest.recipeType());
-        recipe.setWeather(createRecipeRequest.weather());
-        recipe.setIngredients(createRecipeRequest.ingredients());
-        return recipe;
     }
 }

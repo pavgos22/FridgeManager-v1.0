@@ -7,7 +7,9 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -19,6 +21,8 @@ public class Recipe {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="RECIPE_ID", unique = true)
     private Long recipeId;
+    @Column(name="RECIPE_NAME", nullable = false)
+    private String recipeName;
     @Column(name="DESCRIPTION", nullable = true)
     private String description;
     @Column(name="NUMBER_OF_SERVINGS", nullable = false)
@@ -31,5 +35,14 @@ public class Recipe {
     private String recipeUrl;
 
     @OneToMany(mappedBy = "recipe", cascade = CascadeType.ALL)
-    private List<Ingredient> ingredients;
+    private Set<Ingredient> ingredients = new HashSet<>();
+
+    public Recipe(String recipeName, String description, int numberOfServings, RecipeType recipeType, Weather weather, String recipeUrl) {
+        this.recipeName = recipeName;
+        this.description = description;
+        this.numberOfServings = numberOfServings;
+        this.recipeType = recipeType;
+        this.weather = weather;
+        this.recipeUrl = recipeUrl;
+    }
 }

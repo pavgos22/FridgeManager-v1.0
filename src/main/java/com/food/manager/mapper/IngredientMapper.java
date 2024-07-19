@@ -18,7 +18,7 @@ public class IngredientMapper {
                 ingredient.isRequired(),
                 ingredient.isIgnoreGroup(),
                 ingredient.getProduct().getProductId(),
-                ingredient.getRecipe().getRecipeId()
+                ingredient.getRecipe() != null ? ingredient.getRecipe().getRecipeId() : null
         );
     }
 
