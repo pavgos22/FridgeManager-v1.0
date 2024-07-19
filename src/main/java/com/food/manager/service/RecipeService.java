@@ -1,7 +1,6 @@
 package com.food.manager.service;
 
 import com.food.manager.dto.request.recipe.CreateRecipeRequest;
-import com.food.manager.dto.request.recipe.UpdateRecipeRequest;
 import com.food.manager.dto.response.RecipeResponse;
 import com.food.manager.entity.Ingredient;
 import com.food.manager.entity.Recipe;
@@ -17,7 +16,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Service
 public class RecipeService {
@@ -46,7 +44,9 @@ public class RecipeService {
     }
 
     public RecipeResponse createRecipe(CreateRecipeRequest createRecipeRequest) {
-        Recipe recipe = new Recipe(createRecipeRequest.recipeName(), createRecipeRequest.description(), createRecipeRequest.numberOfServings(), createRecipeRequest.recipeType(), createRecipeRequest.weather(), createRecipeRequest.recipeURL());
+        Recipe recipe = new Recipe(createRecipeRequest.recipeName(), createRecipeRequest.description(), createRecipeRequest.recipeType(), createRecipeRequest.weather(), createRecipeRequest.recipeURL());
+
+        recipeRepository.save(recipe);
 
         List<Ingredient> ingredients = ingredientRepository.findAllById(createRecipeRequest.ingredientIds());
         if (ingredients.size() != createRecipeRequest.ingredientIds().size())

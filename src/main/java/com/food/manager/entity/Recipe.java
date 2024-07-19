@@ -8,7 +8,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -25,8 +24,6 @@ public class Recipe {
     private String recipeName;
     @Column(name="DESCRIPTION", nullable = true)
     private String description;
-    @Column(name="NUMBER_OF_SERVINGS", nullable = false)
-    private int numberOfServings;
     @Column(name = "RECIPE_TYPE", nullable = false)
     private RecipeType recipeType;
     @Column(name="WEATHER", nullable = true)
@@ -34,13 +31,12 @@ public class Recipe {
     @Column(name="RECIPE_URL", nullable = true)
     private String recipeUrl;
 
-    @OneToMany(mappedBy = "recipe", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "recipe", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Ingredient> ingredients = new HashSet<>();
 
-    public Recipe(String recipeName, String description, int numberOfServings, RecipeType recipeType, Weather weather, String recipeUrl) {
+    public Recipe(String recipeName, String description, RecipeType recipeType, Weather weather, String recipeUrl) {
         this.recipeName = recipeName;
         this.description = description;
-        this.numberOfServings = numberOfServings;
         this.recipeType = recipeType;
         this.weather = weather;
         this.recipeUrl = recipeUrl;

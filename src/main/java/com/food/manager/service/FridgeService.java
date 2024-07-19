@@ -1,33 +1,22 @@
 package com.food.manager.service;
 
-import com.food.manager.config.OAuthService;
 import com.food.manager.dto.request.fridge.AddProductRequest;
 import com.food.manager.dto.request.fridge.RemoveProductFromFridgeRequest;
-import com.food.manager.dto.request.fridgeproduct.AddFridgeProductRequest;
-import com.food.manager.dto.response.FridgeProductResponse;
 import com.food.manager.dto.response.FridgeResponse;
+import com.food.manager.dto.response.RecipeResponse;
 import com.food.manager.entity.*;
-import com.food.manager.enums.QuantityType;
-import com.food.manager.exception.FridgeNotFoundException;
-import com.food.manager.exception.FridgeProductNotFoundException;
+import com.food.manager.exception.*;
 import com.food.manager.mapper.FridgeMapper;
-import com.food.manager.mapper.FridgeProductMapper;
-import com.food.manager.repository.FridgeProductRepository;
-import com.food.manager.repository.FridgeRepository;
-import com.food.manager.repository.GroupRepository;
-import com.food.manager.repository.ProductRepository;
-import org.json.JSONArray;
-import org.json.JSONObject;
+import com.food.manager.mapper.RecipeMapper;
+import com.food.manager.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class FridgeService {
@@ -39,7 +28,13 @@ public class FridgeService {
     private FridgeProductRepository fridgeProductRepository;
 
     @Autowired
+    private RecipeRepository recipeRepository;
+
+    @Autowired
     private FridgeMapper fridgeMapper;
+
+    @Autowired
+    private RecipeMapper recipeMapper;
 
     @Autowired
     private GroupRepository groupRepository;
@@ -71,21 +66,6 @@ public class FridgeService {
         return fridge;
     }
 
-    public FridgeProduct addFridgeProduct(QuantityType quantityType, int quantity, Long productId) {
-        if (quantity <= 0)
-            throw new RuntimeException("Quantity must be greater than zero");
-
-
-        Optional<Product> optionalProduct = productRepository.findById(productId);
-        if (optionalProduct.isEmpty()) {
-            throw new RuntimeException("Product not found with id: " + productId);
-        }
-        Product product = optionalProduct.get();
-
-        FridgeProduct fridgeProduct = new FridgeProduct(quantityType, quantity, product);
-        fridgeProductRepository.save(fridgeProduct);
-        return fridgeProduct;
-    }
 
     public FridgeResponse addProductToFridge(AddProductRequest addProductRequest) {
         Fridge fridge = fridgeRepository.findById(addProductRequest.fridgeId())
@@ -143,4 +123,66 @@ public class FridgeService {
             throw new RuntimeException("Fridge not found with id: " + removeProductFromFridgeRequest.fridgeId());
     }
 
+    public List<RecipeResponse> getRecipesPossibleWithFridgeProducts(Long fridgeId) {
+        Fridge fridge = fridgeRepository.findById(fridgeId)
+                .orElseThrow(() -> new RuntimeException("Fridge not found with id: " + fridgeId));
+
+        Set<Product> fridgeProducts = fridge.getProducts().stream()
+                .map(FridgeProduct::getProduct)
+                .collect(Collectors.toSet());
+
+        List<Recipe> recipes = recipeRepository.findAll();
+
+        List<Recipe> possibleRecipes = recipes.stream()
+                .filter(recipe -> !recipe.getIngredients().isEmpty())
+                .filter(recipe -> recipe.getIngredients().stream()
+                        .allMatch(ingredient -> fridgeProducts.contains(ingredient.getProduct())))
+                .collect(Collectors.toList());
+
+        return recipeMapper.mapToRecipeResponseList(possibleRecipes);
+    }
+
+    public FridgeResponse executeRecipe(Long fridgeId, Long recipeId) {
+        Fridge fridge = fridgeRepository.findById(fridgeId)
+                .orElseThrow(() -> new FridgeNotFoundException("Fridge not found with id: " + fridgeId));
+
+        Recipe recipe = recipeRepository.findById(recipeId)
+                .orElseThrow(() -> new RecipeNotFoundException("Recipe not found with id: " + recipeId));
+
+        Set<FridgeProduct> fridgeProducts = new HashSet<>(fridge.getProducts());
+
+        for (Ingredient ingredient : recipe.getIngredients()) {
+            FridgeProduct fridgeProduct = fridgeProducts.stream()
+                    .filter(fp -> fp.getProduct().equals(ingredient.getProduct()))
+                    .findFirst()
+                    .orElseThrow(() -> new ProductNotFoundInFridgeException("Product " + ingredient.getProduct().getProductName() + " not found in fridge"));
+
+            if (fridgeProduct.getQuantityType() != ingredient.getQuantityType()) {
+                throw new MismatchedQuantityTypeException("Quantity type mismatch for product " + ingredient.getProduct().getProductName());
+            }
+
+            if (fridgeProduct.getQuantity() < ingredient.getQuantity()) {
+                throw new InsufficientQuantityException("Insufficient quantity for product " + ingredient.getProduct().getProductName());
+            }
+        }
+
+        for (Ingredient ingredient : recipe.getIngredients()) {
+            FridgeProduct fridgeProduct = fridgeProducts.stream()
+                    .filter(fp -> fp.getProduct().equals(ingredient.getProduct()))
+                    .findFirst()
+                    .orElseThrow(() -> new ProductNotFoundInFridgeException("Product " + ingredient.getProduct().getProductName() + " not found in fridge"));
+
+            fridgeProduct.setQuantity(fridgeProduct.getQuantity() - ingredient.getQuantity());
+
+            if (fridgeProduct.getQuantity() == 0) {
+                fridge.getProducts().remove(fridgeProduct);
+                fridgeProductRepository.delete(fridgeProduct);
+            } else {
+                fridgeProductRepository.save(fridgeProduct);
+            }
+        }
+
+        fridgeRepository.save(fridge);
+        return fridgeMapper.toFridgeResponse(fridge);
+    }
 }

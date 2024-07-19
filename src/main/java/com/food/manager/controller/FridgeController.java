@@ -3,7 +3,9 @@ package com.food.manager.controller;
 import com.food.manager.dto.request.fridge.AddProductRequest;
 import com.food.manager.dto.request.fridge.RemoveProductFromFridgeRequest;
 import com.food.manager.dto.response.FridgeResponse;
+import com.food.manager.dto.response.RecipeResponse;
 import com.food.manager.service.FridgeService;
+import com.food.manager.service.RecipeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -39,5 +41,17 @@ public class FridgeController {
     public ResponseEntity<List<FridgeResponse>> getAllFridges() {
         List<FridgeResponse> fridges = fridgeService.getAllFridges();
         return ResponseEntity.ok(fridges);
+    }
+
+    @GetMapping("/recipes/{fridgeId}")
+    public ResponseEntity<List<RecipeResponse>> getRecipesPossibleWithFridgeProducts(@PathVariable Long fridgeId) {
+        List<RecipeResponse> recipes = fridgeService.getRecipesPossibleWithFridgeProducts(fridgeId);
+        return ResponseEntity.ok(recipes);
+    }
+
+    @PutMapping("/{fridgeId}/executeRecipe/{recipeId}")
+    public ResponseEntity<FridgeResponse> executeRecipe(@PathVariable Long fridgeId, @PathVariable Long recipeId) {
+        FridgeResponse fridgeResponse = fridgeService.executeRecipe(fridgeId, recipeId);
+        return ResponseEntity.ok(fridgeResponse);
     }
 }

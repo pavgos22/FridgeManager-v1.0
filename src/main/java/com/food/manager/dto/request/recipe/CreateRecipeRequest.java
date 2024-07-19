@@ -5,5 +5,5 @@ import com.food.manager.enums.Weather;
 
 import java.util.Set;
 
-public record CreateRecipeRequest(String recipeName, String description, int numberOfServings, RecipeType recipeType, Weather weather, Set<Long> ingredientIds, String recipeURL) {
+public record CreateRecipeRequest(String recipeName, String description, RecipeType recipeType, Weather weather, Set<Long> ingredientIds, String recipeURL) {
 }

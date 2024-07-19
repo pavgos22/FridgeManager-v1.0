@@ -35,7 +35,6 @@ public class RecipeTestSuite {
 
         recipe = new Recipe();
         recipe.setDescription("Test Description");
-        recipe.setNumberOfServings(4);
         recipe.setRecipeType(RecipeType.AMERICAN);
         recipe.setWeather(Weather.SUNNY);
         recipe.setProducts(new ArrayList<>(List.of(product)));

@@ -18,7 +18,6 @@ public class RecipeMapper {
                 recipe.getRecipeId(),
                 recipe.getRecipeName(),
                 recipe.getDescription(),
-                recipe.getNumberOfServings(),
                 recipe.getRecipeType().name(),
                 recipe.getWeather() != null ? recipe.getWeather().name() : null,
                 recipe.getIngredients(),
