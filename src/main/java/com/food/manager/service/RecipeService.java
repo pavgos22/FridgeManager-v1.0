@@ -22,7 +22,7 @@ public class RecipeService {
 
     public RecipeResponse createRecipe(CreateRecipeRequest createRecipeRequest) {
         Recipe recipe = recipeMapper.toEntity(createRecipeRequest);
-        recipe = recipeRepository.save(recipe);
+        recipeRepository.save(recipe);
         return recipeMapper.toRecipeResponse(recipe);
     }
 

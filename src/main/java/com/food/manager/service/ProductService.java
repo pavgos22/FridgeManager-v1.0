@@ -1,17 +1,12 @@
 package com.food.manager.service;
 
 import com.food.manager.config.OAuthService;
-import com.food.manager.dto.request.product.CreateNutritionRequest;
 import com.food.manager.dto.request.product.CreateProductRequest;
 import com.food.manager.dto.request.product.UpdateProductRequest;
-import com.food.manager.dto.request.product.AddNutritionRequest;
-import com.food.manager.dto.response.NutritionResponse;
 import com.food.manager.dto.response.ProductResponse;
 import com.food.manager.entity.Nutrition;
 import com.food.manager.entity.Product;
-import com.food.manager.mapper.NutritionMapper;
 import com.food.manager.mapper.ProductMapper;
-import com.food.manager.repository.NutritionRepository;
 import com.food.manager.repository.ProductRepository;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -33,13 +28,7 @@ public class ProductService {
     private ProductRepository productRepository;
 
     @Autowired
-    private NutritionRepository nutritionRepository;
-
-    @Autowired
     private ProductMapper productMapper;
-
-    @Autowired
-    private NutritionMapper nutritionMapper;
 
     @Autowired
     private OAuthService oAuthService;
@@ -91,7 +80,7 @@ public class ProductService {
 
         for (int i = 0; i < foods.length(); i++) {
             JSONObject food = foods.getJSONObject(i);
-            if (food.getString("food_type").equals("Generic")) {
+            if (food.getString("food_type").equals("Generic") || food.getString("food_type").equals("Brand")) {
                 Product product = new Product(food.getString("food_name"));
 
                 Nutrition nutrition = fetchNutritionFromAPI(productName);
@@ -120,7 +109,7 @@ public class ProductService {
 
         for (int i = 0; i < foods.length(); i++) {
             JSONObject food = foods.getJSONObject(i);
-            if (food.getString("food_type").equals("Generic")) {
+            if (food.getString("food_type").equals("Generic") || food.getString("food_type").equals("Brand")) {
                 JSONArray servings = food.getJSONObject("servings").getJSONArray("serving");
                 for (int j = 0; j < servings.length(); j++) {
                     JSONObject serving = servings.getJSONObject(j);

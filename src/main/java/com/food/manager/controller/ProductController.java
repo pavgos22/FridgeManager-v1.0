@@ -1,9 +1,7 @@
 package com.food.manager.controller;
 
-import com.food.manager.dto.request.product.CreateNutritionRequest;
 import com.food.manager.dto.request.product.CreateProductRequest;
 import com.food.manager.dto.request.product.UpdateProductRequest;
-import com.food.manager.dto.request.product.AddNutritionRequest;
 import com.food.manager.dto.response.ProductResponse;
 import com.food.manager.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
