@@ -35,4 +35,12 @@ public class Ingredient {
     @JoinColumn(name="RECIPE_ID")
     @JsonBackReference
     private Recipe recipe;
+
+    public Ingredient(QuantityType quantityType, int quantity, boolean required, boolean ignoreGroup, Product product) {
+        this.quantityType = quantityType;
+        this.quantity = quantity;
+        this.required = required;
+        this.ignoreGroup = ignoreGroup;
+        this.product = product;
+    }
 }
