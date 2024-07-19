@@ -1,6 +1,5 @@
 package com.food.manager.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -39,7 +38,7 @@ public class Product {
     )
     private List<Recipe> recipes;
 
-    @OneToMany(mappedBy = "product", cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "product", cascade = CascadeType.REMOVE, orphanRemoval = true)
     @JsonManagedReference
     private List<FridgeProduct> fridgeProducts;
 

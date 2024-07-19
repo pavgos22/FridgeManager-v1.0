@@ -16,6 +16,7 @@ import com.food.manager.repository.ShoppingListItemRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -24,7 +25,6 @@ public class ShoppingListItemService {
 
     @Autowired
     private ShoppingListItemRepository shoppingListItemRepository;
-
     @Autowired
     private ShoppingListItemMapper shoppingListItemMapper;
     @Autowired
@@ -47,16 +47,16 @@ public class ShoppingListItemService {
     }
 
     public ShoppingListItemResponse addItemToShoppingList(AddItemToListRequest addItemToListRequest) {
-        if(addItemToListRequest.quantity() <= 0)
+        if (addItemToListRequest.quantity() <= 0)
             throw new NegativeValueException("Quantity must be greater than zero");
-        Product product = productRepository.findByProductName(addItemToListRequest.productName())
+
+        Product product = productRepository.findById(addItemToListRequest.productId())
                 .orElseThrow(() -> new ProductNotFoundInProductsException("Product not found in the products list"));
 
         Group group = groupRepository.findById(addItemToListRequest.groupId())
                 .orElseThrow(() -> new GroupNotFoundException("Group not found"));
 
-        Optional<ShoppingListItem> existingItem = product.getItems().stream()
-                .filter(item -> item.getGroup().equals(group)).findFirst();
+        Optional<ShoppingListItem> existingItem = shoppingListItemRepository.findByProductAndGroup(product, group);
 
         ShoppingListItem shoppingListItem;
 
@@ -65,12 +65,14 @@ public class ShoppingListItemService {
             shoppingListItem.setQuantity(shoppingListItem.getQuantity() + addItemToListRequest.quantity());
         } else {
             shoppingListItem = new ShoppingListItem(product, addItemToListRequest.quantityType(), addItemToListRequest.quantity(), false, group);
-            product.getItems().add(shoppingListItem);
+            shoppingListItemRepository.save(shoppingListItem);
         }
 
-        shoppingListItemRepository.save(shoppingListItem);
         return shoppingListItemMapper.toShoppingListItemResponse(shoppingListItem);
     }
+
+
+
 
     public void removeItemFromShoppingList(RemoveItemFromListRequest removeItemFromListRequest) {
         if(removeItemFromListRequest.quantity() <= 0)

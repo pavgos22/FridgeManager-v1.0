@@ -28,7 +28,7 @@ public class ShoppingListItem {
     private boolean checked;
 
     @ManyToOne
-    @JoinColumn(name="PRODUCT_ID", nullable = false)
+    @JoinColumn(name = "PRODUCT_ID", nullable = false)
     @JsonBackReference
     private Product product;
 
@@ -37,7 +37,7 @@ public class ShoppingListItem {
     private List<Comment> comments;
 
     @ManyToOne
-    @JoinColumn(name="GROUP_ID", nullable = false)
+    @JoinColumn(name = "GROUP_ID", nullable = false)
     @JsonBackReference
     private Group group;
 
