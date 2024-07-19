@@ -6,6 +6,7 @@ import com.food.manager.dto.request.product.UpdateProductRequest;
 import com.food.manager.dto.response.ProductResponse;
 import com.food.manager.entity.Nutrition;
 import com.food.manager.entity.Product;
+import com.food.manager.exception.ProductNotFoundInProductsException;
 import com.food.manager.mapper.ProductMapper;
 import com.food.manager.repository.ProductRepository;
 import org.json.JSONArray;
@@ -126,6 +127,14 @@ public class ProductService {
             }
         }
         return null;
+    }
+
+    public void createProductFromWishlist(String productName) {
+        Product product = fetchProductFromAPI(productName);
+        if (product == null) {
+            throw new ProductNotFoundInProductsException("Product not found in API: " + productName);
+        }
+        productMapper.toProductResponse(productRepository.save(product));
     }
 
     public void deleteProduct(Long id) {
