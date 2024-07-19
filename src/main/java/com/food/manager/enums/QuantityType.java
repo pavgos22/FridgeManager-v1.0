@@ -1,5 +1,8 @@
 package com.food.manager.enums;
 
+import lombok.Getter;
+
+@Getter
 public enum QuantityType {
     GRAM("g"),
     MILLILITER("ml"),
@@ -12,7 +15,4 @@ public enum QuantityType {
         this.value = value;
     }
 
-    public String getValue() {
-        return value;
-    }
 }

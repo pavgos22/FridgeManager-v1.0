@@ -1,13 +1,16 @@
 package com.food.manager.entity;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.food.manager.enums.ProductGroup;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Entity
 @Getter
@@ -21,6 +24,8 @@ public class Product {
     private Long productId;
     @Column(name = "PRODUCT_NAME", nullable=false, unique = true)
     private String productName;
+    @Column(name="PRODUCT_GROUP")
+    private ProductGroup productGroup;
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.REMOVE)
     @JsonManagedReference
@@ -30,13 +35,8 @@ public class Product {
     @JoinColumn(name="NUTRITION_ID")
     private Nutrition nutrition;
 
-    @ManyToMany
-    @JoinTable(
-            name = "PRODUCT_HAS_RECIPE",
-            joinColumns = @JoinColumn(name = "PRODUCT_ID"),
-            inverseJoinColumns = @JoinColumn(name = "RECIPE_ID")
-    )
-    private List<Recipe> recipes;
+    @OneToMany(mappedBy ="product", cascade = CascadeType.ALL)
+    private List<Ingredient> ingredients = new ArrayList<>();
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.REMOVE, orphanRemoval = true)
     @JsonManagedReference
@@ -44,6 +44,20 @@ public class Product {
 
     public Product(String productName) {
         this.productName = productName;
+    }
+
+    public Product(String productName, ProductGroup productGroup) {
+        this.productName = productName;
+        this.productGroup = productGroup;
+    }
+
+    public List<Long> getRecipeIds() {
+        return ingredients.stream()
+                .map(Ingredient::getRecipe)
+                .filter(Objects::nonNull)
+                .map(Recipe::getRecipeId)
+                .distinct()
+                .collect(Collectors.toList());
     }
 
     @Override

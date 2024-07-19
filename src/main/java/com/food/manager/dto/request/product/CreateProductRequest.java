@@ -1,4 +1,6 @@
 package com.food.manager.dto.request.product;
 
-public record CreateProductRequest(String productName) {
+import com.food.manager.enums.ProductGroup;
+
+public record CreateProductRequest(String productName, ProductGroup productGroup) {
 }

@@ -48,7 +48,9 @@ public class ProductService {
     }
 
     public ProductResponse createProduct(CreateProductRequest createProductRequest) {
-        return productMapper.toProductResponse(productRepository.save(fetchProductFromAPI(createProductRequest.productName())));
+        Product product = fetchProductFromAPI(createProductRequest.productName());
+        product.setProductGroup(createProductRequest.productGroup());
+        return productMapper.toProductResponse(productRepository.save(product));
     }
 
     public ProductResponse updateProduct(UpdateProductRequest updateProductRequest) {

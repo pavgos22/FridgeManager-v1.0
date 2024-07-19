@@ -30,6 +30,6 @@ public class Recipe {
     @Column(name="RECIPE_URL", nullable = true)
     private String recipeUrl;
 
-    @ManyToMany(mappedBy = "recipes") //ingredients
-    private List<Product> products;
+    @OneToMany(mappedBy = "recipe", cascade = CascadeType.ALL)
+    private List<Ingredient> ingredients;
 }

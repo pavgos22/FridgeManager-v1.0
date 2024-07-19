@@ -21,7 +21,7 @@ public class RecipeMapper {
                 recipe.getNumberOfServings(),
                 recipe.getRecipeType().name(),
                 recipe.getWeather() != null ? recipe.getWeather().name() : null,
-                recipe.getProducts(),
+                recipe.getIngredients(),
                 recipe.getRecipeUrl()
         );
     }
@@ -41,7 +41,7 @@ public class RecipeMapper {
         recipe.setNumberOfServings(createRecipeRequest.numberOfServings());
         recipe.setRecipeType(createRecipeRequest.recipeType());
         recipe.setWeather(createRecipeRequest.weather());
-        recipe.setProducts(createRecipeRequest.ingredients());
+        recipe.setIngredients(createRecipeRequest.ingredients());
         return recipe;
     }
 }
