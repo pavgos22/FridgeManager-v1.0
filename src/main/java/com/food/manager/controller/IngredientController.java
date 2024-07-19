@@ -1,5 +1,6 @@
 package com.food.manager.controller;
 
+import com.food.manager.dto.request.ingredient.CreateIngredientRequest;
 import com.food.manager.dto.response.IngredientResponse;
 import com.food.manager.service.IngredientService;
 import org.springframework.beans.factory.annotation.Autowired;
