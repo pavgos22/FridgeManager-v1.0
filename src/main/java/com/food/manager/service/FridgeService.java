@@ -7,7 +7,6 @@ import com.food.manager.dto.request.fridgeproduct.AddFridgeProductRequest;
 import com.food.manager.dto.response.FridgeProductResponse;
 import com.food.manager.dto.response.FridgeResponse;
 import com.food.manager.entity.*;
-import com.food.manager.enums.QuantityType;
 import com.food.manager.exception.FridgeNotFoundException;
 import com.food.manager.exception.FridgeProductNotFoundException;
 import com.food.manager.mapper.FridgeMapper;
@@ -47,6 +46,12 @@ public class FridgeService {
     @Autowired
     private ProductRepository productRepository;
 
+    @Autowired
+    private OAuthService oAuthService;
+
+    @Autowired
+    private FridgeProductMapper fridgeProductMapper;
+
     public FridgeResponse getFridge(Long id) {
         Optional<Fridge> fridgeOptional = fridgeRepository.findById(id);
         if (fridgeOptional.isPresent()) {
@@ -71,44 +76,117 @@ public class FridgeService {
         return fridge;
     }
 
-    public FridgeProduct addFridgeProduct(QuantityType quantityType, int quantity, Long productId) {
-        if (quantity <= 0)
-            throw new RuntimeException("Quantity must be greater than zero");
+    public FridgeProductResponse addFridgeProduct(AddFridgeProductRequest addFridgeProductRequest) {
+        Optional<Product> optionalProduct = productRepository.findByProductName(addFridgeProductRequest.productName());
+        Product product;
 
-
-        Optional<Product> optionalProduct = productRepository.findById(productId);
         if (optionalProduct.isEmpty()) {
-            throw new RuntimeException("Product not found with id: " + productId);
-        }
-        Product product = optionalProduct.get();
+            product = fetchProductFromAPI(addFridgeProductRequest.productName());
+            if (product == null)
+                throw new RuntimeException("Product not found in external API: " + addFridgeProductRequest.productName());
 
-        FridgeProduct fridgeProduct = new FridgeProduct(quantityType, quantity, product);
+            productRepository.save(product);
+        }
+        else
+            product = optionalProduct.get();
+
+
+        FridgeProduct fridgeProduct = new FridgeProduct(addFridgeProductRequest.quantityType(), addFridgeProductRequest.quantity(), product);
         fridgeProductRepository.save(fridgeProduct);
-        return fridgeProduct;
+        return fridgeProductMapper.toFridgeProductResponse(fridgeProduct);
     }
 
     public FridgeResponse addProductToFridge(AddProductRequest addProductRequest) {
-        Fridge fridge = fridgeRepository.findById(addProductRequest.fridgeId())
-                .orElseThrow(() -> new FridgeNotFoundException("Fridge with id " + addProductRequest.fridgeId() + " not found"));
+        Fridge fridge = fridgeRepository.findById(addProductRequest.fridgeId()).orElseThrow(() -> new FridgeNotFoundException("Fridge with ID: " + addProductRequest.fridgeId()));
+        FridgeProduct fridgeProduct = fridgeProductRepository.findById(addProductRequest.fridgeProductId()).orElseThrow(() -> new FridgeProductNotFoundException("FridgeProduct with ID: " + addProductRequest.fridgeProductId()));
 
-        Optional<FridgeProduct> existingProduct = fridge.getProducts().stream()
-                .filter(fp -> fp.getProduct().getProductId().equals(addProductRequest.productId())).findFirst();
+        Optional<FridgeProduct> optionalFridgeProduct = fridge.getProducts().stream()
+                .filter(fp -> fp.getProduct().equals(fridgeProduct.getProduct()))
+                .findFirst();
 
-        FridgeProduct fridgeProduct;
-        if (existingProduct.isPresent()) {
-            fridgeProduct = existingProduct.get();
-            fridgeProduct.setQuantity(fridgeProduct.getQuantity() + addProductRequest.quantity());
+        if (optionalFridgeProduct.isPresent()) {
+            FridgeProduct existingProduct = optionalFridgeProduct.get();
+            existingProduct.setQuantity(existingProduct.getQuantity() + fridgeProduct.getQuantity());
+            fridgeProductRepository.save(existingProduct);
         } else {
-            Product product = productRepository.findById(addProductRequest.productId())
-                    .orElseThrow(() -> new RuntimeException("Product not found with id: " + addProductRequest.productId()));
-            fridgeProduct = new FridgeProduct(addProductRequest.quantityType(), addProductRequest.quantity(), fridge, product);
-            fridge.getProducts().add(fridgeProduct);
+            fridge.getProducts().add(new FridgeProduct(
+                    fridgeProduct.getQuantityType(),
+                    fridgeProduct.getQuantity(),
+                    fridge,
+                    fridgeProduct.getProduct()
+            ));
         }
 
         fridgeRepository.save(fridge);
+
         return fridgeMapper.toFridgeResponse(fridge);
     }
 
+
+    private Product fetchProductFromAPI(String productName) {
+        String token = oAuthService.getOAuthToken();
+
+        RestTemplate restTemplate = new RestTemplate();
+        String url = "https://platform.fatsecret.com/rest/server.api?method=foods.search.v3&search_expression=" + productName + "&format=json&include_sub_categories=true&flag_default_serving=true&max_results=10&language=en&region=US";
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "Bearer " + token);
+        HttpEntity<String> entity = new HttpEntity<>(headers);
+
+        ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
+
+        JSONObject jsonResponse = new JSONObject(response.getBody());
+        JSONArray foods = jsonResponse.getJSONObject("foods_search").getJSONObject("results").getJSONArray("food");
+
+        for (int i = 0; i < foods.length(); i++) {
+            JSONObject food = foods.getJSONObject(i);
+            if (food.getString("food_type").equals("Generic")) {
+                Product product = new Product(food.getString("food_name"));
+
+                Nutrition nutrition = fetchNutritionFromAPI(productName);
+                if (nutrition != null)
+                    product.setNutrition(nutrition);
+                return product;
+            }
+        }
+        return null;
+    }
+
+
+
+    private Nutrition fetchNutritionFromAPI(String productName) {
+        String token = oAuthService.getOAuthToken();
+
+        RestTemplate restTemplate = new RestTemplate();
+        String url = "https://platform.fatsecret.com/rest/server.api?method=foods.search.v3&search_expression=" + productName + "&format=json&include_sub_categories=true&flag_default_serving=true&max_results=10&language=en&region=US";
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "Bearer " + token);
+        HttpEntity<String> entity = new HttpEntity<>(headers);
+
+        ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
+
+        JSONObject jsonResponse = new JSONObject(response.getBody());
+        JSONArray foods = jsonResponse.getJSONObject("foods_search").getJSONObject("results").getJSONArray("food");
+
+        for (int i = 0; i < foods.length(); i++) {
+            JSONObject food = foods.getJSONObject(i);
+            if (food.getString("food_type").equals("Generic")) {
+                JSONArray servings = food.getJSONObject("servings").getJSONArray("serving");
+                for (int j = 0; j < servings.length(); j++) {
+                    JSONObject serving = servings.getJSONObject(j);
+                    if (serving.getString("metric_serving_unit").equals("g") && serving.getDouble("metric_serving_amount") == 100.0) {
+                        int calories = serving.getInt("calories");
+                        float protein = (float) serving.getDouble("protein");
+                        float fat = (float) serving.getDouble("fat");
+                        float carbohydrate = (float) serving.getDouble("carbohydrate");
+                        return new Nutrition(calories, protein, fat, carbohydrate);
+                    }
+                }
+            }
+        }
+        return null;
+    }
 
     public FridgeResponse removeProductFromFridge(RemoveProductFromFridgeRequest removeProductFromFridgeRequest) {
         Optional<Fridge> fridgeOptional = fridgeRepository.findById(removeProductFromFridgeRequest.fridgeId());
