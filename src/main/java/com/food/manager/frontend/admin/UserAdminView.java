@@ -15,6 +15,7 @@ import java.util.List;
 @Route("admin/users")
 public class UserAdminView extends VerticalLayout {
     private final RestTemplate restTemplate = new RestTemplate();
+    private static final String BASE_URL = "http://localhost:8080/v1/users";
     private final Grid<UserResponse> grid = new Grid<>(UserResponse.class);
     private final TextField username = new TextField("Username");
     private final TextField firstNameField = new TextField("First name");
@@ -32,7 +33,7 @@ public class UserAdminView extends VerticalLayout {
     }
 
     private void setupGrid() {
-        grid.setColumns("id", "name", "email");
+        grid.setColumns("userId", "username", "firstName", "lastName", "email", "createdAt", "updatedAt");
         add(grid);
     }
 
@@ -41,17 +42,17 @@ public class UserAdminView extends VerticalLayout {
         updateButton.addClickListener(e -> updateUser());
         deleteButton.addClickListener(e -> deleteUser());
 
-        add(username, emailField, createButton, updateButton, deleteButton);
+        add(username, firstNameField, lastNameField, emailField, passwordField, createButton, updateButton, deleteButton);
     }
 
     private void loadData() {
-        List<UserResponse> users = restTemplate.getForObject("/v1/users", List.class);
+        List<UserResponse> users = restTemplate.getForObject(BASE_URL, List.class);
         grid.setItems(users);
     }
 
     private void createUser() {
         CreateUserRequest request = new CreateUserRequest(username.getValue(), firstNameField.getValue(), lastNameField.getValue(), emailField.getValue(), passwordField.getValue());
-        restTemplate.postForObject("/v1/users", request, UserResponse.class);
+        restTemplate.postForObject(BASE_URL, request, UserResponse.class);
         loadData();
     }
 
@@ -59,7 +60,7 @@ public class UserAdminView extends VerticalLayout {
         UserResponse selectedUser = grid.asSingleSelect().getValue();
         if (selectedUser != null) {
             UpdateUserRequest request = new UpdateUserRequest(username.getValue(), firstNameField.getValue(), lastNameField.getValue(), emailField.getValue(), passwordField.getValue());
-            restTemplate.put("/v1/users/" + selectedUser.userId(), request);
+            restTemplate.put(BASE_URL + "/" + selectedUser.userId(), request);
             loadData();
         }
     }
@@ -67,7 +68,7 @@ public class UserAdminView extends VerticalLayout {
     private void deleteUser() {
         UserResponse selectedUser = grid.asSingleSelect().getValue();
         if (selectedUser != null) {
-            restTemplate.delete("/v1/users/" + selectedUser.userId());
+            restTemplate.delete(BASE_URL + "/" + selectedUser.userId());
             loadData();
         }
     }
