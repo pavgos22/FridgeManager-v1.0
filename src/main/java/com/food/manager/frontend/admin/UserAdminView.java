@@ -58,7 +58,7 @@ public class UserAdminView extends VerticalLayout {
     private void updateUser() {
         UserResponse selectedUser = grid.asSingleSelect().getValue();
         if (selectedUser != null) {
-            UpdateUserRequest request = new UpdateUserRequest(selectedUser.userId(), username.getValue(), emailField.getValue());
+            UpdateUserRequest request = new UpdateUserRequest(username.getValue(), firstNameField.getValue(), lastNameField.getValue(), emailField.getValue(), passwordField.getValue());
             restTemplate.put("/v1/users/" + selectedUser.userId(), request);
             loadData();
         }
