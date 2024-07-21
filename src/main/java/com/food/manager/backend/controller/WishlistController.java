@@ -1,6 +1,7 @@
 package com.food.manager.backend.controller;
 
 import com.food.manager.backend.dto.response.WishlistResponse;
+import com.food.manager.backend.entity.Wishlist;
 import com.food.manager.backend.service.WishlistService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -22,8 +23,8 @@ public class WishlistController {
     }
 
     @GetMapping
-    public ResponseEntity<List<WishlistResponse>> getAllWishlistItems() {
-        List<WishlistResponse> wishlist = wishlistService.getAllWishlistItems();
+    public ResponseEntity<List<Wishlist>> getAllWishlistItems() {
+        List<Wishlist> wishlist = wishlistService.getAllWishlistItems();
         return ResponseEntity.ok(wishlist);
     }
 

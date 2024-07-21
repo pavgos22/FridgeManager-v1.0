@@ -4,18 +4,23 @@ import com.food.manager.backend.dto.request.recipe.CreateRecipeRequest;
 import com.food.manager.backend.dto.response.RecipeResponse;
 import com.food.manager.backend.entity.Ingredient;
 import com.food.manager.backend.entity.Recipe;
+import com.food.manager.backend.enums.Weather;
 import com.food.manager.backend.exception.DuplicateIngredientException;
 import com.food.manager.backend.exception.IngredientNotFoundException;
 import com.food.manager.backend.mapper.RecipeMapper;
 import com.food.manager.backend.repository.IngredientRepository;
 import com.food.manager.backend.repository.RecipeRepository;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class RecipeService {
@@ -66,6 +71,42 @@ public class RecipeService {
         recipeRepository.save(recipe);
 
         return recipeMapper.toRecipeResponse(recipe);
+    }
+
+    public Weather fetchWeatherFromApi() {
+        String url = "https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/Warsaw?include=fcst%2Cobs%2Chistfcst%2Cstats%2Ccurrent&key=XTDHB9DVQHUMW737HZX5YBQYV&options=beta";
+        RestTemplate restTemplate = new RestTemplate();
+        ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
+
+        JSONObject jsonResponse = new JSONObject(response.getBody());
+        JSONObject currentConditions = jsonResponse.getJSONObject("currentConditions");
+
+        double temperature = currentConditions.getDouble("temp");
+
+        if (currentConditions.getDouble("snow") > 0)
+            return Weather.SNOWY;
+         else if (currentConditions.getDouble("precip") > 0)
+            return Weather.RAINY;
+         else if (temperature >= 85)
+            return Weather.HOT;
+         else if (temperature >= 60)
+            return Weather.WARM;
+        else if (temperature >= 32)
+            return Weather.COLD;
+        else
+            return Weather.FREEZING;
+
+    }
+
+    public List<RecipeResponse> getRecipesForCurrentWeather() {
+        Weather currentWeather = fetchWeatherFromApi();
+        List<Recipe> recipes = recipeRepository.findAll();
+
+        List<Recipe> filteredRecipes = recipes.stream()
+                .filter(recipe -> recipe.getWeather() == currentWeather)
+                .collect(Collectors.toList());
+
+        return recipeMapper.mapToRecipeResponseList(filteredRecipes);
     }
 
     public void deleteRecipe(Long id) {

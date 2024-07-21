@@ -9,7 +9,14 @@ public class OAuthService {
     @Value("${OAUTH_NEW_TOKEN}")
     private String oAuthToken;
 
+    @Value("${WEATHER_KEY}")
+    private String weatherKey;
+
     public String getOAuthToken() {
         return oAuthToken;
+    }
+
+    public String getWeatherKey() {
+        return weatherKey;
     }
 }

@@ -34,6 +34,12 @@ public class RecipeController {
         return ResponseEntity.ok(recipes);
     }
 
+    @GetMapping("/weather")
+    public ResponseEntity<List<RecipeResponse>> getAllRecipesForWeather() {
+        List<RecipeResponse> recipes = recipeService.getRecipesForCurrentWeather();
+        return ResponseEntity.ok(recipes);
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteRecipe(@PathVariable Long id) {
         recipeService.deleteRecipe(id);

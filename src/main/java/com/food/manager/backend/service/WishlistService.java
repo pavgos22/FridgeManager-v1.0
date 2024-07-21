@@ -7,6 +7,7 @@ import com.food.manager.backend.repository.WishlistRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -22,10 +23,8 @@ public class WishlistService {
         return WishlistMapper.toResponse(savedWishlist);
     }
 
-    public List<WishlistResponse> getAllWishlistItems() {
-        return wishlistRepository.findAll().stream()
-                .map(WishlistMapper::toResponse)
-                .collect(Collectors.toList());
+    public List<Wishlist> getAllWishlistItems() {
+        return new ArrayList<>(wishlistRepository.findAll());
     }
 
     public void clearWishlist() {
