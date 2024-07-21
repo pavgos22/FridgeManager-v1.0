@@ -27,7 +27,7 @@ public class Group {
     private LocalDateTime updatedAt;
 
     @ManyToMany(mappedBy = "groups")
-    @JsonManagedReference
+    @JsonManagedReference(value="group-user")
     private List<User> users;
 
     @OneToOne(mappedBy = "group", cascade = CascadeType.ALL, fetch = FetchType.LAZY)

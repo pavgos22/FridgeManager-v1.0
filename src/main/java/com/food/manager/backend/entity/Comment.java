@@ -18,10 +18,13 @@ public class Comment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="COMMENT_ID", unique = true)
     private Long commentId;
+
     @Column(name="CONTENT", nullable = false)
     private String content;
+
     @Column(name="CREATED_AT", nullable = false)
     private LocalDateTime createdAt;
+
     @Column(name="UPDATED_AT", nullable = true)
     private LocalDateTime updatedAt;
 
@@ -32,7 +35,7 @@ public class Comment {
 
     @ManyToOne
     @JoinColumn(name="USER_ID")
-    @JsonBackReference
+    @JsonBackReference(value="user-comment")
     private User author;
 
     public Comment(String content, LocalDateTime createdAt, LocalDateTime updatedAt, ShoppingListItem item, User author) {

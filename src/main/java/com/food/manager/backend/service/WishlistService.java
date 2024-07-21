@@ -1,11 +1,14 @@
 package com.food.manager.backend.service;
 
+import com.food.manager.backend.dto.response.WishlistResponse;
 import com.food.manager.backend.entity.Wishlist;
+import com.food.manager.backend.mapper.WishlistMapper;
 import com.food.manager.backend.repository.WishlistRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class WishlistService {
@@ -13,13 +16,16 @@ public class WishlistService {
     @Autowired
     private WishlistRepository wishlistRepository;
 
-    public Wishlist addProductToWishlist(String productName) {
+    public WishlistResponse addProductToWishlist(String productName) {
         Wishlist wishlist = new Wishlist(productName);
-        return wishlistRepository.save(wishlist);
+        Wishlist savedWishlist = wishlistRepository.save(wishlist);
+        return WishlistMapper.toResponse(savedWishlist);
     }
 
-    public List<Wishlist> getAllWishlistItems() {
-        return wishlistRepository.findAll();
+    public List<WishlistResponse> getAllWishlistItems() {
+        return wishlistRepository.findAll().stream()
+                .map(WishlistMapper::toResponse)
+                .collect(Collectors.toList());
     }
 
     public void clearWishlist() {

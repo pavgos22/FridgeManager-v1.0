@@ -11,6 +11,7 @@ public class AdminView extends VerticalLayout {
     public AdminView() {
         add(new RouterLink("Users", UserAdminView.class));
         add(new RouterLink("Groups", GroupAdminView.class));
+        add(new RouterLink("Wishlist", WishlistAdminView.class));
 //        add(new RouterLink("Fridges", FridgeAdminView.class));
 //        add(new RouterLink("Products", ProductAdminView.class));
 //        add(new RouterLink("Recipes", RecipeAdminView.class));
