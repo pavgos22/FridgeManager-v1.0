@@ -23,24 +23,11 @@ public class UserAdminView extends VerticalLayout {
 
     private void setupGrid() {
         grid.setColumns("userId", "username", "firstName", "lastName", "email", "createdAt", "updatedAt");
-        grid.getColumnByKey("userId").setHeader("userId");
-        grid.getColumnByKey("username").setHeader("username");
-        grid.getColumnByKey("firstName").setHeader("firstName");
-        grid.getColumnByKey("lastName").setHeader("lastName");
-        grid.getColumnByKey("email").setHeader("email");
-        grid.getColumnByKey("createdAt").setHeader("createdAt");
-        grid.getColumnByKey("updatedAt").setHeader("updatedAt");
         add(grid);
     }
 
     private void loadData() {
-        ResponseEntity<List<UserResponse>> response = restTemplate.exchange(
-                BASE_URL,
-                org.springframework.http.HttpMethod.GET,
-                null,
-                new ParameterizedTypeReference<>() {
-                }
-        );
+        ResponseEntity<List<UserResponse>> response = restTemplate.exchange(BASE_URL, org.springframework.http.HttpMethod.GET, null, new ParameterizedTypeReference<>() {});
         List<UserResponse> users = response.getBody();
         grid.setItems(users);
     }
