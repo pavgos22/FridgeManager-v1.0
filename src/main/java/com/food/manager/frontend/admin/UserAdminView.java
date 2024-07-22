@@ -23,6 +23,13 @@ public class UserAdminView extends VerticalLayout {
 
     private void setupGrid() {
         grid.setColumns("userId", "username", "firstName", "lastName", "email", "createdAt", "updatedAt");
+        grid.getColumnByKey("userId").setHeader("userId");
+        grid.getColumnByKey("username").setHeader("username");
+        grid.getColumnByKey("firstName").setHeader("firstName");
+        grid.getColumnByKey("lastName").setHeader("lastName");
+        grid.getColumnByKey("email").setHeader("email");
+        grid.getColumnByKey("createdAt").setHeader("createdAt");
+        grid.getColumnByKey("updatedAt").setHeader("updatedAt");
         add(grid);
     }
 

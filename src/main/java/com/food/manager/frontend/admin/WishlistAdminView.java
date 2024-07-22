@@ -8,11 +8,13 @@ import com.vaadin.flow.router.Route;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.Arrays;
+import java.util.List;
+
 @Route("admin/wishlist")
 public class WishlistAdminView extends VerticalLayout {
 
-    @Autowired
-    private WishlistService wishlistService;
+    private final WishlistService wishlistService;
 
     private Grid<Wishlist> grid = new Grid<>(Wishlist.class);
 
@@ -23,10 +25,17 @@ public class WishlistAdminView extends VerticalLayout {
         grid.setItems(wishlistService.getAllWishlistItems());
     }
 
-    public WishlistAdminView() {
+    public void refreshC() {
+        Wishlist[] wishlistArray = restTemplate.getForObject(BASE_URL, Wishlist[].class);
+        List<Wishlist> wishlist = Arrays.asList(wishlistArray);
+        grid.setItems(wishlist);
+    }
+
+    public WishlistAdminView(WishlistService wishlistService) {
+        this.wishlistService = wishlistService;
         grid.setColumns("id", "productName");
         add(grid);
         setSizeFull();
-        refresh();
+        refreshC();
     }
 }

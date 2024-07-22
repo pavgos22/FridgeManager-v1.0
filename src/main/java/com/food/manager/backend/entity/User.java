@@ -49,7 +49,6 @@ public class User {
             joinColumns = @JoinColumn(name = "USER_ID"),
             inverseJoinColumns = @JoinColumn(name = "GROUP_ID")
     )
-    @JsonBackReference(value="group-user")
     private List<Group> groups = new ArrayList<>();
 
     @OneToMany(mappedBy = "author")

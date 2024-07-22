@@ -21,9 +21,7 @@ public class UserMapper {
                 user.getLastName(),
                 user.getEmail(),
                 user.getCreatedAt(),
-                user.getUpdatedAt(),
-                user.getGroups().stream().map(Group::getGroupId).collect(Collectors.toList()),
-                user.getComments()
+                user.getUpdatedAt()
         );
     }
 
