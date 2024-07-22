@@ -10,6 +10,12 @@ import java.util.stream.Collectors;
 @Service
 public class RecipeMapper {
 
+    private final IngredientMapper ingredientMapper;
+
+    public RecipeMapper(IngredientMapper ingredientMapper) {
+        this.ingredientMapper = ingredientMapper;
+    }
+
     public RecipeResponse toRecipeResponse(Recipe recipe) {
         if (recipe == null) {
             return null;
@@ -20,7 +26,7 @@ public class RecipeMapper {
                 recipe.getDescription(),
                 recipe.getRecipeType().name(),
                 recipe.getWeather() != null ? recipe.getWeather().name() : null,
-                recipe.getIngredients(),
+                ingredientMapper.mapToIngredientSet(recipe.getIngredients()),
                 recipe.getRecipeUrl()
         );
     }

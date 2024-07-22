@@ -1,6 +1,17 @@
 package com.food.manager.backend.dto.response;
 
 import com.food.manager.backend.enums.QuantityType;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 
-public record FridgeProductResponse(Long fridgeProductId, QuantityType quantityType, int quantity, Long fridgeId, String productName) {
+@Getter
+@Setter
+@AllArgsConstructor
+public class FridgeProductResponse {
+    private Long fridgeProductId;
+    private QuantityType quantityType;
+    private int quantity;
+    private Long fridgeId;
+    private String productName;
 }

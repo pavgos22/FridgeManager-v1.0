@@ -30,12 +30,10 @@ public class Comment {
 
     @ManyToOne
     @JoinColumn(name="ITEM_ID", nullable = false)
-    @JsonBackReference
     private ShoppingListItem item;
 
     @ManyToOne
     @JoinColumn(name="USER_ID")
-    @JsonBackReference(value="user-comment")
     private User author;
 
     public Comment(String content, LocalDateTime createdAt, LocalDateTime updatedAt, ShoppingListItem item, User author) {

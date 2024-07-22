@@ -23,11 +23,9 @@ public class Fridge {
 
     @OneToOne
     @JoinColumn(name = "GROUP_ID")
-    @JsonBackReference
     private Group group;
 
     @OneToMany(mappedBy = "fridge", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JsonManagedReference
     private List<FridgeProduct> products = new ArrayList<>();
 
     public Fridge(Group group) {

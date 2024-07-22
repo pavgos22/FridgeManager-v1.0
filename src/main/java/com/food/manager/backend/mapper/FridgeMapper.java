@@ -10,6 +10,14 @@ import java.util.stream.Collectors;
 @Service
 public class FridgeMapper {
 
+    private final ProductMapper productMapper;
+    private final FridgeProductMapper fridgeProductMapper;
+
+    public FridgeMapper(ProductMapper productMapper, FridgeProductMapper fridgeProductMapper) {
+        this.productMapper = productMapper;
+        this.fridgeProductMapper = fridgeProductMapper;
+    }
+
     public FridgeResponse toFridgeResponse(Fridge fridge) {
         if (fridge == null) {
             return null;
@@ -17,7 +25,7 @@ public class FridgeMapper {
         return new FridgeResponse(
                 fridge.getFridgeId(),
                 fridge.getGroup().getGroupId(),
-                fridge.getProducts()
+                fridgeProductMapper.mapToFridgeProductList(fridge.getProducts())
         );
     }
 

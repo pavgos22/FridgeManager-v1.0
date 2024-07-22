@@ -26,7 +26,6 @@ public class Nutrition {
     private float carbohydrate;
 
     @OneToOne(mappedBy = "nutrition")
-    @JsonBackReference
     private Product product;
 
     public Nutrition(int calories, float protein, float fat, float carbohydrate) {

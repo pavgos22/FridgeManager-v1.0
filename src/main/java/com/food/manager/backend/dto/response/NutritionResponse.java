@@ -1,6 +1,16 @@
 package com.food.manager.backend.dto.response;
 
-import com.food.manager.backend.entity.Product;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 
-public record NutritionResponse(Long nutritionId, int calories, float protein, float fat, float carbohydrate) {
+@Getter
+@Setter
+@AllArgsConstructor
+public class NutritionResponse {
+    private Long nutritionId;
+    private int calories;
+    private float protein;
+    private float fat;
+    private float carbohydrate;
 }

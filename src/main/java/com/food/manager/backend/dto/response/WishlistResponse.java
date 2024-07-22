@@ -1,4 +1,13 @@
 package com.food.manager.backend.dto.response;
 
-public record WishlistResponse(Long wishlistId, String productName) {
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
+@AllArgsConstructor
+public class WishlistResponse {
+    private Long wishlistId;
+    private String productName;
 }

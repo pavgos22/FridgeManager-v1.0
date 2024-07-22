@@ -24,11 +24,9 @@ public class FridgeProduct {
 
     @ManyToOne
     @JoinColumn(name="FRIDGE_ID")
-    @JsonBackReference
     private Fridge fridge;
 
     @ManyToOne
-    @JsonBackReference
     @JoinColumn(name="PRODUCT_ID", nullable = false)
     private Product product;
 

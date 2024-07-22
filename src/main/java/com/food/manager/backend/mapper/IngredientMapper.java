@@ -5,6 +5,7 @@ import com.food.manager.backend.entity.Ingredient;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -22,9 +23,9 @@ public class IngredientMapper {
         );
     }
 
-    public List<IngredientResponse> mapToIngredientList(List<Ingredient> ingredients) {
+    public Set<IngredientResponse> mapToIngredientSet(Set<Ingredient> ingredients) {
         return ingredients.stream()
                 .map(this::toIngredientResponse)
-                .collect(Collectors.toList());
+                .collect(Collectors.toSet());
     }
 }

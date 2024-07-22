@@ -51,7 +51,6 @@ public class User {
     private List<Group> groups = new ArrayList<>();
 
     @OneToMany(mappedBy = "author")
-    @JsonManagedReference(value="user-comment")
     private List<Comment> comments = new ArrayList<>();
 
     public User(String username, String firstName, String lastName, String email, String password, LocalDateTime createdAt, LocalDateTime updatedAt) {

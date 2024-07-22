@@ -1,11 +1,21 @@
 package com.food.manager.backend.dto.response;
 
-import com.food.manager.backend.entity.Fridge;
-import com.food.manager.backend.entity.ShoppingListItem;
-import com.food.manager.backend.entity.User;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
-public record GroupResponse(Long groupId, String groupName, LocalDateTime createdAt, LocalDateTime updatedAt, List<User> users, Fridge groupFridge, List<ShoppingListItem> shoppingListItems) {
+@Getter
+@Setter
+@AllArgsConstructor
+public class GroupResponse {
+    private Long groupId;
+    private String groupName;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
+    private List<UserResponse> users;
+    private Long fridgeId;
+    private List<ShoppingListItemResponse> shoppingListItems;
 }

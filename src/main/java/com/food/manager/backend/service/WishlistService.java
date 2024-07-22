@@ -16,10 +16,16 @@ public class WishlistService {
     @Autowired
     private WishlistRepository wishlistRepository;
 
+    private final WishlistMapper wishlistMapper;
+
+    public WishlistService(WishlistMapper wishlistMapper) {
+        this.wishlistMapper = wishlistMapper;
+    }
+
     public WishlistResponse addProductToWishlist(String productName) {
         Wishlist wishlist = new Wishlist(productName);
         Wishlist savedWishlist = wishlistRepository.save(wishlist);
-        return WishlistMapper.toResponse(savedWishlist);
+        return wishlistMapper.toResponse(savedWishlist);
     }
 
     public List<Wishlist> getAllWishlistItems() {

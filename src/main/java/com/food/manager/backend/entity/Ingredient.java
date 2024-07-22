@@ -28,12 +28,10 @@ public class Ingredient {
 
     @ManyToOne
     @JoinColumn(name="PRODUCT_ID")
-    @JsonBackReference
     private Product product;
 
     @ManyToOne
     @JoinColumn(name="RECIPE_ID")
-    @JsonBackReference
     private Recipe recipe;
 
     public Ingredient(QuantityType quantityType, int quantity, boolean required, boolean ignoreGroup, Product product) {

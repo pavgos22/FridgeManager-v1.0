@@ -28,7 +28,6 @@ public class Product {
     private ProductGroup productGroup;
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.REMOVE)
-    @JsonManagedReference
     private List<ShoppingListItem> items;
 
     @OneToOne(cascade = CascadeType.ALL)
@@ -39,8 +38,7 @@ public class Product {
     private List<Ingredient> ingredients = new ArrayList<>();
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.REMOVE, orphanRemoval = true)
-    @JsonManagedReference
-    private List<FridgeProduct> fridgeProducts;
+    private List<FridgeProduct> fridgeProducts = new ArrayList<>();
 
     public Product(String productName) {
         this.productName = productName;

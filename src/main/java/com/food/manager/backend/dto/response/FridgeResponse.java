@@ -1,8 +1,16 @@
 package com.food.manager.backend.dto.response;
 
-import com.food.manager.backend.entity.FridgeProduct;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.List;
 
-public record FridgeResponse(Long fridgeId, Long group, List<FridgeProduct> fridgeProducts) {
+@Getter
+@Setter
+@AllArgsConstructor
+public class FridgeResponse {
+    private Long fridgeId;
+    private Long group;
+    private List<FridgeProductResponse> fridgeProducts;
 }

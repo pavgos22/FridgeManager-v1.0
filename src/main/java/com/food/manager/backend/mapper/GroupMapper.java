@@ -9,6 +9,14 @@ import java.util.List;
 @Service
 public class GroupMapper {
 
+    private final UserMapper userMapper;
+    private final ShoppingListItemMapper itemMapper;
+
+    public GroupMapper(UserMapper userMapper, ShoppingListItemMapper itemMapper) {
+        this.userMapper = userMapper;
+        this.itemMapper = itemMapper;
+    }
+
     public GroupResponse toGroupResponse(Group group) {
         if (group == null) {
             return null;
@@ -18,9 +26,9 @@ public class GroupMapper {
                 group.getGroupName(),
                 group.getCreatedAt(),
                 group.getUpdatedAt(),
-                group.getUsers(),
-                group.getGroupFridge(),
-                group.getShoppingListItems()
+                userMapper.mapToUsersList(group.getUsers()),
+                (group.getGroupFridge() != null && group.getGroupFridge().getFridgeId() != null) ? group.getGroupFridge().getFridgeId() : null,
+                itemMapper.mapToShoppingListItemList(group.getShoppingListItems())
         );
     }
 

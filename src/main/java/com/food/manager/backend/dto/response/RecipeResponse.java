@@ -1,7 +1,21 @@
 package com.food.manager.backend.dto.response;
 
 import com.food.manager.backend.entity.Ingredient;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
+
 import java.util.Set;
 
-public record RecipeResponse(Long recipeId, String recipeName, String description, String recipeType, String weather, Set<Ingredient> ingredients, String recipeUrl) {
+@Getter
+@Setter
+@AllArgsConstructor
+public class RecipeResponse {
+    private Long recipeId;
+    private String recipeName;
+    private String description;
+    private String recipeType;
+    private String weather;
+    private Set<IngredientResponse> ingredients;
+    private String recipeUrl;
 }

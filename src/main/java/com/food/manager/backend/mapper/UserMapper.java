@@ -3,10 +3,8 @@ package com.food.manager.backend.mapper;
 import com.food.manager.backend.dto.response.UserResponse;
 import com.food.manager.backend.entity.User;
 import org.springframework.stereotype.Service;
-import com.food.manager.backend.entity.Group;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class UserMapper {

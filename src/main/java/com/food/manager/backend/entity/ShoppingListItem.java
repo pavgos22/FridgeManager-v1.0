@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -29,16 +30,13 @@ public class ShoppingListItem {
 
     @ManyToOne
     @JoinColumn(name = "PRODUCT_ID", nullable = false)
-    @JsonBackReference
     private Product product;
 
     @OneToMany(mappedBy = "item")
-    @JsonManagedReference
-    private List<Comment> comments;
+    private List<Comment> comments = new ArrayList<>();
 
     @ManyToOne
     @JoinColumn(name = "GROUP_ID", nullable = false)
-    @JsonBackReference
     private Group group;
 
     public ShoppingListItem(Product product, QuantityType quantityType, int quantity, boolean checked, Group group) {

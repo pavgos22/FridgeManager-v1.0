@@ -25,11 +25,11 @@ public class NutritionMapper {
             return null;
         }
         Nutrition nutrition = new Nutrition();
-        nutrition.setNutritionId(nutritionResponse.nutritionId());
-        nutrition.setCalories(nutritionResponse.calories());
-        nutrition.setProtein(nutritionResponse.protein());
-        nutrition.setFat(nutritionResponse.fat());
-        nutrition.setCarbohydrate(nutritionResponse.carbohydrate());
+        nutrition.setNutritionId(nutritionResponse.getNutritionId());
+        nutrition.setCalories(nutritionResponse.getCalories());
+        nutrition.setProtein(nutritionResponse.getProtein());
+        nutrition.setFat(nutritionResponse.getFat());
+        nutrition.setCarbohydrate(nutritionResponse.getCarbohydrate());
         return nutrition;
     }
 }
