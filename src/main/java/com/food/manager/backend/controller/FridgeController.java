@@ -2,6 +2,7 @@ package com.food.manager.backend.controller;
 
 import com.food.manager.backend.dto.request.fridge.AddProductRequest;
 import com.food.manager.backend.dto.request.fridge.RemoveProductFromFridgeRequest;
+import com.food.manager.backend.dto.response.FridgeProductResponse;
 import com.food.manager.backend.dto.response.FridgeResponse;
 import com.food.manager.backend.dto.response.RecipeResponse;
 import com.food.manager.backend.service.FridgeService;
@@ -46,6 +47,12 @@ public class FridgeController {
     public ResponseEntity<List<RecipeResponse>> getRecipesPossibleWithFridgeProducts(@PathVariable Long fridgeId) {
         List<RecipeResponse> recipes = fridgeService.getRecipesPossibleWithFridgeProducts(fridgeId);
         return ResponseEntity.ok(recipes);
+    }
+
+    @GetMapping("/{fridgeId}/products")
+    public ResponseEntity<List<FridgeProductResponse>> getFridgeProducts(@PathVariable Long fridgeId) {
+        List<FridgeProductResponse> fridgeProducts = fridgeService.getFridgeProducts(fridgeId);
+        return ResponseEntity.ok(fridgeProducts);
     }
 
     @PutMapping("/{fridgeId}/executeRecipe/{recipeId}")

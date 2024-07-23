@@ -13,5 +13,7 @@ public class AdminView extends VerticalLayout {
         add(new RouterLink("Wishlist", WishlistAdminView.class));
         add(new RouterLink("Fridges", FridgeAdminView.class));
         add(new RouterLink("Products", ProductAdminView.class));
+        add(new RouterLink("Ingredients", IngredientAdminView.class));
+        add(new RouterLink("Recipes", RecipeAdminView.class));
     }
 }

@@ -1,6 +1,5 @@
 package com.food.manager.backend.dto.response;
 
-import com.food.manager.backend.entity.Ingredient;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;

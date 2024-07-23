@@ -2,11 +2,13 @@ package com.food.manager.backend.service;
 
 import com.food.manager.backend.dto.request.fridge.AddProductRequest;
 import com.food.manager.backend.dto.request.fridge.RemoveProductFromFridgeRequest;
+import com.food.manager.backend.dto.response.FridgeProductResponse;
 import com.food.manager.backend.dto.response.FridgeResponse;
 import com.food.manager.backend.dto.response.RecipeResponse;
 import com.food.manager.backend.entity.*;
 import com.food.manager.backend.exception.*;
 import com.food.manager.backend.mapper.FridgeMapper;
+import com.food.manager.backend.mapper.FridgeProductMapper;
 import com.food.manager.backend.mapper.RecipeMapper;
 import com.food.manager.backend.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +34,9 @@ public class FridgeService {
 
     @Autowired
     private FridgeMapper fridgeMapper;
+
+    @Autowired
+    private FridgeProductMapper fridgeProductMapper;
 
     @Autowired
     private RecipeMapper recipeMapper;
@@ -184,5 +189,13 @@ public class FridgeService {
 
         fridgeRepository.save(fridge);
         return fridgeMapper.toFridgeResponse(fridge);
+    }
+
+    public List<FridgeProductResponse> getFridgeProducts(Long fridgeId) {
+        Fridge fridge = fridgeRepository.findById(fridgeId)
+                .orElseThrow(() -> new RuntimeException("Fridge not found with id: " + fridgeId));
+        return fridge.getProducts().stream()
+                .map(fridgeProductMapper::toFridgeProductResponse)
+                .collect(Collectors.toList());
     }
 }

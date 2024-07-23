@@ -10,6 +10,12 @@ import java.util.stream.Collectors;
 @Service
 public class ProductMapper {
 
+    private final NutritionMapper nutritionMapper;
+
+    public ProductMapper(NutritionMapper nutritionMapper) {
+        this.nutritionMapper = nutritionMapper;
+    }
+
     public ProductResponse toProductResponse(Product product) {
         if (product == null) {
             return null;
@@ -17,7 +23,7 @@ public class ProductMapper {
         return new ProductResponse(
                 product.getProductId(),
                 product.getProductName(),
-                product.getNutrition(),
+                nutritionMapper.toNutritionResponse(product.getNutrition()),
                 product.getRecipeIds()
         );
     }

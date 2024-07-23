@@ -12,6 +12,5 @@ public class FridgeProductResponse {
     private Long fridgeProductId;
     private QuantityType quantityType;
     private int quantity;
-    private Long fridgeId;
     private String productName;
 }

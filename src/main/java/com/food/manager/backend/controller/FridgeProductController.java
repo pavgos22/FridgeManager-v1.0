@@ -1,11 +1,13 @@
 package com.food.manager.backend.controller;
 
-import com.food.manager.backend.dto.request.fridgeproduct.AddFridgeProductRequest;
 import com.food.manager.backend.dto.response.FridgeProductResponse;
 import com.food.manager.backend.service.FridgeProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
