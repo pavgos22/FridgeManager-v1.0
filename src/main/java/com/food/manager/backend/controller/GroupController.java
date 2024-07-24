@@ -40,10 +40,7 @@ public class GroupController {
 
     @PutMapping("/{id}")
     public ResponseEntity<GroupResponse> updateGroup(@PathVariable Long id, @RequestBody UpdateGroupRequest updateGroupRequest) {
-        if (!id.equals(updateGroupRequest.groupId())) {
-            throw new RuntimeException("Path variable id does not match request body id");
-        }
-        GroupResponse groupResponse = groupService.updateGroup(updateGroupRequest);
+        GroupResponse groupResponse = groupService.updateGroup(id, updateGroupRequest);
         return ResponseEntity.ok(groupResponse);
     }
 
@@ -54,7 +51,7 @@ public class GroupController {
         return ResponseEntity.ok(groupResponse);
     }
 
-    @PostMapping("/removeUser")
+    @PutMapping("/removeUser")
     public ResponseEntity<GroupResponse> removeUser(@RequestBody DeleteUserRequest deleteUserRequest) {
         GroupResponse groupResponse = groupService.deleteUser(deleteUserRequest);
         return ResponseEntity.ok(groupResponse);

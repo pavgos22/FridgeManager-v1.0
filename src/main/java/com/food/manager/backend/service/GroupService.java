@@ -54,8 +54,8 @@ public class GroupService {
         return groupMapper.toGroupResponse(groupRepository.save(group));
     }
 
-    public GroupResponse updateGroup(UpdateGroupRequest updateGroupRequest) {
-        Optional<Group> optionalGroup = groupRepository.findById(updateGroupRequest.groupId());
+    public GroupResponse updateGroup(Long id, UpdateGroupRequest updateGroupRequest) {
+        Optional<Group> optionalGroup = groupRepository.findById(id);
 
         if (optionalGroup.isPresent()) {
             Group group = optionalGroup.get();
@@ -63,7 +63,7 @@ public class GroupService {
             group.setUpdatedAt(LocalDateTime.now());
             return groupMapper.toGroupResponse(groupRepository.save(group));
         } else
-            throw new RuntimeException("Group not found with id: " + updateGroupRequest.groupId());
+            throw new RuntimeException("Group not found with id: " + id);
     }
 
 
