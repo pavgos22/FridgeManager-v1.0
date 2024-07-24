@@ -27,39 +27,32 @@ public class GroupAdminView extends VerticalLayout {
     private static final String BASE_URL = "http://localhost:8080/v1/groups";
     private final Grid<GroupResponse> grid = new Grid<>(GroupResponse.class);
 
-    // Fields for createGroup
     private final TextField createGroupNameField = new TextField("Create Group Name");
     private final Button createSaveButton = new Button("Save");
 
-    // Fields for updateGroup
     private final TextField updateGroupNameField = new TextField("Update Group Name");
     private final TextField groupIdField = new TextField("Group ID");
     private final Button updateButton = new Button("Update");
 
-    // Fields for addUser
     private final TextField addUserGroupIdField = new TextField("Group ID");
     private final TextField addUserIdField = new TextField("User ID to Add");
     private final Button addUserButton = new Button("Add User");
 
-    // Fields for removeUser
     private final TextField removeUserGroupIdField = new TextField("Group ID");
     private final TextField removeUserIdField = new TextField("User ID to Remove");
     private final Button removeUserButton = new Button("Remove User");
 
-    // Fields for addItem
     private final TextField addItemGroupIdField = new TextField("Group ID");
     private final TextField addItemProductIdField = new TextField("Product ID");
     private final ComboBox<QuantityType> addItemQuantityTypeField = new ComboBox<>("Quantity Type");
     private final TextField addItemQuantityField = new TextField("Quantity");
     private final Button addItemButton = new Button("Add Item");
 
-    // Fields for removeItem
     private final TextField removeItemGroupIdField = new TextField("Group ID");
     private final TextField removeItemIdField = new TextField("Item ID");
     private final TextField removeItemQuantityField = new TextField("Quantity");
     private final Button removeItemButton = new Button("Remove Item");
 
-    // Fields for deleteGroup
     private final TextField deleteGroupIdField = new TextField("Group ID");
     private final Button deleteGroupButton = new Button("Delete Group");
 

@@ -23,20 +23,17 @@ public class FridgeAdminView extends VerticalLayout {
     private static final String BASE_URL = "http://localhost:8080/v1/fridges";
     private final Grid<FridgeResponse> grid = new Grid<>(FridgeResponse.class);
 
-    // Fields for addProductToFridge
     private final TextField addFridgeIdField = new TextField("Fridge ID");
     private final TextField addProductIdField = new TextField("Product ID");
     private final ComboBox<QuantityType> addQuantityTypeField = new ComboBox<>("Quantity Type");
     private final TextField addQuantityField = new TextField("Quantity");
     private final Button addProductButton = new Button("Add Product");
 
-    // Fields for removeProductFromFridge
     private final TextField removeFridgeIdField = new TextField("Fridge ID");
     private final TextField removeFridgeProductIdField = new TextField("Fridge Product ID");
     private final TextField removeQuantityField = new TextField("Quantity");
     private final Button removeProductButton = new Button("Remove Product");
 
-    // Fields for executeRecipe
     private final TextField executeFridgeIdField = new TextField("Fridge ID");
     private final TextField executeRecipeIdField = new TextField("Recipe ID");
     private final Button executeRecipeButton = new Button("Execute Recipe");
