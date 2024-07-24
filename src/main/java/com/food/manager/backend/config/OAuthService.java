@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class OAuthService {
 
-    @Value("${OAUTH_NEW_TOKEN}")
+    @Value("${P_TOKEN}")
     private String oAuthToken;
 
     @Value("${WEATHER_KEY}")
