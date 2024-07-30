@@ -2,38 +2,37 @@ package com.food.manager.frontend.admin;
 
 import com.food.manager.backend.dto.request.ingredient.CreateIngredientRequest;
 import com.food.manager.backend.dto.response.IngredientResponse;
-import com.food.manager.backend.dto.response.ProductResponse;
 import com.food.manager.backend.enums.QuantityType;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
-import com.vaadin.flow.data.provider.CallbackDataProvider;
-import com.vaadin.flow.data.provider.DataProvider;
-import com.vaadin.flow.data.provider.Query;
 import com.vaadin.flow.router.Route;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
-import java.util.stream.Stream;
 
 @Route("admin/ingredients")
 public class IngredientAdminView extends VerticalLayout {
     private final RestTemplate restTemplate = new RestTemplate();
     private static final String BASE_URL = "http://localhost:8080/v1/ingredients";
-    private static final String PRODUCTS_URL = "http://localhost:8080/v1/products/search";
-    private final Grid<IngredientResponse> grid = new Grid<>(IngredientResponse.class);
 
-    private final ComboBox<ProductResponse> productComboBox = new ComboBox<>("Product");
-    private final ComboBox<QuantityType> quantityTypeComboBox = new ComboBox<>("Quantity Type");
+    private final ComboBox<QuantityType> quantityTypeField = new ComboBox<>("Quantity Type");
     private final TextField quantityField = new TextField("Quantity");
-    private final TextField requiredField = new TextField("Required");
-    private final TextField ignoreGroupField = new TextField("Ignore Group");
-    private final Button createButton = new Button("Create Ingredient");
+    private final TextField productIdField = new TextField("Product ID");
+    private final Checkbox requiredField = new Checkbox("Required");
+    private final Checkbox ignoreGroupField = new Checkbox("Ignore Group");
+    private final Button createIngredientButton = new Button("Create Ingredient");
+
+    private final TextField ingredientIdFieldToDelete = new TextField("Ingredient ID to Delete");
+    private final Button deleteIngredientButton = new Button("Delete Ingredient");
+
+    private final Grid<IngredientResponse> grid = new Grid<>(IngredientResponse.class);
 
     public IngredientAdminView() {
         setupGrid();
@@ -47,58 +46,54 @@ public class IngredientAdminView extends VerticalLayout {
     }
 
     private void setupForm() {
-        quantityTypeComboBox.setItems(QuantityType.values());
-        createButton.addClickListener(e -> createIngredient());
+        quantityTypeField.setItems(QuantityType.values());
+        createIngredientButton.addClickListener(e -> createIngredient());
+        deleteIngredientButton.addClickListener(e -> deleteIngredient());
 
-        DataProvider<ProductResponse, String> productDataProvider = DataProvider.fromFilteringCallbacks(
-                query -> fetchProducts(query.getFilter().orElse("")),
-                query -> fetchProductsCount(query.getFilter().orElse(""))
+        VerticalLayout createFormLayout = new VerticalLayout(
+                quantityTypeField,
+                quantityField,
+                productIdField,
+                requiredField,
+                ignoreGroupField,
+                createIngredientButton
         );
-        //productComboBox.setDataProvider(productDataProvider);
-        productComboBox.setItemLabelGenerator(ProductResponse::getProductName);
 
-        VerticalLayout createIngredientForm = new VerticalLayout(productComboBox, quantityTypeComboBox, quantityField, requiredField, ignoreGroupField, createButton);
-        createIngredientForm.setSpacing(true);
-        createIngredientForm.setPadding(true);
-
-        add(createIngredientForm);
-    }
-
-    private Stream<ProductResponse> fetchProducts(String filter) {
-        ResponseEntity<List<ProductResponse>> response = restTemplate.exchange(
-                PRODUCTS_URL + "?name=" + filter,
-                org.springframework.http.HttpMethod.GET,
-                null,
-                new ParameterizedTypeReference<>() {}
+        VerticalLayout deleteFormLayout = new VerticalLayout(
+                ingredientIdFieldToDelete,
+                deleteIngredientButton
         );
-        List<ProductResponse> products = response.getBody();
-        return products.stream();
-    }
 
-    private int fetchProductsCount(String filter) {
-        return (int) fetchProducts(filter).count();
+        HorizontalLayout formsLayout = new HorizontalLayout(createFormLayout, deleteFormLayout);
+        add(formsLayout);
     }
 
     private void loadData() {
         ResponseEntity<List<IngredientResponse>> response = restTemplate.exchange(
-                BASE_URL,
-                org.springframework.http.HttpMethod.GET,
-                null,
-                new ParameterizedTypeReference<>() {}
+                BASE_URL, org.springframework.http.HttpMethod.GET, null,
+                new ParameterizedTypeReference<List<IngredientResponse>>() {}
         );
         List<IngredientResponse> ingredients = response.getBody();
         grid.setItems(ingredients);
     }
 
     private void createIngredient() {
+        QuantityType quantityType = quantityTypeField.getValue();
+        int quantity = Integer.parseInt(quantityField.getValue());
+        Long productId = Long.parseLong(productIdField.getValue());
+        boolean required = requiredField.getValue();
+        boolean ignoreGroup = ignoreGroupField.getValue();
+
         CreateIngredientRequest request = new CreateIngredientRequest(
-                quantityTypeComboBox.getValue(),
-                Integer.parseInt(quantityField.getValue()),
-                Boolean.parseBoolean(requiredField.getValue()),
-                Boolean.parseBoolean(ignoreGroupField.getValue()),
-                productComboBox.getValue().getProductId()
-        );
-        restTemplate.postForObject(BASE_URL, request, IngredientResponse.class);
+                quantityType, quantity, required, ignoreGroup, productId);
+
+        restTemplate.postForObject(BASE_URL, request, Void.class);
+        loadData();
+    }
+
+    private void deleteIngredient() {
+        Long ingredientId = Long.parseLong(ingredientIdFieldToDelete.getValue());
+        restTemplate.delete(BASE_URL + "/" + ingredientId);
         loadData();
     }
 }

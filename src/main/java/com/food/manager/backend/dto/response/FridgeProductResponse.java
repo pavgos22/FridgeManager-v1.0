@@ -13,4 +13,9 @@ public class FridgeProductResponse {
     private QuantityType quantityType;
     private int quantity;
     private String productName;
+
+    @Override
+    public String toString() {
+        return productName + " (" + quantity + " " + quantityType + ")";
+    }
 }
