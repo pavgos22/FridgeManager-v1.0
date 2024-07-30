@@ -9,16 +9,17 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 public class ItemWindow extends Dialog {
 
     public ItemWindow(Grid<ShoppingListItemResponse> itemsGrid) {
-        setCloseOnOutsideClick(true);
-        setCloseOnEsc(true);
+        setWidth("800px");
+        setHeight("600px");
+        setModal(true);
+        setDraggable(true);
+        setResizable(true);
 
         VerticalLayout layout = new VerticalLayout();
         layout.add(itemsGrid);
-        itemsGrid.setSizeFull();
 
-        Button closeButton = new Button("Close", e -> this.close());
+        Button closeButton = new Button("Close", event -> close());
         layout.add(closeButton);
-        layout.setSizeFull();
 
         add(layout);
         open();
