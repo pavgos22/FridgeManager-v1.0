@@ -4,6 +4,7 @@ import com.food.manager.backend.dto.request.group.*;
 import com.food.manager.backend.dto.request.item.CreateItemRequest;
 import com.food.manager.backend.dto.request.user.DeleteUserRequest;
 import com.food.manager.backend.dto.response.GroupResponse;
+import com.food.manager.backend.dto.response.ShoppingListItemResponse;
 import com.food.manager.backend.service.GroupService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -30,6 +31,12 @@ public class GroupController {
         Optional<GroupResponse> groupResponse = groupService.getGroup(id);
         return groupResponse.map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("/{id}/items")
+    public ResponseEntity<List<ShoppingListItemResponse>> getGroupItems(@PathVariable Long id) {
+        List<ShoppingListItemResponse> items = groupService.getShoppingListItemsByGroup(id);
+        return ResponseEntity.ok(items);
     }
 
     @PostMapping

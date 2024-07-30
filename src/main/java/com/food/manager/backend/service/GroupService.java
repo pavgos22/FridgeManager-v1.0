@@ -4,9 +4,11 @@ import com.food.manager.backend.dto.request.group.*;
 import com.food.manager.backend.dto.request.item.CreateItemRequest;
 import com.food.manager.backend.dto.request.user.DeleteUserRequest;
 import com.food.manager.backend.dto.response.GroupResponse;
+import com.food.manager.backend.dto.response.ShoppingListItemResponse;
 import com.food.manager.backend.entity.*;
 import com.food.manager.backend.exception.ProductNotFoundInProductsException;
 import com.food.manager.backend.mapper.GroupMapper;
+import com.food.manager.backend.mapper.ShoppingListItemMapper;
 import com.food.manager.backend.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,6 +16,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class GroupService {
@@ -23,6 +26,9 @@ public class GroupService {
 
     @Autowired
     private GroupMapper groupMapper;
+
+    @Autowired
+    private ShoppingListItemMapper shoppingListItemMapper;
 
     @Autowired
     private UserRepository userRepository;
@@ -147,6 +153,11 @@ public class GroupService {
 
         groupRepository.save(group);
         return groupMapper.toGroupResponse(group);
+    }
+
+    public List<ShoppingListItemResponse> getShoppingListItemsByGroup(Long groupId) {
+        List<ShoppingListItem> items = shoppingListItemRepository.findByGroupId(groupId);
+        return shoppingListItemMapper.mapToShoppingListItemList(items);
     }
 
 

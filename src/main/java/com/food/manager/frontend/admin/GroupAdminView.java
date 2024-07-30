@@ -7,7 +7,9 @@ import com.food.manager.backend.dto.request.group.UpdateGroupRequest;
 import com.food.manager.backend.dto.request.item.CreateItemRequest;
 import com.food.manager.backend.dto.request.user.DeleteUserRequest;
 import com.food.manager.backend.dto.response.GroupResponse;
+import com.food.manager.backend.dto.response.ShoppingListItemResponse;
 import com.food.manager.backend.enums.QuantityType;
+import com.food.manager.frontend.admin.window.ItemWindow;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.grid.Grid;
@@ -56,6 +58,9 @@ public class GroupAdminView extends VerticalLayout {
     private final TextField deleteGroupIdField = new TextField("Group ID");
     private final Button deleteGroupButton = new Button("Delete Group");
 
+    private final TextField groupItemsGroupIdField = new TextField("Group ID");
+    private final Button viewItemsButton = new Button("View Group Items");
+
     public GroupAdminView() {
         setupGrid();
         setupForm();
@@ -75,6 +80,7 @@ public class GroupAdminView extends VerticalLayout {
         addItemButton.addClickListener(e -> addItem());
         removeItemButton.addClickListener(e -> removeItem());
         deleteGroupButton.addClickListener(e -> deleteGroup());
+        viewItemsButton.addClickListener(e -> viewGroupItems());
 
         VerticalLayout createGroupForm = new VerticalLayout(createGroupNameField, createSaveButton);
         createGroupForm.setSpacing(true);
@@ -105,7 +111,11 @@ public class GroupAdminView extends VerticalLayout {
         deleteGroupForm.setSpacing(true);
         deleteGroupForm.setPadding(true);
 
-        HorizontalLayout formsLayout = new HorizontalLayout(createGroupForm, updateGroupForm, addUserForm, removeUserForm, addItemForm, removeItemForm, deleteGroupForm);
+        VerticalLayout viewItemsForm = new VerticalLayout(groupItemsGroupIdField, viewItemsButton);
+        viewItemsForm.setSpacing(true);
+        viewItemsForm.setPadding(true);
+
+        HorizontalLayout formsLayout = new HorizontalLayout(createGroupForm, updateGroupForm, addUserForm, removeUserForm, addItemForm, removeItemForm, deleteGroupForm, viewItemsForm);
         add(formsLayout);
     }
 
@@ -167,5 +177,23 @@ public class GroupAdminView extends VerticalLayout {
         long groupId = Long.parseLong(deleteGroupIdField.getValue());
         restTemplate.delete(BASE_URL + "/" + groupId);
         loadData();
+    }
+
+    private void viewGroupItems() {
+        Long groupId = Long.parseLong(groupItemsGroupIdField.getValue());
+        ResponseEntity<List<ShoppingListItemResponse>> response = restTemplate.exchange(
+                BASE_URL + "/" + groupId + "/items",
+                org.springframework.http.HttpMethod.GET,
+                null,
+                new ParameterizedTypeReference<>() {
+                }
+        );
+        List<ShoppingListItemResponse> items = response.getBody();
+
+        Grid<ShoppingListItemResponse> itemsGrid = new Grid<>(ShoppingListItemResponse.class);
+        itemsGrid.setColumns("itemId", "productId", "groupId", "quantityType", "quantity", "checked");
+        itemsGrid.setItems(items);
+
+        new ItemWindow(itemsGrid);
     }
 }
