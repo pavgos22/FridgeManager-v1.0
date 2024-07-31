@@ -19,15 +19,15 @@ public class FridgeController {
     @Autowired
     private FridgeService fridgeService;
 
-    @PutMapping("/addProduct")
-    public ResponseEntity<FridgeResponse> addProductToFridge(@RequestBody AddProductRequest addProductRequest) {
-        FridgeResponse fridgeResponse = fridgeService.addProductToFridge(addProductRequest);
+    @PutMapping("/{id}/addProduct")
+    public ResponseEntity<FridgeResponse> addProductToFridge(@PathVariable Long id, @RequestBody AddProductRequest addProductRequest) {
+        FridgeResponse fridgeResponse = fridgeService.addProductToFridge(id, addProductRequest);
         return ResponseEntity.ok(fridgeResponse);
     }
 
-    @PutMapping("/removeProduct")
-    public ResponseEntity<FridgeResponse> removeProduct(@RequestBody RemoveProductFromFridgeRequest removeProductRequest) {
-        FridgeResponse fridgeResponse = fridgeService.removeProductFromFridge(removeProductRequest);
+    @PutMapping("/{id}/removeProduct")
+    public ResponseEntity<FridgeResponse> removeProduct(@PathVariable Long id, @RequestBody RemoveProductFromFridgeRequest removeProductRequest) {
+        FridgeResponse fridgeResponse = fridgeService.removeProductFromFridge(id, removeProductRequest);
         return ResponseEntity.ok(fridgeResponse);
     }
 

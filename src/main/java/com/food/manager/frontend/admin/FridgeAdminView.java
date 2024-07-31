@@ -105,8 +105,8 @@ public class FridgeAdminView extends VerticalLayout {
         QuantityType quantityType = addQuantityTypeField.getValue();
         int quantity = Integer.parseInt(addQuantityField.getValue());
 
-        AddProductRequest request = new AddProductRequest(fridgeId, productId, quantityType, quantity);
-        restTemplate.put(BASE_URL + "/addProduct", request, FridgeResponse.class);
+        AddProductRequest request = new AddProductRequest(productId, quantityType, quantity);
+        restTemplate.put(BASE_URL + "/" + fridgeId + "/addProduct", request, FridgeResponse.class);
         loadData();
     }
 
@@ -115,8 +115,8 @@ public class FridgeAdminView extends VerticalLayout {
         Long fridgeProductId = Long.parseLong(removeFridgeProductIdField.getValue());
         int quantity = Integer.parseInt(removeQuantityField.getValue());
 
-        RemoveProductFromFridgeRequest request = new RemoveProductFromFridgeRequest(fridgeId, fridgeProductId, quantity);
-        restTemplate.put(BASE_URL + "/removeProduct", request, FridgeResponse.class);
+        RemoveProductFromFridgeRequest request = new RemoveProductFromFridgeRequest(fridgeProductId, quantity);
+        restTemplate.put(BASE_URL + "/" + fridgeId + "/removeProduct", request, FridgeResponse.class);
         loadData();
     }
 

@@ -72,9 +72,9 @@ public class FridgeService {
     }
 
 
-    public FridgeResponse addProductToFridge(AddProductRequest addProductRequest) {
-        Fridge fridge = fridgeRepository.findById(addProductRequest.fridgeId())
-                .orElseThrow(() -> new FridgeNotFoundException("Fridge with id " + addProductRequest.fridgeId() + " not found"));
+    public FridgeResponse addProductToFridge(Long fridgeId, AddProductRequest addProductRequest) {
+        Fridge fridge = fridgeRepository.findById(fridgeId)
+                .orElseThrow(() -> new FridgeNotFoundException("Fridge with id " + fridgeId + " not found"));
 
         Optional<FridgeProduct> existingProduct = fridge.getProducts().stream()
                 .filter(fp -> fp.getProduct().getProductId().equals(addProductRequest.productId())).findFirst();
@@ -95,8 +95,8 @@ public class FridgeService {
     }
 
 
-    public FridgeResponse removeProductFromFridge(RemoveProductFromFridgeRequest removeProductFromFridgeRequest) {
-        Optional<Fridge> fridgeOptional = fridgeRepository.findById(removeProductFromFridgeRequest.fridgeId());
+    public FridgeResponse removeProductFromFridge(Long fridgeId, RemoveProductFromFridgeRequest removeProductFromFridgeRequest) {
+        Optional<Fridge> fridgeOptional = fridgeRepository.findById(fridgeId);
 
         if (fridgeOptional.isPresent()) {
             Fridge fridge = fridgeOptional.get();
@@ -125,7 +125,7 @@ public class FridgeService {
             return fridgeMapper.toFridgeResponse(fridge);
         }
         else
-            throw new RuntimeException("Fridge not found with id: " + removeProductFromFridgeRequest.fridgeId());
+            throw new RuntimeException("Fridge not found with id: " + fridgeId);
     }
 
     public List<RecipeResponse> getRecipesPossibleWithFridgeProducts(Long fridgeId) {

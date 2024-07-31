@@ -1,9 +1,7 @@
 package com.food.manager.backend.controller;
 
-import com.food.manager.backend.dto.request.user.EditCommentRequest;
 import com.food.manager.backend.dto.response.CommentResponse;
 import com.food.manager.backend.service.CommentService;
-import com.food.manager.backend.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
