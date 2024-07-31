@@ -2,5 +2,5 @@ package com.food.manager.backend.dto.request.item;
 
 import com.food.manager.backend.enums.QuantityType;
 
-public record CreateItemRequest(Long productId, QuantityType quantityType, int quantity, Long groupId) {
+public record CreateItemRequest(Long productId, QuantityType quantityType, int quantity) {
 }

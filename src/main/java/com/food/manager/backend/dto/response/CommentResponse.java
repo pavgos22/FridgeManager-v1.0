@@ -1,6 +1,5 @@
 package com.food.manager.backend.dto.response;
 
-import com.food.manager.backend.entity.ShoppingListItem;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -15,6 +14,6 @@ public class CommentResponse {
     private String content;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
-    private ShoppingListItem item;
+    private ShoppingListItemResponse item;
     private Long authorId;
 }

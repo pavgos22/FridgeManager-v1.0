@@ -10,13 +10,19 @@ import java.util.stream.Collectors;
 @Component
 public class CommentMapper {
 
+    private final ShoppingListItemMapper shoppingListItemMapper;
+
+    public CommentMapper(ShoppingListItemMapper shoppingListItemMapper) {
+        this.shoppingListItemMapper = shoppingListItemMapper;
+    }
+
     public CommentResponse toCommentResponse(Comment comment) {
         return new CommentResponse(
                 comment.getCommentId(),
                 comment.getContent(),
                 comment.getCreatedAt(),
                 comment.getUpdatedAt(),
-                comment.getItem(),
+                shoppingListItemMapper.toShoppingListItemResponse(comment.getItem()),
                 comment.getAuthor().getUserId()
         );
     }

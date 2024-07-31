@@ -39,9 +39,9 @@ public class UserController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    @PostMapping("/addComment")
-    public ResponseEntity<CommentResponse> addComment(@RequestBody AddCommentRequest addCommentRequest) {
-        CommentResponse comment = userService.addComment(addCommentRequest);
+    @PostMapping("/{id}/addComment")
+    public ResponseEntity<CommentResponse> addComment(@PathVariable Long id, @RequestBody AddCommentRequest addCommentRequest) {
+        CommentResponse comment = userService.addComment(id, addCommentRequest);
         return ResponseEntity.ok(comment);
     }
 

@@ -74,9 +74,9 @@ public class UserService {
                 .orElseThrow(() -> new RuntimeException("User not found"));
     }
 
-    public CommentResponse addComment(AddCommentRequest addCommentRequest) {
+    public CommentResponse addComment(Long authorId, AddCommentRequest addCommentRequest) {
         ShoppingListItem item = shoppingListItemRepository.findById(addCommentRequest.itemId()).orElseThrow(() -> new RuntimeException("Item not found"));
-        User user = userRepository.findById(addCommentRequest.userId()).orElseThrow(() -> new RuntimeException("User not found"));
+        User user = userRepository.findById(authorId).orElseThrow(() -> new RuntimeException("User not found"));
         Comment comment = new Comment(
                 addCommentRequest.content(),
                 LocalDateTime.now(),

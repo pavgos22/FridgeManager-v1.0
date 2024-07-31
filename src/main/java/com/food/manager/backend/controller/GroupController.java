@@ -64,16 +64,15 @@ public class GroupController {
         return ResponseEntity.ok(groupResponse);
     }
 
-    @PutMapping("/addItem")
-    public ResponseEntity<GroupResponse> addItemToGroup(@RequestBody CreateItemRequest createItemRequest) {
-        GroupResponse groupResponse = groupService.addItemToGroup(createItemRequest);
+    @PutMapping("/{id}/addItem")
+    public ResponseEntity<GroupResponse> addItemToGroup(@PathVariable Long id, @RequestBody CreateItemRequest createItemRequest) {
+        GroupResponse groupResponse = groupService.addItemToGroup(id, createItemRequest);
         return ResponseEntity.ok(groupResponse);
     }
 
-    @PutMapping("/removeItem")
-    public ResponseEntity<GroupResponse> removeItemFromGroup(
-            @RequestBody RemoveItemFromGroupRequest removeItemFromGroupRequest) {
-        GroupResponse groupResponse = groupService.removeItemFromGroup(removeItemFromGroupRequest);
+    @PutMapping("/{id}/removeItem")
+    public ResponseEntity<GroupResponse> removeItemFromGroup(@PathVariable Long id, @RequestBody RemoveItemFromGroupRequest removeItemFromGroupRequest) {
+        GroupResponse groupResponse = groupService.removeItemFromGroup(id, removeItemFromGroupRequest);
         return ResponseEntity.ok(groupResponse);
     }
 

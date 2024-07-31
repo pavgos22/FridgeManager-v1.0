@@ -159,8 +159,8 @@ public class GroupAdminView extends VerticalLayout {
         Long productId = Long.parseLong(addItemProductIdField.getValue());
         QuantityType quantityType = addItemQuantityTypeField.getValue();
         int quantity = Integer.parseInt(addItemQuantityField.getValue());
-        CreateItemRequest request = new CreateItemRequest(productId, quantityType, quantity, groupId);
-        restTemplate.put(BASE_URL + "/addItem", request, GroupResponse.class);
+        CreateItemRequest request = new CreateItemRequest(productId, quantityType, quantity);
+        restTemplate.put(BASE_URL + "/" + groupId + "/addItem", request, GroupResponse.class);
         loadData();
     }
 
@@ -168,8 +168,8 @@ public class GroupAdminView extends VerticalLayout {
         Long groupId = Long.parseLong(removeItemGroupIdField.getValue());
         Long itemId = Long.parseLong(removeItemIdField.getValue());
         int quantity = Integer.parseInt(removeItemQuantityField.getValue());
-        RemoveItemFromGroupRequest request = new RemoveItemFromGroupRequest(groupId, itemId, quantity);
-        restTemplate.put(BASE_URL + "/removeItem", request, GroupResponse.class);
+        RemoveItemFromGroupRequest request = new RemoveItemFromGroupRequest(itemId, quantity);
+        restTemplate.put(BASE_URL + "/" + groupId + "/removeItem", request, GroupResponse.class);
         loadData();
     }
 

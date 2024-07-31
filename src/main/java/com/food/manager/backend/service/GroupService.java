@@ -110,9 +110,9 @@ public class GroupService {
             throw new RuntimeException("Group or User not found");
     }
 
-    public GroupResponse addItemToGroup(CreateItemRequest createItemRequest) {
-        Group group = groupRepository.findById(createItemRequest.groupId())
-                .orElseThrow(() -> new RuntimeException("Group not found with id: " + createItemRequest.groupId()));
+    public GroupResponse addItemToGroup(Long groupId, CreateItemRequest createItemRequest) {
+        Group group = groupRepository.findById(groupId)
+                .orElseThrow(() -> new RuntimeException("Group not found with id: " + groupId));
 
         Product product = productRepository.findById(createItemRequest.productId())
                 .orElseThrow(() -> new ProductNotFoundInProductsException("Product with id " + createItemRequest.productId() + " not found"));
@@ -136,9 +136,9 @@ public class GroupService {
     }
 
 
-    public GroupResponse removeItemFromGroup(RemoveItemFromGroupRequest removeItemFromGroupRequest) {
-        Group group = groupRepository.findById(removeItemFromGroupRequest.groupId())
-                .orElseThrow(() -> new RuntimeException("Group not found with id: " + removeItemFromGroupRequest.groupId()));
+    public GroupResponse removeItemFromGroup(Long groupId, RemoveItemFromGroupRequest removeItemFromGroupRequest) {
+        Group group = groupRepository.findById(groupId)
+                .orElseThrow(() -> new RuntimeException("Group not found with id: " + groupId));
 
         ShoppingListItem item = shoppingListItemRepository.findById(removeItemFromGroupRequest.itemId())
                 .orElseThrow(() -> new RuntimeException("Item not found with id: " + removeItemFromGroupRequest.itemId()));

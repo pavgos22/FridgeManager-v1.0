@@ -104,12 +104,12 @@ public class UserAdminView extends VerticalLayout {
     }
 
     private void addComment() {
+        long authorId = Long.parseLong(addCommentUserId.getValue());
         AddCommentRequest request = new AddCommentRequest(
-                Long.parseLong(addCommentUserId.getValue()),
                 Long.parseLong(addCommentItemId.getValue()),
                 addCommentContent.getValue()
         );
-        restTemplate.postForObject(BASE_URL + "/addComment", request, CommentResponse.class);
+        restTemplate.postForObject(BASE_URL + "/" + authorId + "/addComment", request, CommentResponse.class);
     }
 
     private void editComment() {
