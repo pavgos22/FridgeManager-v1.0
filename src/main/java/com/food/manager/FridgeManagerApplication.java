@@ -9,5 +9,4 @@ public class FridgeManagerApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(FridgeManagerApplication.class, args);
 	}
-
 }
