@@ -2,7 +2,9 @@ package com.food.manager.frontend.admin;
 
 import com.food.manager.backend.dto.request.product.CreateProductRequest;
 import com.food.manager.backend.dto.response.ProductResponse;
+import com.food.manager.backend.dto.response.NutritionResponse;
 import com.food.manager.backend.enums.ProductGroup;
+import com.food.manager.frontend.admin.window.NutritionWindow;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
@@ -24,10 +26,13 @@ public class ProductAdminView extends VerticalLayout {
 
     private final TextField productNameField = new TextField("Product Name");
     private final ComboBox<ProductGroup> productGroupField = new ComboBox<>("Product Group");
-    private final Button createSaveButton = new Button("Save");
+    private final Button createSaveButton = new Button("Add");
 
     private final TextField productIdToDeleteField = new TextField("Product ID to Delete");
     private final Button deleteButton = new Button("Delete");
+
+    private final TextField nutritionProductIdField = new TextField("Product ID for Nutrition");
+    private final Button getNutritionButton = new Button("Get Nutrition");
 
     public ProductAdminView() {
         setupGrid();
@@ -43,6 +48,7 @@ public class ProductAdminView extends VerticalLayout {
     private void setupForm() {
         createSaveButton.addClickListener(e -> createProduct());
         deleteButton.addClickListener(e -> deleteProduct());
+        getNutritionButton.addClickListener(e -> getNutrition());
 
         productGroupField.setItems(ProductGroup.values());
         VerticalLayout createProductForm = new VerticalLayout(productNameField, productGroupField, createSaveButton);
@@ -53,7 +59,11 @@ public class ProductAdminView extends VerticalLayout {
         deleteProductForm.setSpacing(true);
         deleteProductForm.setPadding(true);
 
-        HorizontalLayout formsLayout = new HorizontalLayout(createProductForm, deleteProductForm);
+        VerticalLayout nutritionForm = new VerticalLayout(nutritionProductIdField, getNutritionButton);
+        nutritionForm.setSpacing(true);
+        nutritionForm.setPadding(true);
+
+        HorizontalLayout formsLayout = new HorizontalLayout(createProductForm, deleteProductForm, nutritionForm);
         add(formsLayout);
     }
 
@@ -76,5 +86,12 @@ public class ProductAdminView extends VerticalLayout {
         Long productId = Long.parseLong(productIdToDeleteField.getValue());
         restTemplate.delete(BASE_URL + "/" + productId);
         loadData();
+    }
+
+    private void getNutrition() {
+        Long productId = Long.parseLong(nutritionProductIdField.getValue());
+        ResponseEntity<NutritionResponse> response = restTemplate.getForEntity(BASE_URL + "/" + productId + "/nutrition", NutritionResponse.class);
+        NutritionResponse nutrition = response.getBody();
+        new NutritionWindow(nutrition);
     }
 }
