@@ -3,11 +3,15 @@ package com.food.manager.backend.service;
 import com.food.manager.backend.config.OAuthService;
 import com.food.manager.backend.dto.request.product.CreateProductRequest;
 import com.food.manager.backend.dto.request.product.UpdateProductRequest;
+import com.food.manager.backend.dto.response.NutritionResponse;
 import com.food.manager.backend.dto.response.ProductResponse;
 import com.food.manager.backend.entity.Nutrition;
 import com.food.manager.backend.entity.Product;
+import com.food.manager.backend.exception.NutritionIsNullException;
 import com.food.manager.backend.exception.ProductNotFoundInProductsException;
+import com.food.manager.backend.mapper.NutritionMapper;
 import com.food.manager.backend.mapper.ProductMapper;
+import com.food.manager.backend.repository.NutritionRepository;
 import com.food.manager.backend.repository.ProductRepository;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -33,6 +37,10 @@ public class ProductService {
 
     @Autowired
     private OAuthService oAuthService;
+    @Autowired
+    private NutritionRepository nutritionRepository;
+    @Autowired
+    private NutritionMapper nutritionMapper;
 
     public ProductResponse getProduct(Long id) {
         Optional<Product> productOptional = productRepository.findById(id);
@@ -41,6 +49,12 @@ public class ProductService {
         } else {
             throw new RuntimeException("Product not found with id: " + id);
         }
+    }
+
+    public NutritionResponse getProductNutrition(Long productId) {
+        Product product = productRepository.findById(productId).orElseThrow(() -> new RuntimeException("Product with id " + productId + " not found"));
+        Nutrition nutrition = nutritionRepository.findById(product.getNutrition().getNutritionId()).orElseThrow(() -> new NutritionIsNullException("Nutrition for product with id " + productId + " is Null"));
+        return nutritionMapper.toNutritionResponse(nutrition);
     }
 
     public List<ProductResponse> getAllProducts() {

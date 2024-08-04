@@ -1,6 +1,7 @@
 package com.food.manager.backend.controller;
 
 import com.food.manager.backend.dto.request.recipe.CreateRecipeRequest;
+import com.food.manager.backend.dto.response.RecipeNutrition;
 import com.food.manager.backend.dto.response.RecipeResponse;
 import com.food.manager.backend.service.RecipeService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +27,12 @@ public class RecipeController {
     public ResponseEntity<RecipeResponse> getRecipe(@PathVariable Long id) {
         RecipeResponse recipeResponse = recipeService.getRecipe(id);
         return ResponseEntity.ok(recipeResponse);
+    }
+
+    @GetMapping("/{id}/nutrition")
+    public ResponseEntity<RecipeNutrition>getRecipeNutrition(@PathVariable Long id) {
+        RecipeNutrition recipeNutrition = recipeService.calcNutrition(id);
+        return ResponseEntity.ok(recipeNutrition);
     }
 
     @GetMapping

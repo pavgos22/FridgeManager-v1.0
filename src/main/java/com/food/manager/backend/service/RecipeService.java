@@ -1,12 +1,16 @@
 package com.food.manager.backend.service;
 
 import com.food.manager.backend.dto.request.recipe.CreateRecipeRequest;
+import com.food.manager.backend.dto.response.RecipeNutrition;
 import com.food.manager.backend.dto.response.RecipeResponse;
 import com.food.manager.backend.entity.Ingredient;
+import com.food.manager.backend.entity.Nutrition;
+import com.food.manager.backend.entity.Product;
 import com.food.manager.backend.entity.Recipe;
 import com.food.manager.backend.enums.Weather;
 import com.food.manager.backend.exception.DuplicateIngredientException;
 import com.food.manager.backend.exception.IngredientNotFoundException;
+import com.food.manager.backend.exception.RecipeNotFoundException;
 import com.food.manager.backend.mapper.RecipeMapper;
 import com.food.manager.backend.repository.IngredientRepository;
 import com.food.manager.backend.repository.RecipeRepository;
@@ -108,6 +112,29 @@ public class RecipeService {
 
         return recipeMapper.mapToRecipeResponseList(filteredRecipes);
     }
+
+    public RecipeNutrition calcNutrition(Long recipeId) {
+        Recipe recipe = recipeRepository.findById(recipeId)
+                .orElseThrow(() -> new RecipeNotFoundException("Recipe with " + recipeId + " not found"));
+
+        int totalCalories = 0;
+        float totalProtein = 0;
+        float totalFat = 0;
+        float totalCarbohydrate = 0;
+
+        for (Ingredient ingredient : recipe.getIngredients()) {
+            Product product = ingredient.getProduct();
+            if (product != null && product.getNutrition() != null) {
+                Nutrition nutrition = product.getNutrition();
+                totalCalories += nutrition.getCalories();
+                totalProtein += nutrition.getProtein();
+                totalFat += nutrition.getFat();
+                totalCarbohydrate += nutrition.getCarbohydrate();
+            }
+        }
+        return new RecipeNutrition(totalCalories, totalProtein, totalFat, totalCarbohydrate);
+    }
+
 
     public void deleteRecipe(Long id) {
         if (recipeRepository.existsById(id)) {
