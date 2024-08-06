@@ -17,8 +17,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class GroupService {
@@ -53,6 +56,24 @@ public class GroupService {
     public Optional<GroupResponse> getGroup(Long id) {
         return groupRepository.findById(id).map(groupMapper::toGroupResponse);
     }
+
+    public Map<ShoppingListItemResponse, Map<String, String>> getItemsWithComments(Long groupId) {
+        List<ShoppingListItem> items = shoppingListItemRepository.findByGroupId(groupId);
+
+        Map<ShoppingListItemResponse, Map<String, String>> itemsWithComments = new HashMap<>();
+
+        for (ShoppingListItem item : items) {
+            Map<String, String> commentsMap = item.getComments().stream()
+                    .collect(Collectors.toMap(comment -> comment.getAuthor().getUsername(), Comment::getContent));
+
+            if (!commentsMap.isEmpty()) {
+                ShoppingListItemResponse itemResponse = shoppingListItemMapper.toShoppingListItemResponse(item);
+                itemsWithComments.put(itemResponse, commentsMap);
+            }
+        }
+        return itemsWithComments;
+    }
+
 
     public GroupResponse createGroup(CreateGroupRequest createGroupRequest) {
         Group group = new Group(createGroupRequest.groupName(), LocalDateTime.now(), LocalDateTime.now());
@@ -110,7 +131,6 @@ public class GroupService {
         return groupMapper.toGroupResponse(group);
     }
 
-
     public GroupResponse addItemToGroup(Long groupId, CreateItemRequest createItemRequest) {
         Group group = groupRepository.findById(groupId).orElseThrow(() -> new RuntimeException("Group not found with id: " + groupId));
         Product product = productRepository.findById(createItemRequest.productId()).orElseThrow(() -> new ProductNotFoundInProductsException("Product with id " + createItemRequest.productId() + " not found"));
@@ -157,6 +177,7 @@ public class GroupService {
         List<ShoppingListItem> items = shoppingListItemRepository.findByGroupId(groupId);
         return shoppingListItemMapper.mapToShoppingListItemList(items);
     }
+
 
 
     public void deleteGroup(DeleteGroupRequest deleteGroupRequest) {

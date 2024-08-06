@@ -180,7 +180,7 @@ public class GroupAdminView extends VerticalLayout {
     }
 
     private void viewGroupItems() {
-        Long groupId = Long.parseLong(groupItemsGroupIdField.getValue());
+        long groupId = Long.parseLong(groupItemsGroupIdField.getValue());
         ResponseEntity<List<ShoppingListItemResponse>> response = restTemplate.exchange(
                 BASE_URL + "/" + groupId + "/items",
                 org.springframework.http.HttpMethod.GET,

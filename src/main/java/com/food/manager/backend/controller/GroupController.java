@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -38,6 +39,13 @@ public class GroupController {
         List<ShoppingListItemResponse> items = groupService.getShoppingListItemsByGroup(id);
         return ResponseEntity.ok(items);
     }
+
+    @GetMapping("/{id}/itemsWithComments")
+    public ResponseEntity<Map<ShoppingListItemResponse, Map<String, String>>> getItemsWithComments(@PathVariable Long id) {
+        Map<ShoppingListItemResponse, Map<String, String>> itemsWithComments = groupService.getItemsWithComments(id);
+        return ResponseEntity.ok(itemsWithComments);
+    }
+
 
     @PostMapping
     public ResponseEntity<GroupResponse> createGroup(@RequestBody CreateGroupRequest createGroupRequest) {
