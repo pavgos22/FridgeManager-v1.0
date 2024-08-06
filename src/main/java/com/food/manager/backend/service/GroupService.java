@@ -6,7 +6,10 @@ import com.food.manager.backend.dto.request.user.DeleteUserRequest;
 import com.food.manager.backend.dto.response.GroupResponse;
 import com.food.manager.backend.dto.response.ShoppingListItemResponse;
 import com.food.manager.backend.entity.*;
+import com.food.manager.backend.exception.GroupNotFoundException;
 import com.food.manager.backend.exception.ProductNotFoundInProductsException;
+import com.food.manager.backend.exception.UserAlreadyInGroupException;
+import com.food.manager.backend.exception.UserNotFoundException;
 import com.food.manager.backend.mapper.GroupMapper;
 import com.food.manager.backend.mapper.ShoppingListItemMapper;
 import com.food.manager.backend.repository.*;
@@ -16,7 +19,6 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class GroupService {
@@ -74,24 +76,23 @@ public class GroupService {
 
 
     public GroupResponse addUser(AddUserRequest addUserRequest) {
-        Optional<Group> groupOptional = groupRepository.findById(addUserRequest.groupId());
-        Optional<User> userOptional = userRepository.findById(addUserRequest.userId());
+        Group group = groupRepository.findById(addUserRequest.groupId()).orElseThrow(() -> new GroupNotFoundException("Group with ID " + addUserRequest.groupId() + " not found"));
 
-        if (groupOptional.isPresent() && userOptional.isPresent()) {
-            Group group = groupOptional.get();
-            User user = userOptional.get();
+        User user = userRepository.findById(addUserRequest.userId()).orElseThrow(() -> new UserNotFoundException("User with ID " + addUserRequest.userId() + " not found"));
 
-            group.getUsers().add(user);
-            user.getGroups().add(group);
+        if (group.getUsers().contains(user))
+            throw new UserAlreadyInGroupException("User with ID " + addUserRequest.userId() + " is already in group with ID " + addUserRequest.groupId());
 
-            groupRepository.save(group);
-            userRepository.save(user);
 
-            return groupMapper.toGroupResponse(group);
-        } else {
-            throw new RuntimeException("Group or User not found");
-        }
+        group.getUsers().add(user);
+        user.getGroups().add(group);
+
+        groupRepository.save(group);
+        userRepository.save(user);
+
+        return groupMapper.toGroupResponse(group);
     }
+
 
     public GroupResponse deleteUser(DeleteUserRequest deleteUserRequest) {
         Optional<Group> groupOptional = groupRepository.findById(deleteUserRequest.groupId());
