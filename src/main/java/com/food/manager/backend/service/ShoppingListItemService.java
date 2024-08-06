@@ -2,13 +2,16 @@ package com.food.manager.backend.service;
 
 import com.food.manager.backend.dto.request.item.AddItemToListRequest;
 import com.food.manager.backend.dto.request.item.RemoveItemFromListRequest;
+import com.food.manager.backend.dto.response.CommentResponse;
 import com.food.manager.backend.dto.response.ShoppingListItemResponse;
+import com.food.manager.backend.entity.Comment;
 import com.food.manager.backend.entity.Group;
 import com.food.manager.backend.entity.Product;
 import com.food.manager.backend.entity.ShoppingListItem;
 import com.food.manager.backend.exception.GroupNotFoundException;
 import com.food.manager.backend.exception.NegativeValueException;
 import com.food.manager.backend.exception.ProductNotFoundInProductsException;
+import com.food.manager.backend.exception.ShoppingListItemNotFoundException;
 import com.food.manager.backend.mapper.ShoppingListItemMapper;
 import com.food.manager.backend.repository.GroupRepository;
 import com.food.manager.backend.repository.ProductRepository;
@@ -17,7 +20,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class ShoppingListItemService {
@@ -43,6 +48,13 @@ public class ShoppingListItemService {
         } else {
             throw new RuntimeException("Item not found with id: " + id);
         }
+    }
+
+    public Map<String, String> getItemComments(Long itemId) {
+        ShoppingListItem item = shoppingListItemRepository.findById(itemId)
+                .orElseThrow(() -> new ShoppingListItemNotFoundException("Item with ID: " + itemId + " not found"));
+
+        return shoppingListItemMapper.toCommentMap(item);
     }
 
     public ShoppingListItemResponse addItemToShoppingList(AddItemToListRequest addItemToListRequest) {

@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/v1/items")
@@ -27,6 +28,12 @@ public class ShoppingListItemController {
     public ResponseEntity<ShoppingListItemResponse> getItem(@PathVariable Long id) {
         ShoppingListItemResponse item = shoppingListItemService.getItem(id);
         return ResponseEntity.ok(item);
+    }
+
+    @GetMapping("/{id}/comments")
+    public ResponseEntity<Map<String, String>> getItemComments(@PathVariable Long id) {
+        Map<String, String> comments = shoppingListItemService.getItemComments(id);
+        return ResponseEntity.ok(comments);
     }
 
     @PutMapping
