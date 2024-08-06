@@ -1,6 +1,5 @@
 package com.food.manager.backend.entity;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.food.manager.backend.enums.QuantityType;
 import jakarta.persistence.*;
 import lombok.Getter;

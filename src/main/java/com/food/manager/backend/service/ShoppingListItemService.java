@@ -70,9 +70,6 @@ public class ShoppingListItemService {
         return shoppingListItemMapper.toShoppingListItemResponse(shoppingListItem);
     }
 
-
-
-
     public void removeItemFromShoppingList(RemoveItemFromListRequest removeItemFromListRequest) {
         if(removeItemFromListRequest.quantity() <= 0)
             throw new NegativeValueException("Quantity must be greater than zero");

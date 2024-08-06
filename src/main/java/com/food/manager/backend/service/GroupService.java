@@ -95,28 +95,25 @@ public class GroupService {
 
 
     public GroupResponse deleteUser(DeleteUserRequest deleteUserRequest) {
-        Optional<Group> groupOptional = groupRepository.findById(deleteUserRequest.groupId());
-        Optional<User> userOptional = userRepository.findById(deleteUserRequest.userId());
+        Group group = groupRepository.findById(deleteUserRequest.groupId())
+                .orElseThrow(() -> new GroupNotFoundException("Group with ID " + deleteUserRequest.groupId() + " not found"));
 
-        if (groupOptional.isPresent() && userOptional.isPresent()) {
-            Group group = groupOptional.get();
-            User user = userOptional.get();
+        User user = userRepository.findById(deleteUserRequest.userId())
+                .orElseThrow(() -> new UserNotFoundException("User with ID " + deleteUserRequest.userId() + " not found"));
 
-            group.getUsers().remove(user);
-            user.getGroups().remove(group);
+        group.getUsers().remove(user);
+        user.getGroups().remove(group);
 
-            return groupMapper.toGroupResponse(group);
-        }
-        else
-            throw new RuntimeException("Group or User not found");
+        groupRepository.save(group);
+        userRepository.save(user);
+
+        return groupMapper.toGroupResponse(group);
     }
 
-    public GroupResponse addItemToGroup(Long groupId, CreateItemRequest createItemRequest) {
-        Group group = groupRepository.findById(groupId)
-                .orElseThrow(() -> new RuntimeException("Group not found with id: " + groupId));
 
-        Product product = productRepository.findById(createItemRequest.productId())
-                .orElseThrow(() -> new ProductNotFoundInProductsException("Product with id " + createItemRequest.productId() + " not found"));
+    public GroupResponse addItemToGroup(Long groupId, CreateItemRequest createItemRequest) {
+        Group group = groupRepository.findById(groupId).orElseThrow(() -> new RuntimeException("Group not found with id: " + groupId));
+        Product product = productRepository.findById(createItemRequest.productId()).orElseThrow(() -> new ProductNotFoundInProductsException("Product with id " + createItemRequest.productId() + " not found"));
 
         Optional<ShoppingListItem> existingItemOptional = group.getShoppingListItems().stream()
                 .filter(item -> item.getProduct().getProductId().equals(createItemRequest.productId()))
