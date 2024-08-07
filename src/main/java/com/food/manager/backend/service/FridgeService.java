@@ -52,7 +52,7 @@ public class FridgeService {
         if (fridgeOptional.isPresent()) {
             return fridgeMapper.toFridgeResponse(fridgeOptional.get());
         } else {
-            throw new RuntimeException("Fridge not found with id: " + id);
+            throw new FridgeNotFoundException("Fridge not found with ID: " + id);
         }
     }
 
@@ -64,7 +64,7 @@ public class FridgeService {
     public Fridge createFridge(Long groupId) {
         Optional<Group> optionalGroup = groupRepository.findById(groupId);
         if (optionalGroup.isEmpty()) {
-            throw new RuntimeException("Group not found with id: " + groupId);
+            throw new GroupNotFoundException("Group not found with ID: " + groupId);
         }
         Fridge fridge = new Fridge(optionalGroup.get());
         fridge = fridgeRepository.save(fridge);
@@ -104,10 +104,10 @@ public class FridgeService {
             FridgeProduct fridgeProduct = fridge.getProducts().stream()
                     .filter(fp -> fp.getFridgeProductId().equals(removeProductFromFridgeRequest.fridgeProductId()))
                     .findFirst()
-                    .orElseThrow(() -> new RuntimeException("Product not found in fridge"));
+                    .orElseThrow(() -> new ProductNotFoundInFridgeException("FridgeProduct with ID " + removeProductFromFridgeRequest.fridgeProductId() + " not found in fridge with ID " + fridgeId));
 
             if (fridgeProduct.getQuantity() < removeProductFromFridgeRequest.quantity()) {
-                throw new RuntimeException("Not enough quantity to remove");
+                throw new InsufficientQuantityException("Not enough quantity to remove");
             }
 
             fridgeProduct.setQuantity(fridgeProduct.getQuantity() - removeProductFromFridgeRequest.quantity());
@@ -130,7 +130,7 @@ public class FridgeService {
 
     public List<RecipeResponse> getRecipesPossibleWithFridgeProducts(Long fridgeId) {
         Fridge fridge = fridgeRepository.findById(fridgeId)
-                .orElseThrow(() -> new RuntimeException("Fridge not found with id: " + fridgeId));
+                .orElseThrow(() -> new FridgeNotFoundException("Fridge not found with id: " + fridgeId));
 
         Set<Product> fridgeProducts = fridge.getProducts().stream()
                 .map(FridgeProduct::getProduct)
@@ -193,7 +193,7 @@ public class FridgeService {
 
     public List<FridgeProductResponse> getFridgeProducts(Long fridgeId) {
         Fridge fridge = fridgeRepository.findById(fridgeId)
-                .orElseThrow(() -> new RuntimeException("Fridge not found with id: " + fridgeId));
+                .orElseThrow(() -> new FridgeNotFoundException("Fridge not found with id: " + fridgeId));
         return fridge.getProducts().stream()
                 .map(fridgeProductMapper::toFridgeProductResponse)
                 .collect(Collectors.toList());
