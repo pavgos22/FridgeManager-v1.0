@@ -53,7 +53,6 @@ public class GroupController {
         return ResponseEntity.ok(itemsWithComments);
     }
 
-
     @PostMapping
     public ResponseEntity<GroupResponse> createGroup(@RequestBody CreateGroupRequest createGroupRequest) {
         GroupResponse groupResponse = groupService.createGroup(createGroupRequest);
