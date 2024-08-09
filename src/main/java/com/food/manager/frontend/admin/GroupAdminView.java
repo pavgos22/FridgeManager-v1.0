@@ -150,7 +150,7 @@ public class GroupAdminView extends VerticalLayout {
         Long groupId = Long.parseLong(removeUserGroupIdField.getValue());
         Long userId = Long.parseLong(removeUserIdField.getValue());
         DeleteUserRequest request = new DeleteUserRequest(groupId, userId);
-        restTemplate.postForObject(BASE_URL + "/removeUser", request, GroupResponse.class);
+        restTemplate.put(BASE_URL + "/removeUser", request, GroupResponse.class);
         loadData();
     }
 

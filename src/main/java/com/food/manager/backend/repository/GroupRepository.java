@@ -13,4 +13,7 @@ public interface GroupRepository extends JpaRepository<Group, Long> {
 
     @Query("SELECT g FROM Group g JOIN g.shoppingListItems i WHERE i.itemId = :itemId")
     Group findByItem(@Param("itemId") Long itemId);
+
+    @Query("SELECT g FROM Group g JOIN FETCH g.users WHERE g.groupId = :groupId")
+    Group findGroupWithUsers(@Param("groupId") Long groupId);
 }

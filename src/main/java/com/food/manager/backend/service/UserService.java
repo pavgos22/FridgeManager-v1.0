@@ -10,7 +10,6 @@ import com.food.manager.backend.entity.Comment;
 import com.food.manager.backend.entity.Group;
 import com.food.manager.backend.entity.ShoppingListItem;
 import com.food.manager.backend.entity.User;
-import com.food.manager.backend.exception.GroupNotFoundException;
 import com.food.manager.backend.exception.UserNotInGroupException;
 import com.food.manager.backend.mapper.CommentMapper;
 import com.food.manager.backend.mapper.UserMapper;

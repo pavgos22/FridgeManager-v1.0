@@ -5,6 +5,7 @@ import com.food.manager.backend.dto.request.item.CreateItemRequest;
 import com.food.manager.backend.dto.request.user.DeleteUserRequest;
 import com.food.manager.backend.dto.response.GroupResponse;
 import com.food.manager.backend.dto.response.ShoppingListItemResponse;
+import com.food.manager.backend.dto.response.UserResponse;
 import com.food.manager.backend.service.GroupService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -23,7 +24,7 @@ public class GroupController {
 
     @GetMapping
     public ResponseEntity<List<GroupResponse>> getAllGroups() {
-        List<GroupResponse> groups = groupService.getAllUsers();
+        List<GroupResponse> groups = groupService.getAllGroups();
         return ResponseEntity.ok(groups);
     }
 
@@ -32,6 +33,12 @@ public class GroupController {
         Optional<GroupResponse> groupResponse = groupService.getGroup(id);
         return groupResponse.map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("/{id}/users")
+    public ResponseEntity<List<UserResponse>> getAllUsersFromGroup(@PathVariable Long id) {
+        List<UserResponse> groupUsers = groupService.getAllUsersInGroup(id);
+        return ResponseEntity.ok(groupUsers);
     }
 
     @GetMapping("/{id}/items")

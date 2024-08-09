@@ -31,10 +31,8 @@ public class ProductService {
 
     @Autowired
     private ProductRepository productRepository;
-
     @Autowired
     private ProductMapper productMapper;
-
     @Autowired
     private OAuthService oAuthService;
     @Autowired

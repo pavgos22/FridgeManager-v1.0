@@ -5,6 +5,7 @@ import com.food.manager.backend.dto.request.item.CreateItemRequest;
 import com.food.manager.backend.dto.request.user.DeleteUserRequest;
 import com.food.manager.backend.dto.response.GroupResponse;
 import com.food.manager.backend.dto.response.ShoppingListItemResponse;
+import com.food.manager.backend.dto.response.UserResponse;
 import com.food.manager.backend.entity.*;
 import com.food.manager.backend.exception.GroupNotFoundException;
 import com.food.manager.backend.exception.ProductNotFoundInProductsException;
@@ -12,6 +13,7 @@ import com.food.manager.backend.exception.UserAlreadyInGroupException;
 import com.food.manager.backend.exception.UserNotFoundException;
 import com.food.manager.backend.mapper.GroupMapper;
 import com.food.manager.backend.mapper.ShoppingListItemMapper;
+import com.food.manager.backend.mapper.UserMapper;
 import com.food.manager.backend.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -33,6 +35,9 @@ public class GroupService {
     private GroupMapper groupMapper;
 
     @Autowired
+    private UserMapper userMapper;
+
+    @Autowired
     private ShoppingListItemMapper shoppingListItemMapper;
 
     @Autowired
@@ -48,9 +53,15 @@ public class GroupService {
     private FridgeService fridgeService;
 
 
-    public List<GroupResponse> getAllUsers() {
+    public List<GroupResponse> getAllGroups() {
         List<Group> groups = groupRepository.findAll();
         return groupMapper.mapToGroupsList(groups);
+    }
+
+    public List<UserResponse> getAllUsersInGroup(Long groupId) {
+        Group group = groupRepository.findGroupWithUsers(groupId);
+        List<User> users = group.getUsers();
+        return userMapper.mapToUsersList(users);
     }
 
     public Optional<GroupResponse> getGroup(Long id) {
