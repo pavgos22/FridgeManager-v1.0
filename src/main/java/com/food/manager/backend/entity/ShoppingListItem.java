@@ -30,7 +30,7 @@ public class ShoppingListItem {
     @JoinColumn(name = "PRODUCT_ID", nullable = false)
     private Product product;
 
-    @OneToMany(mappedBy = "item")
+    @OneToMany(mappedBy = "item", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comment> comments = new ArrayList<>();
 
     @ManyToOne

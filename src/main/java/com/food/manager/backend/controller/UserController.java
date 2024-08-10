@@ -45,9 +45,9 @@ public class UserController {
         return ResponseEntity.ok(comment);
     }
 
-    @PatchMapping("/editComment")
-    public ResponseEntity<CommentResponse> editComment(@RequestBody EditCommentRequest editCommentRequest) {
-        CommentResponse updatedComment = userService.editComment(editCommentRequest);
+    @PutMapping("{id}/editComment")
+    public ResponseEntity<CommentResponse> editComment(@PathVariable Long id, @RequestBody EditCommentRequest editCommentRequest) {
+        CommentResponse updatedComment = userService.editComment(id, editCommentRequest);
         return ResponseEntity.ok(updatedComment);
     }
 

@@ -10,6 +10,7 @@ import com.food.manager.backend.entity.Comment;
 import com.food.manager.backend.entity.Group;
 import com.food.manager.backend.entity.ShoppingListItem;
 import com.food.manager.backend.entity.User;
+import com.food.manager.backend.exception.NotUsersCommentException;
 import com.food.manager.backend.exception.UserNotInGroupException;
 import com.food.manager.backend.mapper.CommentMapper;
 import com.food.manager.backend.mapper.UserMapper;
@@ -97,8 +98,10 @@ public class UserService {
         return commentMapper.toCommentResponse(comment);
     }
 
-    public CommentResponse editComment(EditCommentRequest editCommentRequest) {
-        Comment comment = commentRepository.findById(editCommentRequest.commentId()).orElseThrow(() -> new RuntimeException("Comment not found"));
+    public CommentResponse editComment(Long commentId, EditCommentRequest editCommentRequest) {
+        Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new RuntimeException("Comment not found"));
+        if(!comment.getAuthor().getUserId().equals(editCommentRequest.AuthorId()))
+            throw new NotUsersCommentException("User with ID: " + editCommentRequest.AuthorId() + " is not author of comment with ID: " + commentId);
         comment.setContent(editCommentRequest.content());
         comment.setUpdatedAt(LocalDateTime.now());
         commentRepository.save(comment);

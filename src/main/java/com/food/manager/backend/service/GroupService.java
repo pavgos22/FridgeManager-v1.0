@@ -189,9 +189,7 @@ public class GroupService {
         return shoppingListItemMapper.mapToShoppingListItemList(items);
     }
 
-
-
-    public void deleteGroup(DeleteGroupRequest deleteGroupRequest) {
-        groupRepository.deleteById(deleteGroupRequest.id());
+    public void deleteGroup(Long id) {
+        groupRepository.deleteById(id);
     }
 }

@@ -19,7 +19,8 @@ import java.util.List;
 
 @Route("admin/users")
 public class UserAdminView extends VerticalLayout {
-    private final RestTemplate restTemplate = new RestTemplate();
+    RestTemplate restTemplate = new RestTemplate();
+
     private static final String BASE_URL = "http://localhost:8080/v1/users";
     private final Grid<UserResponse> grid = new Grid<>(UserResponse.class);
 
@@ -39,6 +40,7 @@ public class UserAdminView extends VerticalLayout {
     private final Button addCommentButton = new Button("Add Comment");
 
     private final TextField editCommentId = new TextField("Comment ID");
+    private final TextField editCommentAuthorId = new TextField("Author ID");
     private final TextField editCommentContent = new TextField("Content");
     private final Button editCommentButton = new Button("Edit Comment");
 
@@ -71,7 +73,7 @@ public class UserAdminView extends VerticalLayout {
         addCommentForm.setSpacing(true);
         addCommentForm.setPadding(true);
 
-        VerticalLayout editCommentForm = new VerticalLayout(editCommentId, editCommentContent, editCommentButton);
+        VerticalLayout editCommentForm = new VerticalLayout(editCommentId, editCommentAuthorId, editCommentContent, editCommentButton);
         editCommentForm.setSpacing(true);
         editCommentForm.setPadding(true);
 
@@ -113,10 +115,11 @@ public class UserAdminView extends VerticalLayout {
     }
 
     private void editComment() {
+        long commentId = Long.parseLong(editCommentId.getValue());
         EditCommentRequest request = new EditCommentRequest(
-                Long.parseLong(editCommentId.getValue()),
+                Long.parseLong(editCommentAuthorId.getValue()),
                 editCommentContent.getValue()
         );
-        restTemplate.patchForObject(BASE_URL + "/editComment", request, CommentResponse.class);
+        restTemplate.put(BASE_URL + "/" + commentId + "/editComment", request, CommentResponse.class);
     }
 }
