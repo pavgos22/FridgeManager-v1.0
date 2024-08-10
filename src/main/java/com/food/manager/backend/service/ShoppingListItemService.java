@@ -2,9 +2,7 @@ package com.food.manager.backend.service;
 
 import com.food.manager.backend.dto.request.item.AddItemToListRequest;
 import com.food.manager.backend.dto.request.item.RemoveItemFromListRequest;
-import com.food.manager.backend.dto.response.CommentResponse;
 import com.food.manager.backend.dto.response.ShoppingListItemResponse;
-import com.food.manager.backend.entity.Comment;
 import com.food.manager.backend.entity.Group;
 import com.food.manager.backend.entity.Product;
 import com.food.manager.backend.entity.ShoppingListItem;
@@ -22,7 +20,6 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class ShoppingListItemService {

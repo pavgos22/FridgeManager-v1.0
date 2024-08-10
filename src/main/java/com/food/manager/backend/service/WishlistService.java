@@ -23,7 +23,8 @@ public class WishlistService {
     }
 
     public WishlistResponse addProductToWishlist(String productName) {
-        Wishlist wishlist = new Wishlist(productName);
+        Wishlist wishlist = Wishlist.builder().productName(productName).build();
+
         Wishlist savedWishlist = wishlistRepository.save(wishlist);
         return wishlistMapper.toResponse(savedWishlist);
     }

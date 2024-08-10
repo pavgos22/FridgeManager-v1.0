@@ -53,7 +53,7 @@ public class RecipeAdminView extends VerticalLayout {
     }
 
     private void getRecipeNutrition() {
-        Long recipeId = Long.parseLong(recipeIdField.getValue());
+        long recipeId = Long.parseLong(recipeIdField.getValue());
         ResponseEntity<RecipeNutrition> response = restTemplate.getForEntity(BASE_URL + "/" + recipeId + "/nutrition", RecipeNutrition.class);
         RecipeNutrition nutrition = response.getBody();
         new RecipeNutritionWindow(nutrition);
