@@ -13,4 +13,9 @@ public class NutritionResponse {
     private float protein;
     private float fat;
     private float carbohydrate;
+
+    @Override
+    public String toString() {
+        return "Kcal: " + calories + " | Protein: " + protein + " | Fat: " + fat + " | Carbs: " + carbohydrate;
+    }
 }
