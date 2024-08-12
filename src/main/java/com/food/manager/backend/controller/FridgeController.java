@@ -19,6 +19,18 @@ public class FridgeController {
     @Autowired
     private FridgeService fridgeService;
 
+    @GetMapping
+    public ResponseEntity<List<FridgeResponse>> getAllFridges() {
+        List<FridgeResponse> fridges = fridgeService.getAllFridges();
+        return ResponseEntity.ok(fridges);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<FridgeResponse> getFridge(@PathVariable Long id) {
+        FridgeResponse fridgeResponse = fridgeService.getFridge(id);
+        return ResponseEntity.ok(fridgeResponse);
+    }
+
     @PutMapping("/{id}/addProduct")
     public ResponseEntity<FridgeResponse> addProductToFridge(@PathVariable Long id, @RequestBody AddProductRequest addProductRequest) {
         FridgeResponse fridgeResponse = fridgeService.addProductToFridge(id, addProductRequest);
@@ -29,18 +41,6 @@ public class FridgeController {
     public ResponseEntity<FridgeResponse> removeProduct(@PathVariable Long id, @RequestBody RemoveProductFromFridgeRequest removeProductRequest) {
         FridgeResponse fridgeResponse = fridgeService.removeProductFromFridge(id, removeProductRequest);
         return ResponseEntity.ok(fridgeResponse);
-    }
-
-    @GetMapping("/{id}")
-    public ResponseEntity<FridgeResponse> getFridge(@PathVariable Long id) {
-        FridgeResponse fridgeResponse = fridgeService.getFridge(id);
-        return ResponseEntity.ok(fridgeResponse);
-    }
-
-    @GetMapping
-    public ResponseEntity<List<FridgeResponse>> getAllFridges() {
-        List<FridgeResponse> fridges = fridgeService.getAllFridges();
-        return ResponseEntity.ok(fridges);
     }
 
     @GetMapping("/recipes/{fridgeId}")

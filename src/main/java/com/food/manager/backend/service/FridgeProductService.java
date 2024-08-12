@@ -22,11 +22,16 @@ public class FridgeProductService {
     public FridgeProductResponse getFridgeProduct(Long id) {
         Optional<FridgeProduct> fridgeProductOptional = fridgeProductRepository.findById(id);
         if (fridgeProductOptional.isPresent()) {
-            return fridgeProductMapper.toFridgeProductResponse(fridgeProductOptional.get());
+            FridgeProduct fridgeProduct = fridgeProductOptional.get();
+            if (fridgeProduct.getProduct() == null) {
+                throw new RuntimeException("FridgeProduct has a null Product with id: " + id);
+            }
+            return fridgeProductMapper.toFridgeProductResponse(fridgeProduct);
         } else {
             throw new RuntimeException("FridgeProduct not found with id: " + id);
         }
     }
+
 
     public List<FridgeProductResponse> getAllFridgeProducts() {
         List<FridgeProduct> fridgeProducts = fridgeProductRepository.findAll();

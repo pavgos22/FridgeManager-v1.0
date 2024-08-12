@@ -125,7 +125,7 @@ public class FridgeService {
             return fridgeMapper.toFridgeResponse(fridge);
         }
         else
-            throw new RuntimeException("Fridge not found with id: " + fridgeId);
+            throw new FridgeNotFoundException("Fridge not found with id: " + fridgeId);
     }
 
     public List<RecipeResponse> getRecipesPossibleWithFridgeProducts(Long fridgeId) {

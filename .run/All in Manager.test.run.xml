@@ -1,0 +1,14 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="All in Manager.test" type="JUnit" factoryName="JUnit" nameIsGenerated="true">
+    <module name="Manager.test" />
+    <shortenClasspath name="MANIFEST" />
+    <option name="PACKAGE_NAME" value="" />
+    <option name="MAIN_CLASS_NAME" value="" />
+    <option name="METHOD_NAME" value="" />
+    <option name="TEST_OBJECT" value="package" />
+    <option name="VM_PARAMETERS" value="-javaagent:C:\Users\Paweł\AppData\Local\JetBrains\IntelliJIdea2024.1\testAgent\intellij-coverage-agent-1.0.744.jar=D:\Dev\IdeaProjects\fridge-manager\FridgeManager-v1.0\coverage\coverage.data,true,false,false,true " />
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>
