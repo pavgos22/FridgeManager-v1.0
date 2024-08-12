@@ -42,7 +42,7 @@ public class User {
     @Column(name = "UPDATED_AT", nullable = false)
     private LocalDateTime updatedAt;
 
-    @ManyToMany
+    @ManyToMany()
     @JoinTable(
             name = "USER_HAS_GROUP",
             joinColumns = @JoinColumn(name = "USER_ID"),
@@ -50,7 +50,7 @@ public class User {
     )
     private List<Group> groups = new ArrayList<>();
 
-    @OneToMany(mappedBy = "author")
+    @OneToMany(mappedBy = "author", cascade = CascadeType.ALL)
     private List<Comment> comments = new ArrayList<>();
 
     public User(String username, String firstName, String lastName, String email, String password, LocalDateTime createdAt, LocalDateTime updatedAt) {

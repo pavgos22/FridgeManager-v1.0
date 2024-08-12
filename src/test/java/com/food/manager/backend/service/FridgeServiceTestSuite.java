@@ -367,7 +367,7 @@ class FridgeServiceTestSuite {
 
         assertNotNull(result);
         assertEquals(1, result.size());
-        assertEquals(recipeResponse, result.get(0));
+        assertEquals(recipeResponse, result.getFirst());
         verify(fridgeRepository, times(1)).findById(fridgeId);
         verify(recipeRepository, times(1)).findAll();
         verify(recipeMapper, times(1)).mapToRecipeResponseList(recipes);

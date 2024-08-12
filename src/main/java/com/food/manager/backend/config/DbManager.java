@@ -1,14 +1,17 @@
 package com.food.manager.backend.config;
 
+import lombok.Getter;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Properties;
 
+@Getter
 public enum DbManager {
     INSTANCE;
 
-    private Connection connection;
+    private final Connection connection;
 
     DbManager() {
         Properties connectionProps = new Properties();
@@ -30,7 +33,4 @@ public enum DbManager {
         return INSTANCE;
     }
 
-    public Connection getConnection() {
-        return connection;
-    }
 }
