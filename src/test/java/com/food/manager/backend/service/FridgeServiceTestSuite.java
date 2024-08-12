@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @Transactional
-class FridgeServiceTestSuite {
+public class FridgeServiceTestSuite {
 
     @Mock
     private FridgeRepository fridgeRepository;

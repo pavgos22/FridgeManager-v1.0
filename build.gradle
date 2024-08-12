@@ -51,6 +51,10 @@ dependencyManagement {
 	}
 }
 
+tasks.withType(Test).configureEach {
+	maxParallelForks = 1
+}
+
 tasks.named('test') {
 	useJUnitPlatform()
 }

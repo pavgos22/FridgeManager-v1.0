@@ -94,7 +94,6 @@ public class FridgeService {
         return fridgeMapper.toFridgeResponse(fridge);
     }
 
-
     public FridgeResponse removeProductFromFridge(Long fridgeId, RemoveProductFromFridgeRequest removeProductFromFridgeRequest) {
         Optional<Fridge> fridgeOptional = fridgeRepository.findById(fridgeId);
 

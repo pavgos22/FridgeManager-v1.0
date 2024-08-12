@@ -7,6 +7,7 @@ import com.food.manager.backend.dto.response.NutritionResponse;
 import com.food.manager.backend.dto.response.ProductResponse;
 import com.food.manager.backend.entity.Nutrition;
 import com.food.manager.backend.entity.Product;
+import com.food.manager.backend.entity.builder.ProductBuilder;
 import com.food.manager.backend.exception.NutritionIsNullException;
 import com.food.manager.backend.exception.ProductNotFoundInProductsException;
 import com.food.manager.backend.mapper.NutritionMapper;
@@ -96,16 +97,19 @@ public class ProductService {
         for (int i = 0; i < foods.length(); i++) {
             JSONObject food = foods.getJSONObject(i);
             if (food.getString("food_type").equals("Generic") || food.getString("food_type").equals("Brand")) {
-                Product product = new Product(food.getString("food_name"));
+                ProductBuilder productBuilder = new ProductBuilder().withProductName(food.getString("food_name"));
 
                 Nutrition nutrition = fetchNutritionFromAPI(productName);
-                if (nutrition != null)
-                    product.setNutrition(nutrition);
-                return product;
+                if (nutrition != null) {
+                    productBuilder.withNutrition(nutrition);
+                }
+
+                return productBuilder.build();
             }
         }
         return null;
     }
+
 
     public Nutrition fetchNutritionFromAPI(String productName) {
         String token = oAuthService.getOAuthToken();

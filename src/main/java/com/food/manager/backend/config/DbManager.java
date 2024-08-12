@@ -32,5 +32,4 @@ public enum DbManager {
     public static DbManager getInstance() {
         return INSTANCE;
     }
-
 }
