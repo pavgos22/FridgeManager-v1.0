@@ -2,9 +2,10 @@ package com.food.manager.backend.mapper;
 
 import com.food.manager.backend.dto.response.NutritionResponse;
 import com.food.manager.backend.entity.Nutrition;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
-@Service
+@Component
 public class NutritionMapper {
 
     public NutritionResponse toNutritionResponse(Nutrition nutrition) {

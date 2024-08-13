@@ -2,12 +2,13 @@ package com.food.manager.backend.mapper;
 
 import com.food.manager.backend.dto.response.FridgeProductResponse;
 import com.food.manager.backend.entity.FridgeProduct;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Service
+@Component
 public class FridgeProductMapper {
 
     public FridgeProductResponse toFridgeProductResponse(FridgeProduct fridgeProduct) {

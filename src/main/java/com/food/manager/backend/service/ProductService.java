@@ -51,10 +51,19 @@ public class ProductService {
     }
 
     public NutritionResponse getProductNutrition(Long productId) {
-        Product product = productRepository.findById(productId).orElseThrow(() -> new RuntimeException("Product with id " + productId + " not found"));
-        Nutrition nutrition = nutritionRepository.findById(product.getNutrition().getNutritionId()).orElseThrow(() -> new NutritionIsNullException("Nutrition for product with id " + productId + " is Null"));
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new ProductNotFoundInProductsException("Product with id " + productId + " not found"));
+
+        if (product.getNutrition() == null)
+            throw new NutritionIsNullException("Nutrition for product with id " + productId + " is Null");
+
+
+        Nutrition nutrition = nutritionRepository.findById(product.getNutrition().getNutritionId())
+                .orElseThrow(() -> new NutritionIsNullException("Nutrition for product with id " + productId + " is Null"));
+
         return nutritionMapper.toNutritionResponse(nutrition);
     }
+
 
     public List<ProductResponse> getAllProducts() {
         List<Product> products = productRepository.findAll();
@@ -92,6 +101,11 @@ public class ProductService {
         ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
 
         JSONObject jsonResponse = new JSONObject(response.getBody());
+
+        if (!jsonResponse.has("foods_search") || jsonResponse.getJSONObject("foods_search").isNull("results")) {
+            throw new ProductNotFoundInProductsException("Product not found in API: " + productName);
+        }
+
         JSONArray foods = jsonResponse.getJSONObject("foods_search").getJSONObject("results").getJSONArray("food");
 
         for (int i = 0; i < foods.length(); i++) {

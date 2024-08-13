@@ -3,13 +3,14 @@ package com.food.manager.backend.mapper;
 import com.food.manager.backend.dto.response.ShoppingListItemResponse;
 import com.food.manager.backend.entity.ShoppingListItem;
 import com.food.manager.backend.entity.Comment;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-@Service
+@Component
 public class ShoppingListItemMapper {
 
     public ShoppingListItemResponse toShoppingListItemResponse(ShoppingListItem item) {
