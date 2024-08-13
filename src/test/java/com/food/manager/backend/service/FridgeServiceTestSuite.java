@@ -2,6 +2,7 @@ package com.food.manager.backend.service;
 
 import com.food.manager.backend.dto.request.fridge.AddProductRequest;
 import com.food.manager.backend.dto.request.fridge.RemoveProductFromFridgeRequest;
+import com.food.manager.backend.dto.response.FridgeProductResponse;
 import com.food.manager.backend.dto.response.FridgeResponse;
 import com.food.manager.backend.dto.response.RecipeResponse;
 import com.food.manager.backend.entity.*;
@@ -13,6 +14,7 @@ import com.food.manager.backend.exception.GroupNotFoundException;
 import com.food.manager.backend.exception.InsufficientQuantityException;
 import com.food.manager.backend.exception.ProductNotFoundInFridgeException;
 import com.food.manager.backend.mapper.FridgeMapper;
+import com.food.manager.backend.mapper.FridgeProductMapper;
 import com.food.manager.backend.mapper.RecipeMapper;
 import com.food.manager.backend.repository.*;
 import jakarta.transaction.Transactional;
@@ -41,6 +43,9 @@ public class FridgeServiceTestSuite {
 
     @Mock
     private RecipeMapper recipeMapper;
+
+    @Mock
+    private FridgeProductMapper fridgeProductMapper;
 
     @Mock
     private RecipeRepository recipeRepository;
@@ -424,5 +429,42 @@ public class FridgeServiceTestSuite {
         verify(fridgeRepository, times(1)).findById(fridgeId);
         verify(recipeRepository, times(1)).findAll();
         verify(recipeMapper, times(1)).mapToRecipeResponseList(recipes);
+    }
+
+    @Test
+    void returnsFridgeProductsWhenFridgeExists() {
+        Long fridgeId = 1L;
+        Product product = new Product("Apple");
+        FridgeProduct fridgeProduct = new FridgeProduct(QuantityType.PIECE, 10, null, product);
+        Fridge fridge = new Fridge();
+        fridge.getProducts().add(fridgeProduct);
+
+        FridgeProductResponse fridgeProductResponse = new FridgeProductResponse();
+
+        when(fridgeRepository.findById(fridgeId)).thenReturn(Optional.of(fridge));
+        when(fridgeProductMapper.toFridgeProductResponse(fridgeProduct)).thenReturn(fridgeProductResponse);
+
+        List<FridgeProductResponse> result = fridgeService.getFridgeProducts(fridgeId);
+
+        assertNotNull(result);
+        assertEquals(1, result.size());
+        assertEquals(fridgeProductResponse, result.get(0));
+        verify(fridgeRepository, times(1)).findById(fridgeId);
+        verify(fridgeProductMapper, times(1)).toFridgeProductResponse(fridgeProduct);
+    }
+
+    @Test
+    void returnsEmptyListWhenFridgeIsEmpty() {
+        Long fridgeId = 1L;
+        Fridge fridge = new Fridge();
+
+        when(fridgeRepository.findById(fridgeId)).thenReturn(Optional.of(fridge));
+
+        List<FridgeProductResponse> result = fridgeService.getFridgeProducts(fridgeId);
+
+        assertNotNull(result);
+        assertTrue(result.isEmpty());
+        verify(fridgeRepository, times(1)).findById(fridgeId);
+        verify(fridgeProductMapper, times(0)).toFridgeProductResponse(any(FridgeProduct.class));
     }
 }
