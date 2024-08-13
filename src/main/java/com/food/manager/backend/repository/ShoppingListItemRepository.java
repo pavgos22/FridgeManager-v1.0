@@ -20,5 +20,6 @@ public interface ShoppingListItemRepository extends JpaRepository<ShoppingListIt
     List<ShoppingListItem> findByGroupId(@Param("groupId") Long groupId);
 
     Optional<ShoppingListItem> findByProductAndGroup(Product product, Group group);
+
 }
 

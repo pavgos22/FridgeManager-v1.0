@@ -43,7 +43,7 @@ public class ShoppingListItemService {
         if (itemOptional.isPresent()) {
             return shoppingListItemMapper.toShoppingListItemResponse(itemOptional.get());
         } else {
-            throw new RuntimeException("Item not found with id: " + id);
+            throw new ShoppingListItemNotFoundException("Item not found with id: " + id);
         }
     }
 

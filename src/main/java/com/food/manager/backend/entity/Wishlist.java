@@ -17,4 +17,8 @@ public class Wishlist {
 
     @Column(name="PRODUCT_NAME", nullable=false)
     private String productName;
+
+    public Wishlist(String productName){
+        this.productName = productName;
+    }
 }
