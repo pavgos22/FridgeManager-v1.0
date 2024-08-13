@@ -44,6 +44,7 @@ public class RecipeController {
     @GetMapping("/weather")
     public ResponseEntity<List<RecipeResponse>> getAllRecipesForWeather() {
         List<RecipeResponse> recipes = recipeService.getRecipesForCurrentWeather();
+        System.out.println(recipeService.fetchWeatherFromApi());
         return ResponseEntity.ok(recipes);
     }
 

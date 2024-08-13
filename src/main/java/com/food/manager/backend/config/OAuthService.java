@@ -26,10 +26,6 @@ public class OAuthService {
     @Value("${TOKEN_URL}")
     private String tokenUrl;
 
-    @Getter
-    @Value("${WEATHER_KEY}")
-    private String weatherKey;
-
     private String oAuthToken;
     private long tokenExpiryTime;
 

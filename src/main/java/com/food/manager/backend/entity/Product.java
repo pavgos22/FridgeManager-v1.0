@@ -23,6 +23,7 @@ public class Product {
     private Long productId;
     @Column(name = "PRODUCT_NAME", nullable=false, unique = true)
     private String productName;
+    @Enumerated(EnumType.STRING)
     @Column(name="PRODUCT_GROUP")
     private ProductGroup productGroup;
 

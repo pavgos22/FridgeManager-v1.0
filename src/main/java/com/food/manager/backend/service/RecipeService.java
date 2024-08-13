@@ -1,5 +1,6 @@
 package com.food.manager.backend.service;
 
+import com.food.manager.backend.config.WeatherService;
 import com.food.manager.backend.dto.request.recipe.CreateRecipeRequest;
 import com.food.manager.backend.dto.response.RecipeNutrition;
 import com.food.manager.backend.dto.response.RecipeResponse;
@@ -36,6 +37,9 @@ public class RecipeService {
     private IngredientRepository ingredientRepository;
 
     @Autowired
+    private WeatherService weatherService;
+
+    @Autowired
     private RecipeMapper recipeMapper;
 
     public RecipeResponse getRecipe(Long id) {
@@ -43,7 +47,7 @@ public class RecipeService {
         if (recipeOptional.isPresent()) {
             return recipeMapper.toRecipeResponse(recipeOptional.get());
         } else {
-            throw new RuntimeException("Recipe not found with id: " + id);
+            throw new RecipeNotFoundException("Recipe not found with id: " + id);
         }
     }
 
@@ -53,18 +57,21 @@ public class RecipeService {
     }
 
     public RecipeResponse createRecipe(CreateRecipeRequest createRecipeRequest) {
+        Set<Long> ingredientIdSet = new HashSet<>(createRecipeRequest.ingredientIds());
+        if (ingredientIdSet.size() != createRecipeRequest.ingredientIds().size()) {
+            throw new DuplicateIngredientException("Duplicate ingredients found");
+        }
+
         Recipe recipe = new Recipe(createRecipeRequest.recipeName(), createRecipeRequest.description(), createRecipeRequest.recipeType(), createRecipeRequest.weather(), createRecipeRequest.recipeURL());
 
         recipeRepository.save(recipe);
 
         List<Ingredient> ingredients = ingredientRepository.findAllById(createRecipeRequest.ingredientIds());
-        if (ingredients.size() != createRecipeRequest.ingredientIds().size())
+        if (ingredients.size() != createRecipeRequest.ingredientIds().size()) {
             throw new IngredientNotFoundException("One or more ingredients not found");
+        }
 
         Set<Ingredient> uniqueIngredients = new HashSet<>(ingredients);
-        if (uniqueIngredients.size() != ingredients.size())
-            throw new DuplicateIngredientException("Duplicate ingredients found");
-
         recipe.setIngredients(uniqueIngredients);
 
         for (Ingredient ingredient : uniqueIngredients) {
@@ -77,8 +84,9 @@ public class RecipeService {
         return recipeMapper.toRecipeResponse(recipe);
     }
 
+
     public Weather fetchWeatherFromApi() {
-        String url = "https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/Warsaw?include=fcst%2Cobs%2Chistfcst%2Cstats%2Ccurrent&key=XTDHB9DVQHUMW737HZX5YBQYV&options=beta";
+        String url = "https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/Warsaw?unitGroup=metric&key=" + weatherService.getWeatherKey() + "&contentType=json";
         RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
 
@@ -91,15 +99,14 @@ public class RecipeService {
             return Weather.SNOWY;
          else if (currentConditions.getDouble("precip") > 0)
             return Weather.RAINY;
-         else if (temperature >= 85)
+         else if (temperature >= 30)
             return Weather.HOT;
-         else if (temperature >= 60)
+         else if (temperature >= 16)
             return Weather.WARM;
-        else if (temperature >= 32)
+        else if (temperature > 0)
             return Weather.COLD;
         else
             return Weather.FREEZING;
-
     }
 
     public List<RecipeResponse> getRecipesForCurrentWeather() {

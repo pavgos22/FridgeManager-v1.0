@@ -1,5 +1,7 @@
 package com.food.manager.backend.dto.response;
 
+import com.food.manager.backend.enums.RecipeType;
+import com.food.manager.backend.enums.Weather;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,8 +17,8 @@ public class RecipeResponse {
     private Long recipeId;
     private String recipeName;
     private String description;
-    private String recipeType;
-    private String weather;
+    private RecipeType recipeType;
+    private Weather weather;
     private Set<IngredientResponse> ingredients;
     private String recipeUrl;
 }

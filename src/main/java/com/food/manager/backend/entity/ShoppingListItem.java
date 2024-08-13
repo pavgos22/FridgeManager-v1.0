@@ -19,6 +19,7 @@ public class ShoppingListItem {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="ITEM_ID", unique = true)
     private Long itemId;
+    @Enumerated(EnumType.STRING)
     @Column(name="QUANTITY_TYPE", nullable = false)
     private QuantityType quantityType;
     @Column(name="QUANTITY", nullable = false)

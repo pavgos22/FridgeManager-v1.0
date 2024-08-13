@@ -24,8 +24,10 @@ public class Recipe {
     private String recipeName;
     @Column(name="DESCRIPTION", nullable = true)
     private String description;
+    @Enumerated(EnumType.STRING)
     @Column(name = "RECIPE_TYPE", nullable = false)
     private RecipeType recipeType;
+    @Enumerated(EnumType.STRING)
     @Column(name="WEATHER", nullable = true)
     private Weather weather;
     @Column(name="RECIPE_URL", nullable = true)

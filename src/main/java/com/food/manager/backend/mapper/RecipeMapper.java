@@ -25,8 +25,8 @@ public class RecipeMapper {
                 recipe.getRecipeId(),
                 recipe.getRecipeName(),
                 recipe.getDescription(),
-                recipe.getRecipeType().name(),
-                recipe.getWeather() != null ? recipe.getWeather().name() : null,
+                recipe.getRecipeType(),
+                recipe.getWeather() != null ? recipe.getWeather() : null,
                 ingredientMapper.mapToIngredientSet(recipe.getIngredients()),
                 recipe.getRecipeUrl()
         );
