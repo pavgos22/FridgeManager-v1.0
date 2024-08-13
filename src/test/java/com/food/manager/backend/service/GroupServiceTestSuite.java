@@ -138,32 +138,6 @@ class GroupServiceTestSuite {
         verify(groupMapper, times(0)).toGroupResponse(any(Group.class));
     }
 
-
-//    @Test
-//    void createGroupSuccessfully() {
-//        CreateGroupRequest createGroupRequest = new CreateGroupRequest("New Group");
-//        Group group = new Group(createGroupRequest.groupName(), LocalDateTime.now(), LocalDateTime.now());
-//        group.setGroupId(1L);
-//
-//        Fridge fridge = new Fridge(group);
-//        fridge.setFridgeId(1L);
-//
-//        GroupResponse groupResponse = new GroupResponse();
-//
-//        when(groupRepository.save(any(Group.class))).thenAnswer(invocation -> invocation.getArgument(0));
-//        when(fridgeService.createFridge(group.getGroupId())).thenReturn(fridge);
-//        when(groupMapper.toGroupResponse(group)).thenReturn(groupResponse);
-//
-//        GroupResponse result = groupService.createGroup(createGroupRequest);
-//
-//        assertNotNull(result);
-//        assertEquals(groupResponse, result);
-//        verify(groupRepository, times(2)).save(group);
-//        verify(fridgeService, times(1)).createFridge(group.getGroupId());
-//        verify(groupMapper, times(1)).toGroupResponse(group);
-//    }
-
-
     @Test
     void updateGroupSuccessfully() {
         Long groupId = 1L;
