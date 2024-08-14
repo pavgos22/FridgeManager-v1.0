@@ -12,7 +12,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -47,12 +46,6 @@ public class GroupController {
         return ResponseEntity.ok(items);
     }
 
-    @GetMapping("/{id}/itemsWithComments")
-    public ResponseEntity<Map<ShoppingListItemResponse, Map<String, String>>> getItemsWithComments(@PathVariable Long id) {
-        Map<ShoppingListItemResponse, Map<String, String>> itemsWithComments = groupService.getItemsWithComments(id);
-        return ResponseEntity.ok(itemsWithComments);
-    }
-
     @PostMapping
     public ResponseEntity<GroupResponse> createGroup(@RequestBody CreateGroupRequest createGroupRequest) {
         GroupResponse groupResponse = groupService.createGroup(createGroupRequest);
@@ -72,7 +65,7 @@ public class GroupController {
         return ResponseEntity.ok(groupResponse);
     }
 
-    @PutMapping("/removeUser")
+    @DeleteMapping("/removeUser")
     public ResponseEntity<GroupResponse> removeUser(@RequestBody DeleteUserRequest deleteUserRequest) {
         GroupResponse groupResponse = groupService.deleteUser(deleteUserRequest);
         return ResponseEntity.ok(groupResponse);

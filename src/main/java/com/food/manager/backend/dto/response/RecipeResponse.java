@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
 import java.util.Set;
 
 @Getter
@@ -21,4 +22,7 @@ public class RecipeResponse {
     private Weather weather;
     private Set<IngredientResponse> ingredients;
     private String recipeUrl;
+
+    public <T> RecipeResponse(long l, String pancake, List<T> list) {
+    }
 }

@@ -31,9 +31,6 @@ public class UserServiceTestSuite {
     private UserService userService;
 
     @Autowired
-    private CommentService commentService;
-
-    @Autowired
     private UserRepository userRepository;
 
     @Autowired
