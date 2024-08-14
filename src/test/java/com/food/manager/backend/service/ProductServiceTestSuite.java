@@ -140,7 +140,7 @@ class ProductServiceTestSuite {
 
     @Test
     void createProductFromWishlistSuccessfully() {
-        String productName = "Watermelon";
+        String productName = "Mango";
 
         productService.createProductFromWishlist(productName);
 

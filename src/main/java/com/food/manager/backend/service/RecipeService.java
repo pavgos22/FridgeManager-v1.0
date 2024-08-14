@@ -8,6 +8,7 @@ import com.food.manager.backend.entity.Ingredient;
 import com.food.manager.backend.entity.Nutrition;
 import com.food.manager.backend.entity.Product;
 import com.food.manager.backend.entity.Recipe;
+import com.food.manager.backend.enums.QuantityType;
 import com.food.manager.backend.enums.Weather;
 import com.food.manager.backend.exception.DuplicateIngredientException;
 import com.food.manager.backend.exception.IngredientNotFoundException;
@@ -130,17 +131,25 @@ public class RecipeService {
         float totalCarbohydrate = 0;
 
         for (Ingredient ingredient : recipe.getIngredients()) {
+            if (ingredient.getQuantityType() != QuantityType.GRAM) {
+                throw new IllegalArgumentException("Ingredient quantity must be in grams to calculate nutrition.");
+            }
+
             Product product = ingredient.getProduct();
             if (product != null && product.getNutrition() != null) {
                 Nutrition nutrition = product.getNutrition();
-                totalCalories += nutrition.getCalories();
-                totalProtein += nutrition.getProtein();
-                totalFat += nutrition.getFat();
-                totalCarbohydrate += nutrition.getCarbohydrate();
+
+                float multiplier = ingredient.getQuantity() / 100.0f;
+
+                totalCalories += (int) (nutrition.getCalories() * multiplier);
+                totalProtein += nutrition.getProtein() * multiplier;
+                totalFat += nutrition.getFat() * multiplier;
+                totalCarbohydrate += nutrition.getCarbohydrate() * multiplier;
             }
         }
         return new RecipeNutrition(totalCalories, totalProtein, totalFat, totalCarbohydrate);
     }
+
 
 
     public void deleteRecipe(Long id) {

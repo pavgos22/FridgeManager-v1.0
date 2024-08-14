@@ -3,9 +3,7 @@ package com.food.manager.backend.mapper;
 import com.food.manager.backend.dto.response.IngredientResponse;
 import com.food.manager.backend.entity.Ingredient;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 

@@ -3,7 +3,6 @@ package com.food.manager.backend.mapper;
 import com.food.manager.backend.dto.response.GroupResponse;
 import com.food.manager.backend.entity.Group;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
 
