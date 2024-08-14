@@ -27,7 +27,7 @@ public class UserController {
     }
 
     @PostMapping
-    public ResponseEntity<UserResponse> createUser(@RequestBody CreateUserRequest userRequest) { //userExistsException
+    public ResponseEntity<UserResponse> createUser(@RequestBody CreateUserRequest userRequest) {
         UserResponse newUser = userService.createUser(userRequest);
         return ResponseEntity.ok(newUser);
     }
