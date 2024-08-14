@@ -2,6 +2,7 @@ package com.food.manager.frontend.admin;
 
 import com.food.manager.backend.dto.response.RecipeResponse;
 import com.food.manager.backend.dto.response.RecipeNutrition;
+import com.food.manager.frontend.admin.window.RecipeListWindow;
 import com.food.manager.frontend.admin.window.RecipeNutritionWindow;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.Grid;
@@ -23,6 +24,7 @@ public class RecipeAdminView extends VerticalLayout {
 
     private final TextField recipeIdField = new TextField("Recipe ID");
     private final Button getNutritionButton = new Button("Get Nutrition");
+    private final Button getWeatherRecipesButton = new Button("Get Recipes for Current Weather");
 
     public RecipeAdminView() {
         setupGrid();
@@ -37,8 +39,9 @@ public class RecipeAdminView extends VerticalLayout {
 
     private void setupForm() {
         getNutritionButton.addClickListener(e -> getRecipeNutrition());
+        getWeatherRecipesButton.addClickListener(e -> getRecipesForCurrentWeather());
 
-        VerticalLayout nutritionForm = new VerticalLayout(recipeIdField, getNutritionButton);
+        VerticalLayout nutritionForm = new VerticalLayout(recipeIdField, getNutritionButton, getWeatherRecipesButton);
         nutritionForm.setSpacing(true);
         nutritionForm.setPadding(true);
 
@@ -58,4 +61,11 @@ public class RecipeAdminView extends VerticalLayout {
         RecipeNutrition nutrition = response.getBody();
         new RecipeNutritionWindow(nutrition);
     }
+
+    private void getRecipesForCurrentWeather() {
+        ResponseEntity<List<RecipeResponse>> response = restTemplate.exchange(BASE_URL + "/weather", org.springframework.http.HttpMethod.GET, null, new ParameterizedTypeReference<List<RecipeResponse>>() {});
+        List<RecipeResponse> recipes = response.getBody();
+        new RecipeListWindow(recipes).open();
+    }
 }
+
