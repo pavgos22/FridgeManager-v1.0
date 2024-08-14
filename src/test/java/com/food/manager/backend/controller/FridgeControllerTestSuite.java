@@ -17,9 +17,12 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
+import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.hamcrest.Matchers.hasItems;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
@@ -129,7 +132,7 @@ class FridgeControllerTestSuite {
 
     @Test
     void getRecipesPossibleWithFridgeProductsSuccessfully() throws Exception {
-        List<RecipeResponse> recipes = Arrays.asList(recipeResponse);
+        List<RecipeResponse> recipes = Collections.singletonList(recipeResponse);
 
         when(fridgeService.getRecipesPossibleWithFridgeProducts(anyLong())).thenReturn(recipes);
 
@@ -138,10 +141,10 @@ class FridgeControllerTestSuite {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].recipeId").value(1L))
                 .andExpect(jsonPath("$[0].recipeName").value("Pancake"))
-                .andExpect(jsonPath("$[0].ingredients[0].productId").value(103L))
-                .andExpect(jsonPath("$[0].ingredients[1].productId").value(101L))
-                .andExpect(jsonPath("$[0].ingredients[2].productId").value(102L));
+                .andExpect(jsonPath("$[0].ingredients[*].productId").value(containsInAnyOrder(101, 102, 103)));
     }
+
+
 
 
     @Test
