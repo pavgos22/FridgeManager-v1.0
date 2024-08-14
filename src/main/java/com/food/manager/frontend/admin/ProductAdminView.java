@@ -3,6 +3,7 @@ package com.food.manager.frontend.admin;
 import com.food.manager.backend.dto.request.product.CreateProductRequest;
 import com.food.manager.backend.dto.response.ProductResponse;
 import com.food.manager.backend.dto.response.NutritionResponse;
+import com.food.manager.backend.dto.response.WishlistResponse;
 import com.food.manager.backend.enums.ProductGroup;
 import com.food.manager.frontend.admin.window.NutritionWindow;
 import com.vaadin.flow.component.button.Button;
@@ -34,6 +35,9 @@ public class ProductAdminView extends VerticalLayout {
     private final TextField nutritionProductIdField = new TextField("Product ID for Nutrition");
     private final Button getNutritionButton = new Button("Get Nutrition");
 
+    private final TextField wishlistProductNameField = new TextField("Product Name for Wishlist");
+    private final Button addToWishlistButton = new Button("Add to Wishlist");
+
     public ProductAdminView() {
         setupGrid();
         setupForm();
@@ -49,6 +53,7 @@ public class ProductAdminView extends VerticalLayout {
         createSaveButton.addClickListener(e -> createProduct());
         deleteButton.addClickListener(e -> deleteProduct());
         getNutritionButton.addClickListener(e -> getNutrition());
+        addToWishlistButton.addClickListener(e -> addProductToWishlist());
 
         productGroupField.setItems(ProductGroup.values());
         VerticalLayout createProductForm = new VerticalLayout(productNameField, productGroupField, createSaveButton);
@@ -63,7 +68,11 @@ public class ProductAdminView extends VerticalLayout {
         nutritionForm.setSpacing(true);
         nutritionForm.setPadding(true);
 
-        HorizontalLayout formsLayout = new HorizontalLayout(createProductForm, deleteProductForm, nutritionForm);
+        VerticalLayout wishlistForm = new VerticalLayout(wishlistProductNameField, addToWishlistButton);
+        wishlistForm.setSpacing(true);
+        wishlistForm.setPadding(true);
+
+        HorizontalLayout formsLayout = new HorizontalLayout(createProductForm, deleteProductForm, nutritionForm, wishlistForm);
         add(formsLayout);
     }
 
@@ -83,15 +92,27 @@ public class ProductAdminView extends VerticalLayout {
     }
 
     private void deleteProduct() {
-        Long productId = Long.parseLong(productIdToDeleteField.getValue());
+        long productId = Long.parseLong(productIdToDeleteField.getValue());
         restTemplate.delete(BASE_URL + "/" + productId);
         loadData();
     }
 
     private void getNutrition() {
-        Long productId = Long.parseLong(nutritionProductIdField.getValue());
+        long productId = Long.parseLong(nutritionProductIdField.getValue());
         ResponseEntity<NutritionResponse> response = restTemplate.getForEntity(BASE_URL + "/" + productId + "/nutrition", NutritionResponse.class);
         NutritionResponse nutrition = response.getBody();
         new NutritionWindow(nutrition);
     }
+
+    private void addProductToWishlist() {
+        String productName = wishlistProductNameField.getValue();
+        String url = "http://localhost:8080/v1/wishlist?productName=" + productName;
+
+        ResponseEntity<WishlistResponse> response = restTemplate.postForEntity(url, null, WishlistResponse.class);
+
+        if (response.getStatusCode().is2xxSuccessful())
+            System.out.println("Product added to wishlist successfully");
+        else System.out.println("Failed to add product to wishlist");
+    }
+
 }
