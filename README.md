@@ -1,5 +1,6 @@
 Application Functionality
 
+Application is a fully functional Rest API made with java.
 Users can create groups, and each group has its own fridge, to which products can be added from the Products table. The admin manually populates the Products table by pulling items from an external API, FatSecretAPI. If a user wants to add a product that is not in the Products table, they can add it to the wishlist in the Products section. The program, using a scheduler, reads the wishlist daily at midnight, fetches the products from the API, and adds them to the Products table.
 
 Each group has its own shopping list, where products can be added and removed. Each item on the list can be commented on by group members.
