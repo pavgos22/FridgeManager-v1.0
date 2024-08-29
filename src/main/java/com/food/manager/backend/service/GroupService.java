@@ -7,10 +7,7 @@ import com.food.manager.backend.dto.response.GroupResponse;
 import com.food.manager.backend.dto.response.ShoppingListItemResponse;
 import com.food.manager.backend.dto.response.UserResponse;
 import com.food.manager.backend.entity.*;
-import com.food.manager.backend.exception.GroupNotFoundException;
-import com.food.manager.backend.exception.ProductNotFoundInProductsException;
-import com.food.manager.backend.exception.UserAlreadyInGroupException;
-import com.food.manager.backend.exception.UserNotFoundException;
+import com.food.manager.backend.exception.*;
 import com.food.manager.backend.mapper.GroupMapper;
 import com.food.manager.backend.mapper.ShoppingListItemMapper;
 import com.food.manager.backend.mapper.UserMapper;
@@ -103,17 +100,17 @@ public class GroupService {
             group.setUpdatedAt(LocalDateTime.now());
             return groupMapper.toGroupResponse(groupRepository.save(group));
         } else
-            throw new RuntimeException("Group not found with id: " + id);
+            throw new GroupNotFoundException(id);
     }
 
 
     public GroupResponse addUser(AddUserRequest addUserRequest) {
-        Group group = groupRepository.findById(addUserRequest.groupId()).orElseThrow(() -> new GroupNotFoundException("Group with ID " + addUserRequest.groupId() + " not found"));
+        Group group = groupRepository.findById(addUserRequest.groupId()).orElseThrow(() -> new GroupNotFoundException(addUserRequest.groupId()));
 
-        User user = userRepository.findById(addUserRequest.userId()).orElseThrow(() -> new UserNotFoundException("User with ID " + addUserRequest.userId() + " not found"));
+        User user = userRepository.findById(addUserRequest.userId()).orElseThrow(() -> new UserNotFoundException(addUserRequest.userId()));
 
         if (group.getUsers().contains(user))
-            throw new UserAlreadyInGroupException("User with ID " + addUserRequest.userId() + " is already in group with ID " + addUserRequest.groupId());
+            throw new UserAlreadyExistsInGroupException(addUserRequest.userId(), addUserRequest.groupId());
 
 
         group.getUsers().add(user);
@@ -128,10 +125,10 @@ public class GroupService {
 
     public GroupResponse deleteUser(DeleteUserRequest deleteUserRequest) {
         Group group = groupRepository.findById(deleteUserRequest.groupId())
-                .orElseThrow(() -> new GroupNotFoundException("Group with ID " + deleteUserRequest.groupId() + " not found"));
+                .orElseThrow(() -> new GroupNotFoundException(deleteUserRequest.groupId()));
 
         User user = userRepository.findById(deleteUserRequest.userId())
-                .orElseThrow(() -> new UserNotFoundException("User with ID " + deleteUserRequest.userId() + " not found"));
+                .orElseThrow(() -> new UserNotFoundException(deleteUserRequest.userId()));
 
         group.getUsers().remove(user);
         user.getGroups().remove(group);
@@ -144,7 +141,7 @@ public class GroupService {
 
     public GroupResponse addItemToGroup(Long groupId, CreateItemRequest createItemRequest) {
         Group group = groupRepository.findById(groupId).orElseThrow(() -> new RuntimeException("Group not found with id: " + groupId));
-        Product product = productRepository.findById(createItemRequest.productId()).orElseThrow(() -> new ProductNotFoundInProductsException("Product with id " + createItemRequest.productId() + " not found"));
+        Product product = productRepository.findById(createItemRequest.productId()).orElseThrow(() -> new ProductNotFoundInProductsException(createItemRequest.productId()));
 
         Optional<ShoppingListItem> existingItemOptional = group.getShoppingListItems().stream()
                 .filter(item -> item.getProduct().getProductId().equals(createItemRequest.productId()))
@@ -167,10 +164,10 @@ public class GroupService {
 
     public GroupResponse removeItemFromGroup(Long groupId, RemoveItemFromGroupRequest removeItemFromGroupRequest) {
         Group group = groupRepository.findById(groupId)
-                .orElseThrow(() -> new RuntimeException("Group not found with id: " + groupId));
+                .orElseThrow(() -> new GroupNotFoundException(groupId));
 
         ShoppingListItem item = shoppingListItemRepository.findById(removeItemFromGroupRequest.itemId())
-                .orElseThrow(() -> new RuntimeException("Item not found with id: " + removeItemFromGroupRequest.itemId()));
+                .orElseThrow(() -> new ShoppingListItemNotFoundException(removeItemFromGroupRequest.itemId()));
 
         if (item.getQuantity() > removeItemFromGroupRequest.quantity()) {
             item.setQuantity(item.getQuantity() - removeItemFromGroupRequest.quantity());

@@ -9,6 +9,7 @@ import com.food.manager.backend.entity.Nutrition;
 import com.food.manager.backend.entity.Product;
 import com.food.manager.backend.entity.builder.ProductBuilder;
 import com.food.manager.backend.exception.NutritionIsNullException;
+import com.food.manager.backend.exception.ProductNotFoundInExternalApiException;
 import com.food.manager.backend.exception.ProductNotFoundInProductsException;
 import com.food.manager.backend.mapper.NutritionMapper;
 import com.food.manager.backend.mapper.ProductMapper;
@@ -46,16 +47,16 @@ public class ProductService {
         if (productOptional.isPresent()) {
             return productMapper.toProductResponse(productOptional.get());
         } else {
-            throw new RuntimeException("Product not found with id: " + id);
+            throw new ProductNotFoundInProductsException(id);
         }
     }
 
     public NutritionResponse getProductNutrition(Long productId) {
         Product product = productRepository.findById(productId)
-                .orElseThrow(() -> new ProductNotFoundInProductsException("Product with id " + productId + " not found"));
+                .orElseThrow(() -> new ProductNotFoundInProductsException(productId));
 
         if (product.getNutrition() == null)
-            throw new NutritionIsNullException("Nutrition for product with id " + productId + " is Null");
+            throw new NutritionIsNullException(product.getProductName());
 
 
         Nutrition nutrition = nutritionRepository.findById(product.getNutrition().getNutritionId())
@@ -103,7 +104,7 @@ public class ProductService {
         JSONObject jsonResponse = new JSONObject(response.getBody());
 
         if (!jsonResponse.has("foods_search") || jsonResponse.getJSONObject("foods_search").isNull("results")) {
-            throw new ProductNotFoundInProductsException("Product not found in API: " + productName);
+            throw new ProductNotFoundInExternalApiException(productName);
         }
 
         JSONArray foods = jsonResponse.getJSONObject("foods_search").getJSONObject("results").getJSONArray("food");
@@ -162,7 +163,7 @@ public class ProductService {
     public void createProductFromWishlist(String productName) {
         Product product = fetchProductFromAPI(productName);
         if (product == null) {
-            throw new ProductNotFoundInProductsException("Product not found in API: " + productName);
+            throw new ProductNotFoundInExternalApiException(productName);
         }
         productMapper.toProductResponse(productRepository.save(product));
     }
@@ -171,7 +172,7 @@ public class ProductService {
         if (productRepository.existsById(id)) {
             productRepository.deleteById(id);
         } else {
-            throw new RuntimeException("Product not found with id: " + id);
+            throw new ProductNotFoundInProductsException(id);
         }
     }
 

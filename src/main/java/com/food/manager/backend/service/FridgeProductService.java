@@ -2,6 +2,7 @@ package com.food.manager.backend.service;
 
 import com.food.manager.backend.dto.response.FridgeProductResponse;
 import com.food.manager.backend.entity.FridgeProduct;
+import com.food.manager.backend.exception.FridgeProductNotFoundException;
 import com.food.manager.backend.mapper.FridgeProductMapper;
 import com.food.manager.backend.repository.FridgeProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,13 +24,10 @@ public class FridgeProductService {
         Optional<FridgeProduct> fridgeProductOptional = fridgeProductRepository.findById(id);
         if (fridgeProductOptional.isPresent()) {
             FridgeProduct fridgeProduct = fridgeProductOptional.get();
-            if (fridgeProduct.getProduct() == null) {
+            if (fridgeProduct.getProduct() == null)
                 throw new RuntimeException("FridgeProduct has a null Product with id: " + id);
-            }
             return fridgeProductMapper.toFridgeProductResponse(fridgeProduct);
-        } else {
-            throw new RuntimeException("FridgeProduct not found with id: " + id);
-        }
+        } else throw new FridgeProductNotFoundException(id);
     }
 
 

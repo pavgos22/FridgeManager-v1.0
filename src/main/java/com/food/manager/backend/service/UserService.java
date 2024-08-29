@@ -10,8 +10,7 @@ import com.food.manager.backend.entity.Comment;
 import com.food.manager.backend.entity.Group;
 import com.food.manager.backend.entity.ShoppingListItem;
 import com.food.manager.backend.entity.User;
-import com.food.manager.backend.exception.NotUsersCommentException;
-import com.food.manager.backend.exception.UserNotInGroupException;
+import com.food.manager.backend.exception.*;
 import com.food.manager.backend.mapper.CommentMapper;
 import com.food.manager.backend.mapper.UserMapper;
 import com.food.manager.backend.repository.CommentRepository;
@@ -77,16 +76,16 @@ public class UserService {
                     return userRepository.save(user);
                 })
                 .map(userMapper::toUserResponse)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new UserNotFoundException(userId));
     }
 
     public CommentResponse addComment(Long authorId, AddCommentRequest addCommentRequest) {
-        ShoppingListItem item = shoppingListItemRepository.findById(addCommentRequest.itemId()).orElseThrow(() -> new RuntimeException("Item not found"));
-        User user = userRepository.findById(authorId).orElseThrow(() -> new RuntimeException("User not found"));
+        ShoppingListItem item = shoppingListItemRepository.findById(addCommentRequest.itemId()).orElseThrow(() -> new ShoppingListItemNotFoundException(addCommentRequest.itemId()));
+        User user = userRepository.findById(authorId).orElseThrow(() -> new UserNotFoundException(authorId));
         Group group = groupRepository.findByItem(addCommentRequest.itemId());
 
         if(!group.getUsers().contains(user))
-            throw new UserNotInGroupException("User with ID " + authorId + " is not in group with ID " + group.getGroupId());
+            throw new UserNotInGroupException(authorId, group.getGroupId());
 
         Comment comment = new Comment(
                 addCommentRequest.content(),
@@ -99,9 +98,9 @@ public class UserService {
     }
 
     public CommentResponse editComment(Long commentId, EditCommentRequest editCommentRequest) {
-        Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new RuntimeException("Comment not found"));
+        Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new CommentNotFoundException(commentId));
         if(!comment.getAuthor().getUserId().equals(editCommentRequest.AuthorId()))
-            throw new NotUsersCommentException("User with ID: " + editCommentRequest.AuthorId() + " is not author of comment with ID: " + commentId);
+            throw new NotUsersCommentException(editCommentRequest.AuthorId(), commentId);
         comment.setContent(editCommentRequest.content());
         comment.setUpdatedAt(LocalDateTime.now());
         commentRepository.save(comment);

@@ -21,7 +21,7 @@ public class CommentService {
 
     public CommentResponse getComment(Long id) {
         Comment comment = commentRepository.findById(id)
-                .orElseThrow(() -> new CommentNotFoundException("Comment not found with id: " + id));
+                .orElseThrow(() -> new CommentNotFoundException(id));
         return commentMapper.toCommentResponse(comment);
     }
 
@@ -34,7 +34,7 @@ public class CommentService {
         if (commentRepository.existsById(id)) {
             commentRepository.deleteById(id);
         } else {
-            throw new CommentNotFoundException("Comment not found with id: " + id);
+            throw new CommentNotFoundException(id);
         }
     }
 

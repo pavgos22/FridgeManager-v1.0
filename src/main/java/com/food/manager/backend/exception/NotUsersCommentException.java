@@ -1,7 +1,7 @@
 package com.food.manager.backend.exception;
 
 public class NotUsersCommentException extends RuntimeException {
-    public NotUsersCommentException(String message) {
-        super(message);
+    public NotUsersCommentException(long userId, long commentId) {
+        super("User with ID: " + userId + "is not an author of comment with ID: " + commentId);
     }
 }

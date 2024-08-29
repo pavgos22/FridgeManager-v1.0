@@ -1,7 +1,7 @@
 package com.food.manager.backend.exception;
 
 public class GroupNotFoundException extends RuntimeException {
-    public GroupNotFoundException(String message) {
-        super(message);
+    public GroupNotFoundException(long id) {
+        super("Group with ID: " + id + " not found");
     }
 }

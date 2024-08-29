@@ -11,7 +11,7 @@ import com.food.manager.backend.entity.Recipe;
 import com.food.manager.backend.enums.QuantityType;
 import com.food.manager.backend.enums.Weather;
 import com.food.manager.backend.exception.DuplicateIngredientException;
-import com.food.manager.backend.exception.IngredientNotFoundException;
+import com.food.manager.backend.exception.IngredientsNotFoundException;
 import com.food.manager.backend.exception.RecipeNotFoundException;
 import com.food.manager.backend.mapper.RecipeMapper;
 import com.food.manager.backend.repository.IngredientRepository;
@@ -48,7 +48,7 @@ public class RecipeService {
         if (recipeOptional.isPresent()) {
             return recipeMapper.toRecipeResponse(recipeOptional.get());
         } else {
-            throw new RecipeNotFoundException("Recipe not found with id: " + id);
+            throw new RecipeNotFoundException(id);
         }
     }
 
@@ -60,7 +60,7 @@ public class RecipeService {
     public RecipeResponse createRecipe(CreateRecipeRequest createRecipeRequest) {
         Set<Long> ingredientIdSet = new HashSet<>(createRecipeRequest.ingredientIds());
         if (ingredientIdSet.size() != createRecipeRequest.ingredientIds().size()) {
-            throw new DuplicateIngredientException("Duplicate ingredients found");
+            throw new DuplicateIngredientException();
         }
 
         Recipe recipe = new Recipe(createRecipeRequest.recipeName(), createRecipeRequest.description(), createRecipeRequest.recipeType(), createRecipeRequest.weather(), createRecipeRequest.recipeURL());
@@ -69,7 +69,7 @@ public class RecipeService {
 
         List<Ingredient> ingredients = ingredientRepository.findAllById(createRecipeRequest.ingredientIds());
         if (ingredients.size() != createRecipeRequest.ingredientIds().size()) {
-            throw new IngredientNotFoundException("One or more ingredients not found");
+            throw new IngredientsNotFoundException();
         }
 
         Set<Ingredient> uniqueIngredients = new HashSet<>(ingredients);
@@ -123,7 +123,7 @@ public class RecipeService {
 
     public RecipeNutrition calcNutrition(Long recipeId) {
         Recipe recipe = recipeRepository.findById(recipeId)
-                .orElseThrow(() -> new RecipeNotFoundException("Recipe with " + recipeId + " not found"));
+                .orElseThrow(() -> new RecipeNotFoundException(recipeId));
 
         int totalCalories = 0;
         float totalProtein = 0;
@@ -156,7 +156,7 @@ public class RecipeService {
         if (recipeRepository.existsById(id)) {
             recipeRepository.deleteById(id);
         } else {
-            throw new RuntimeException("Recipe not found with id: " + id);
+            throw new RecipeNotFoundException(id);
         }
     }
 

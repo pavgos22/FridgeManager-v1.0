@@ -29,7 +29,7 @@ public class IngredientService {
 
     public IngredientResponse getIngredient(Long id) {
         Ingredient ingredient = ingredientRepository.findById(id)
-                .orElseThrow(() -> new IngredientNotFoundException("Ingredient not found with id: " + id));
+                .orElseThrow(() -> new IngredientNotFoundException(id));
         return ingredientMapper.toIngredientResponse(ingredient);
     }
 
@@ -41,7 +41,7 @@ public class IngredientService {
     }
 
     public IngredientResponse createIngredient(CreateIngredientRequest createIngredientRequest) {
-        Product product = productRepository.findById(createIngredientRequest.productId()).orElseThrow(() -> new ProductNotFoundInProductsException("Product not found with id: " + createIngredientRequest.productId()));
+        Product product = productRepository.findById(createIngredientRequest.productId()).orElseThrow(() -> new ProductNotFoundInProductsException(createIngredientRequest.productId()));
         Ingredient ingredient = new Ingredient(createIngredientRequest.quantityType(), createIngredientRequest.quantity(), createIngredientRequest.required(), createIngredientRequest.ignoreGroup(), product);
         return ingredientMapper.toIngredientResponse(ingredientRepository.save(ingredient));
     }
@@ -50,7 +50,7 @@ public class IngredientService {
         if (ingredientRepository.existsById(id)) {
             ingredientRepository.deleteById(id);
         } else {
-            throw new IngredientNotFoundException("Ingredient not found with id: " + id);
+            throw new IngredientNotFoundException(id);
         }
     }
 
