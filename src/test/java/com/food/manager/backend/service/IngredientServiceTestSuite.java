@@ -73,7 +73,7 @@ class IngredientServiceTestSuite {
             ingredientService.getIngredient(ingredientId);
         });
 
-        assertEquals("Ingredient not found with id: " + ingredientId, exception.getMessage());
+        assertEquals("Ingredient with ID: " + ingredientId + " not found", exception.getMessage());
 
         verify(ingredientRepository, times(1)).findById(ingredientId);
         verify(ingredientMapper, times(0)).toIngredientResponse(any(Ingredient.class));
@@ -153,7 +153,7 @@ class IngredientServiceTestSuite {
             ingredientService.createIngredient(request);
         });
 
-        assertEquals("Product not found with id: " + productId, exception.getMessage());
+        assertEquals("Product with ID: " + productId + " not found" , exception.getMessage());
 
         verify(productRepository, times(1)).findById(productId);
         verify(ingredientRepository, times(0)).save(any(Ingredient.class));
@@ -183,7 +183,7 @@ class IngredientServiceTestSuite {
             ingredientService.deleteIngredient(ingredientId);
         });
 
-        assertEquals("Ingredient not found with id: " + ingredientId, exception.getMessage());
+        assertEquals("Ingredient with ID: " + ingredientId + " not found", exception.getMessage());
 
         verify(ingredientRepository, times(1)).existsById(ingredientId);
         verify(ingredientRepository, times(0)).deleteById(ingredientId);

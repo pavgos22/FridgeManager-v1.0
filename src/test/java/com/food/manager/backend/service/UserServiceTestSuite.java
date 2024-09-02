@@ -8,8 +8,7 @@ import com.food.manager.backend.dto.response.CommentResponse;
 import com.food.manager.backend.dto.response.UserResponse;
 import com.food.manager.backend.entity.*;
 import com.food.manager.backend.enums.QuantityType;
-import com.food.manager.backend.exception.NotUsersCommentException;
-import com.food.manager.backend.exception.UserNotInGroupException;
+import com.food.manager.backend.exception.*;
 import com.food.manager.backend.repository.*;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.BeforeEach;
@@ -149,11 +148,11 @@ public class UserServiceTestSuite {
         Long nonExistingUserId = 999L;
         UpdateUserRequest updateRequest = new UpdateUserRequest("newUsername", "newFirstName", "newLastName", "newEmail@test.com", "newPassword");
 
-        RuntimeException exception = assertThrows(RuntimeException.class, () -> {
+        UserNotFoundException exception = assertThrows(UserNotFoundException.class, () -> {
             userService.updateUser(nonExistingUserId, updateRequest);
         });
 
-        assertEquals("User not found", exception.getMessage());
+        assertEquals("User with ID: " + nonExistingUserId + " not found", exception.getMessage());
     }
 
     @Test
@@ -192,22 +191,22 @@ public class UserServiceTestSuite {
     void addCommentThrowsExceptionWhenItemNotFound() {
         AddCommentRequest request = new AddCommentRequest(999L, "This is a test comment.");
 
-        RuntimeException exception = assertThrows(RuntimeException.class, () -> {
+        ShoppingListItemNotFoundException exception = assertThrows(ShoppingListItemNotFoundException.class, () -> {
             userService.addComment(testUser.getUserId(), request);
         });
 
-        assertEquals("Item not found", exception.getMessage());
+        assertEquals("Item with ID: " + request.itemId() + " not found", exception.getMessage());
     }
 
     @Test
     void addCommentThrowsExceptionWhenUserNotFound() {
         AddCommentRequest request = new AddCommentRequest(testItem.getItemId(), "This is a test comment.");
 
-        RuntimeException exception = assertThrows(RuntimeException.class, () -> {
+        UserNotFoundException exception = assertThrows(UserNotFoundException.class, () -> {
             userService.addComment(999L, request);
         });
 
-        assertEquals("User not found", exception.getMessage());
+        assertEquals("User with ID: " + 999L + " not found", exception.getMessage());
     }
 
     @Test
@@ -232,11 +231,11 @@ public class UserServiceTestSuite {
 
         Long nonExistingCommentId = 999L;
 
-        RuntimeException exception = assertThrows(RuntimeException.class, () -> {
+        CommentNotFoundException exception = assertThrows(CommentNotFoundException.class, () -> {
             userService.editComment(nonExistingCommentId, request);
         });
 
-        assertEquals("Comment not found", exception.getMessage());
+        assertEquals("Comment with ID: " + nonExistingCommentId + " not found", exception.getMessage());
     }
 
     @Test
@@ -247,7 +246,7 @@ public class UserServiceTestSuite {
             userService.editComment(testComment.getCommentId(), request);
         });
 
-        assertEquals("User with ID: " + anotherUser.getUserId() + " is not author of comment with ID: " + testComment.getCommentId(), exception.getMessage());
+        assertEquals("User with ID: " + anotherUser.getUserId() + " is not an author of a comment with ID: " + testComment.getCommentId(), exception.getMessage());
     }
 
     @Test

@@ -5,12 +5,9 @@ import com.food.manager.backend.dto.request.item.RemoveItemFromListRequest;
 import com.food.manager.backend.dto.response.ShoppingListItemResponse;
 import com.food.manager.backend.entity.Group;
 import com.food.manager.backend.entity.Product;
-import com.food.manager.backend.enums.QuantityType;
 import com.food.manager.backend.entity.ShoppingListItem;
-import com.food.manager.backend.exception.GroupNotFoundException;
-import com.food.manager.backend.exception.NegativeValueException;
-import com.food.manager.backend.exception.ProductNotFoundInProductsException;
-import com.food.manager.backend.exception.ShoppingListItemNotFoundException;
+import com.food.manager.backend.enums.QuantityType;
+import com.food.manager.backend.exception.*;
 import com.food.manager.backend.repository.GroupRepository;
 import com.food.manager.backend.repository.ProductRepository;
 import com.food.manager.backend.repository.ShoppingListItemRepository;
@@ -148,7 +145,7 @@ class ShoppingListItemServiceTestSuite {
             shoppingListItemService.addItemToShoppingList(request);
         });
 
-        assertEquals("Product not found in the products list", exception.getMessage());
+        assertEquals("Product with ID: " + request.productId() + " not found", exception.getMessage());
     }
 
     @Test
@@ -159,7 +156,7 @@ class ShoppingListItemServiceTestSuite {
             shoppingListItemService.addItemToShoppingList(request);
         });
 
-        assertEquals("Group not found", exception.getMessage());
+        assertEquals("Group with ID: " + request.groupId() + " not found", exception.getMessage());
     }
 
     @Test
@@ -189,23 +186,24 @@ class ShoppingListItemServiceTestSuite {
         Long invalidItemId = 999L;
         RemoveItemFromListRequest request = new RemoveItemFromListRequest(invalidItemId, testGroup.getGroupId(), 1);
 
-        RuntimeException exception = assertThrows(RuntimeException.class, () -> {
+        ShoppingListItemNotFoundException exception = assertThrows(ShoppingListItemNotFoundException.class, () -> {
             shoppingListItemService.removeItemFromShoppingList(request);
         });
 
-        assertEquals("Shopping List Item not found", exception.getMessage());
+        assertEquals("Item with ID: " + request.itemId() + " not found", exception.getMessage());
     }
 
+    // TODO: Fix test
     @Test
     void removeItemFromShoppingListThrowsExceptionWhenItemDoesNotBelongToGroup() {
         Group anotherGroup = groupRepository.save(new Group("Another Group", LocalDateTime.now(), LocalDateTime.now()));
         RemoveItemFromListRequest request = new RemoveItemFromListRequest(testItem.getItemId(), anotherGroup.getGroupId(), 1);
 
-        RuntimeException exception = assertThrows(RuntimeException.class, () -> {
+        ShoppingListItemNotInGroupException exception = assertThrows(ShoppingListItemNotInGroupException.class, () -> {
             shoppingListItemService.removeItemFromShoppingList(request);
         });
 
-        assertEquals("Shopping List Item does not belong to the specified group", exception.getMessage());
+        assertEquals("Item with ID: " + request.itemId() + " does not belong to group with ID: " + anotherGroup.getGroupId(), exception.getMessage());
     }
 
     @Test
@@ -222,11 +220,11 @@ class ShoppingListItemServiceTestSuite {
     void deleteItemThrowsExceptionWhenItemNotFound() {
         Long nonExistentItemId = 999L;
 
-        RuntimeException exception = assertThrows(RuntimeException.class, () -> {
+        ShoppingListItemNotFoundException exception = assertThrows(ShoppingListItemNotFoundException.class, () -> {
             shoppingListItemService.deleteItem(nonExistentItemId);
         });
 
-        assertEquals("Item not found with id: " + nonExistentItemId, exception.getMessage());
+        assertEquals("Item with ID: " + nonExistentItemId + " not found", exception.getMessage());
     }
 
 }

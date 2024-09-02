@@ -7,6 +7,7 @@ import com.food.manager.backend.entity.Nutrition;
 import com.food.manager.backend.entity.Product;
 import com.food.manager.backend.enums.ProductGroup;
 import com.food.manager.backend.exception.NutritionIsNullException;
+import com.food.manager.backend.exception.ProductNotFoundInExternalApiException;
 import com.food.manager.backend.exception.ProductNotFoundInProductsException;
 import com.food.manager.backend.mapper.NutritionMapper;
 import com.food.manager.backend.mapper.ProductMapper;
@@ -71,7 +72,7 @@ class ProductServiceTestSuite {
             productService.getProduct(invalidProductId);
         });
 
-        assertEquals("Product not found with id: " + invalidProductId, exception.getMessage());
+        assertEquals("Product with ID: " + invalidProductId + " not found", exception.getMessage());
     }
 
     @Test
@@ -94,7 +95,7 @@ class ProductServiceTestSuite {
             productService.getProductNutrition(productWithoutNutrition.getProductId());
         });
 
-        assertEquals("Nutrition for product with id " + productWithoutNutrition.getProductId() + " is Null", exception.getMessage());
+        assertEquals("Nutrition for product: " + productWithoutNutrition.getProductName() + " is null", exception.getMessage());
     }
 
     @Test
@@ -138,9 +139,10 @@ class ProductServiceTestSuite {
         productRepository.delete(savedProduct);
     }
 
+    // TODO: Fix test
     @Test
     void createProductFromWishlistSuccessfully() {
-        String productName = "Mango";
+        String productName = "Lychee";
 
         productService.createProductFromWishlist(productName);
 
@@ -155,11 +157,11 @@ class ProductServiceTestSuite {
     void createProductFromWishlistThrowsExceptionWhenProductNotFoundInAPI() {
         String invalidProductName = "NonExistentProduct";
 
-        ProductNotFoundInProductsException exception = assertThrows(ProductNotFoundInProductsException.class, () -> {
+        ProductNotFoundInExternalApiException exception = assertThrows(ProductNotFoundInExternalApiException.class, () -> {
             productService.createProductFromWishlist(invalidProductName);
         });
 
-        assertEquals("Product not found in API: " + invalidProductName, exception.getMessage());
+        assertEquals("Product: " + invalidProductName + " not found in external API", exception.getMessage());
     }
 
 

@@ -13,6 +13,6 @@ import java.util.Optional;
 @Repository
 @Transactional
 public interface FridgeProductRepository extends JpaRepository<FridgeProduct, Long> {
-    @Query("SELECT fp.product.productName FROM FridgeProduct fp WHERE fp.FridgeProductId = :fridgeProductId")
+    @Query("SELECT fp.product.productName FROM FridgeProduct fp WHERE fp.fridgeProductId = :fridgeProductId")
     Optional<String> findProductNameByFridgeProductId(@Param("fridgeProductId") Long fridgeProductId);
 }

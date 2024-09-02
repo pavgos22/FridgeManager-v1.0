@@ -15,7 +15,7 @@ public class FridgeProduct {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="FRIDGE_PRODUCT_ID", unique=true)
-    private Long FridgeProductId;
+    private Long fridgeProductId;
     @Column(name = "QUANTITY_TYPE", nullable = false)
     private QuantityType quantityType;
     @Column(name = "QUANTITY", nullable = false)

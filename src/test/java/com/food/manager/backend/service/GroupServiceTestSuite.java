@@ -1,7 +1,6 @@
 package com.food.manager.backend.service;
 
 import com.food.manager.backend.dto.request.group.AddUserRequest;
-import com.food.manager.backend.dto.request.group.CreateGroupRequest;
 import com.food.manager.backend.dto.request.group.UpdateGroupRequest;
 import com.food.manager.backend.dto.request.user.DeleteUserRequest;
 import com.food.manager.backend.dto.response.GroupResponse;
@@ -9,7 +8,7 @@ import com.food.manager.backend.dto.response.ShoppingListItemResponse;
 import com.food.manager.backend.dto.response.UserResponse;
 import com.food.manager.backend.entity.*;
 import com.food.manager.backend.exception.GroupNotFoundException;
-import com.food.manager.backend.exception.UserAlreadyInGroupException;
+import com.food.manager.backend.exception.UserAlreadyExistsInGroupException;
 import com.food.manager.backend.exception.UserNotFoundException;
 import com.food.manager.backend.mapper.GroupMapper;
 import com.food.manager.backend.mapper.ShoppingListItemMapper;
@@ -172,7 +171,7 @@ class GroupServiceTestSuite {
             groupService.updateGroup(groupId, updateGroupRequest);
         });
 
-        assertEquals("Group not found with id: " + groupId, exception.getMessage());
+        assertEquals("Group with ID: " + groupId + " not found", exception.getMessage());
         verify(groupRepository, times(1)).findById(groupId);
         verify(groupRepository, times(0)).save(any(Group.class));
         verify(groupMapper, times(0)).toGroupResponse(any(Group.class));
@@ -222,7 +221,7 @@ class GroupServiceTestSuite {
             groupService.addUser(addUserRequest);
         });
 
-        assertEquals("Group with ID " + groupId + " not found", exception.getMessage());
+        assertEquals("Group with ID: " + groupId + " not found", exception.getMessage());
 
         verify(groupRepository, times(1)).findById(groupId);
         verify(userRepository, times(0)).findById(anyLong());
@@ -247,7 +246,7 @@ class GroupServiceTestSuite {
             groupService.addUser(addUserRequest);
         });
 
-        assertEquals("User with ID " + userId + " not found", exception.getMessage());
+        assertEquals("User with ID: " + userId + " not found", exception.getMessage());
 
         verify(groupRepository, times(1)).findById(groupId);
         verify(userRepository, times(1)).findById(userId);
@@ -272,11 +271,12 @@ class GroupServiceTestSuite {
         when(groupRepository.findById(groupId)).thenReturn(Optional.of(group));
         when(userRepository.findById(userId)).thenReturn(Optional.of(user));
 
-        UserAlreadyInGroupException exception = assertThrows(UserAlreadyInGroupException.class, () -> {
+        UserAlreadyExistsInGroupException exception = assertThrows(UserAlreadyExistsInGroupException.class, () -> {
             groupService.addUser(addUserRequest);
         });
 
-        assertEquals("User with ID " + userId + " is already in group with ID " + groupId, exception.getMessage());
+        assertEquals("User with ID: " + userId + " already exists in group with ID: " + groupId, exception.getMessage());
+
 
         verify(groupRepository, times(1)).findById(groupId);
         verify(userRepository, times(1)).findById(userId);
@@ -332,7 +332,7 @@ class GroupServiceTestSuite {
             groupService.deleteUser(deleteUserRequest);
         });
 
-        assertEquals("Group with ID " + groupId + " not found", exception.getMessage());
+        assertEquals("Group with ID: " + groupId + " not found", exception.getMessage());
 
         verify(groupRepository, times(1)).findById(groupId);
         verify(userRepository, times(0)).findById(anyLong());
@@ -357,7 +357,7 @@ class GroupServiceTestSuite {
             groupService.deleteUser(deleteUserRequest);
         });
 
-        assertEquals("User with ID " + userId + " not found", exception.getMessage());
+        assertEquals("User with ID: " + userId + " not found", exception.getMessage());
 
         verify(groupRepository, times(1)).findById(groupId);
         verify(userRepository, times(1)).findById(userId);

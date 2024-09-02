@@ -1,17 +1,15 @@
 package com.food.manager.backend.service;
 
 import com.food.manager.backend.dto.request.recipe.CreateRecipeRequest;
-import com.food.manager.backend.dto.response.RecipeNutrition;
 import com.food.manager.backend.dto.response.RecipeResponse;
 import com.food.manager.backend.entity.Ingredient;
-import com.food.manager.backend.entity.Nutrition;
 import com.food.manager.backend.entity.Product;
 import com.food.manager.backend.entity.Recipe;
 import com.food.manager.backend.enums.ProductGroup;
 import com.food.manager.backend.enums.QuantityType;
 import com.food.manager.backend.enums.RecipeType;
 import com.food.manager.backend.enums.Weather;
-import com.food.manager.backend.exception.IngredientNotFoundException;
+import com.food.manager.backend.exception.IngredientsNotFoundException;
 import com.food.manager.backend.exception.RecipeNotFoundException;
 import com.food.manager.backend.repository.IngredientRepository;
 import com.food.manager.backend.repository.NutritionRepository;
@@ -85,7 +83,7 @@ class RecipeServiceTestSuite {
             recipeService.getRecipe(invalidRecipeId);
         });
 
-        assertEquals("Recipe not found with id: " + invalidRecipeId, exception.getMessage());
+        assertEquals("Recipe with ID: " + invalidRecipeId + " not found", exception.getMessage());
     }
 
     @Test
@@ -137,7 +135,7 @@ class RecipeServiceTestSuite {
                 "http://new-recipe.url"
         );
 
-        IngredientNotFoundException exception = assertThrows(IngredientNotFoundException.class, () -> {
+        IngredientsNotFoundException exception = assertThrows(IngredientsNotFoundException.class, () -> {
             recipeService.createRecipe(request);
         });
 
