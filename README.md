@@ -46,6 +46,10 @@ The Food Manager application is a comprehensive `REST API` developed in `Java Sp
 - **Advanced Recipe Features**: The application will start using the `IgnoreGroup` and `Required` fields in recipes for more complex recipe management.
     - **IgnoreGroup**: Products can be assigned to productGroups e.g. Canola Oil, Avocado Oil and Peanut Oil are assigned to `ProductGroup.OIL`, because usually in a recipe these ingredients are replaceable, so if you want to specify that in your recipe a specific type of oil must be used, you can check the ignoreGroup field.
     - **Required**: An ingredient like parsley to garnish can be optional, so then the `required` should be unchecked.
+<<<<<<< HEAD
+=======
+- **API Documentation**: A full documentation for all the endpoints in API.
+>>>>>>> 1552743e391f0113efe5cb452cdec38fe5cd811a
 
 ## Testing
 
@@ -57,4 +61,14 @@ Unit tests are implemented for the backend, covering entities, controllers, and 
 - **Database**: `MySQL`
 - **Frontend**: `Vaadin` (Admin Panel)
 - **External APIs**: `FatSecretAPI`, `Visual Crossing API`
+<<<<<<< HEAD
 - **Dependency Management**: `Gradle 8.8`
+=======
+- **Dependency Management**: `Gradle 8.8`
+
+## How to run
+1. Clone the repository or download ZIP
+2. Run `FridgeManagerApplication.java`
+3. To run the API type `localhost:8080/v1/...` in Postman or other API testing platform (API documentation coming soon).
+4. To run AdminPanel simply type `http://localhost:8080/admin` in browser, the `Vaadin` framework is already installed in the repository.
+>>>>>>> 1552743e391f0113efe5cb452cdec38fe5cd811a
