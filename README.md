@@ -59,7 +59,6 @@ Unit tests are implemented for the backend, covering entities, controllers, and 
 - **Frontend**: `Vaadin` (Admin Panel)
 - **External APIs**: `FatSecretAPI`, `Visual Crossing API`
 - **Dependency Management**: `Gradle 8.8`
-- **Dependency Management**: `Gradle 8.8`
 
 ## How to run
 1. Clone the repository or download ZIP

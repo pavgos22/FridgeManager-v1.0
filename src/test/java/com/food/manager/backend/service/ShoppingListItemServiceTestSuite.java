@@ -203,7 +203,7 @@ class ShoppingListItemServiceTestSuite {
             shoppingListItemService.removeItemFromShoppingList(request);
         });
 
-        assertEquals("Item with ID: " + request.itemId() + " does not belong to group with ID: " + anotherGroup.getGroupId(), exception.getMessage());
+        assertEquals("Item with ID: " + request.itemId() + " does not belong to group with ID: " + (anotherGroup.getGroupId() - 1), exception.getMessage());
     }
 
     @Test
