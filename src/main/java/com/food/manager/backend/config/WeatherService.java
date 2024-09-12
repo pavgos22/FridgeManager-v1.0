@@ -2,11 +2,11 @@ package com.food.manager.backend.config;
 
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
+import org.springframework.context.annotation.Configuration;
 
 @Getter
-@Component
+@Configuration
 public class WeatherService {
-    @Value("${WEATHER_KEY}")
+    @Value("${weather.api-key}")
     private String weatherKey;
 }

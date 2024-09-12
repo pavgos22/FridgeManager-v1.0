@@ -3,22 +3,22 @@ package com.food.manager.backend.config;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.http.*;
-import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.Instant;
 
-@Service
+@Configuration
 public class OAuthService {
 
-    @Value("${CLIENT_ID}")
+    @Value("${oauth.client-id}")
     private String clientId;
 
-    @Value("${CLIENT_SECRET}")
+    @Value("${oauth.client-secret}")
     private String clientSecret;
 
-    @Value("${TOKEN_URL}")
+    @Value("${oauth.token-url}")
     private String tokenUrl;
 
     private String oAuthToken;
